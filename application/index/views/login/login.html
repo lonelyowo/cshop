@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="x-ua-compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+<link rel="icon" href="<?php echo base_url('static/index/login_giant/favicon.ico'); ?>" type="image/x-icon" />
+<link rel="shortcut icon" href="<?php echo base_url('static/index/login_giant/favicon.ico'); ?>" type="image/x-icon" />
+
+<link rel="stylesheet" href="<?php echo base_url('static/index/login_giant/css/login_giant.css'); ?>">
+
+<title>Giant账号 - 账号登录</title>
+<style>
+
+
+</style>
+</head>
+
+<body class="login_giant">
+<!--
+不同品牌为 body 添加相应class
+login_giant
+login_mmt
+login_liv
+不填写品牌Class，将三个品牌轮播
+-->
+<div id="login_header">
+  <div id="giantcolor"></div>
+  <div id="giantlogo"></div>
+  <div id="mmtlogo"></div>
+  <div id="livlogo"></div>
+</div>
+
+
+
+
+<div id="" class="login_card">
+<form id="form_login">
+  <div class="title">账号登录</div>
+
+  <input type="text" id="loginname" name="" placeholder="账号" autocomplete="on" value="">
+  
+  <input type="password" id="password" name="" placeholder="密码" value="">
+  
+  <div class="btn_group">
+    <button type="submit" class="btn btn_login">登录</button>
+  </div>
+  
+
+  <div class="login_extra">
+    <a href="<?php echo site_url('Login/reg'); ?>">注册捷安特账号</a>
+    <!-- <a href="<?php echo site_url('Login/reset'); ?>" class="reset_password">忘记密码？</a> -->
+    <!-- <a target="_blank" href="http://wechat.giant.com.cn/giant/forget_pwd.aspx" class="reset_password">忘记密码？</a> -->
+  </div>
+</form>
+</div>
+
+
+
+
+
+<div id="copyright">捷安特（昆山）有限公司</div>
+
+
+<div id="reg_term">
+  <div class="reg_term_box">
+    <div class="title">服务条款</div>
+    <div class="text">
+      <ol>
+        <li>在本站注册的会员，必须遵守《互联网电子公告服务管理规定》，不得在本站发表诽谤他人，侵犯他人隐私，侵犯他人知识产权，传播病毒，政治言论，商业讯息等信息。
+  </li>
+        <li>在所有在本站发表的文章，本站都具有最终编辑权，并且保留用于印刷或向第三方发表的权利，如果你的资料不齐全，我们将有权不作任何通知使用你在本站发布的作品。
+  </li>
+        <li>在登记过程中，您将选择注册名和密码。注册名的选择应遵守法律法规及社会公德。您必须对您的密码保密，您将对您注册名和密码下发生的所有活动承担责任。
+  </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script type="text/javascript" src="<?php echo base_url('static/index/login_giant/js/jquery.min.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo base_url('static/index/login_giant/js/login_giant.js'); ?>"></script>
+
+
+
+<script>
+
+//$("html").on("click", ".btn_login", function() {
+$("#form_login").submit( function() {
+
+  var loginname = $('#loginname').val();
+  var password = $('#password').val();
+
+  if( loginname=='' ) {
+    $.fn.poptips({
+      con: "请输入手机号或邮箱",
+      btnOKClick: function (){
+        $("#loginname").focus().addClass("has-error");
+      }
+    });
+    return false;
+  }
+
+  if( password=='' ) {
+    $.fn.poptips({
+      con: "请输入密码",
+      btnOKClick: function (){
+        $("#password").focus().addClass("has-error");
+      }
+    });
+    return false;
+  }
+
+
+
+  if( $(".btn_login").hasClass("disabled") ) {
+    return false;
+  } else {
+
+    $.ajax({
+      type: "POST",
+      url: "<?php echo site_url('Login/login'); ?>",
+      data: { "username":loginname,"password":password },
+      dataType: "json",
+      success: function(data){
+        if (data.status) {
+          
+          var client = "<?php echo $_SESSION['client']; ?>";
+        
+          if (client == 'pc') {
+            window.location.href = "<?php echo isset($_SESSION['history_url'])?$_SESSION['history_url']:base_url(); ?>";
+          }
+
+          if (client == 'weixin') {
+            window.location.href = "<?php echo site_url('Login/bind'); ?>";
+          }
+
+        } else {
+          $(".btn_login").removeClass("disabled").html( "登录" );
+          $.fn.poptips(data.msg);
+        }
+      },
+      error: function(e){
+        $(".btn_login").removeClass("disabled").html( "登录" );
+        $.fn.poptips("发生未知错误，请稍后再试。");
+      },
+      beforeSend: function(){
+        $(".btn_login").addClass("disabled").html( "登录中..." );
+      }
+    });
+
+  }
+
+
+  return false;
+
+});
+
+
+
+
+/*
+//点击注册按钮
+$("html").on("click", ".btn_login", function() {
+
+
+
+if( 1 ) {
+  $.fn.poptips({
+    con: "请输入手机号码",
+    btnOKClick: function (){
+      $("#xxxx").focus().addClass("has-error");
+    }
+  });
+  return false;
+}
+
+
+
+
+
+});
+*/
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="控制台 后台管理">
+    <meta name="author" content="Chenjp">
+    <!-- <link rel="icon" href="http://v3.bootcss.com/favicon.ico"> -->
+
+    <title>Chenjp</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="http://v3.bootcss.com/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="http://v3.bootcss.com/examples/dashboard/dashboard.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="http://v3.bootcss.com/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="http://v3.bootcss.com/assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <?php $this->load->view('public/navbar.html'); ?>
+
+    <div class="container-fluid">
+      <div class="row">
+      
+        <?php $this->load->view('public/sidebar.html'); ?>
+
+
+      
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          
+          <a class="btn btn-danger" href="<?php echo site_url('Index/api_add'); ?>" role="button">添加API</a>
+          
+          <hr>
+
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+              
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>标题</th>
+                  <th>时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+
+              <tbody>
+      
+                <?php if ($data) : ?>
+                  <?php foreach ($data as $row) : ?>
+                  <tr>
+                    <td><?php echo $row['id']; ?></td>
+                    <td><?php echo $row['title']; ?></td>
+                    <td><?php echo date('Y-m-d H:i:s',$row['time']); ?></td>
+                    <td>
+                      <a class="btn btn-success" href="<?php echo site_url('Index/api_detail/'.$row['id']); ?>" role="button">查看</a>
+                      <a class="btn btn-info" href="<?php echo site_url('Index/api_edit/'.$row['id']); ?>" role="button">编辑</a>
+                      <a class="api_del btn btn-danger" data-href="<?php echo site_url('Index/api_del/'.$row['id']); ?>" href="JavaScript:;" role="button">删除</a>
+                    </td>
+                  </tr>
+                  <?php endforeach; ?>
+                <?php endif; ?>
+                
+              </tbody>
+            
+            </table>
+          </div>
+
+        </div>
+
+
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://v3.bootcss.com/dist/js/bootstrap.min.js"></script>
+    <!-- <script src="http://v3.bootcss.com/assets/js/docs.min.js"></script> -->
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="http://v3.bootcss.com/assets/js/ie10-viewport-bug-workaround.js"></script>
+  
+    <script>
+      $(function(){
+        $('.api_del').click(function(){
+          var url = $(this).attr('data-href');
+          if ( confirm("确定删除？") ){    
+            window.location.href = url;
+          }
+        });
+
+
+      });
+    </script>
+
+  </body>
+</html>

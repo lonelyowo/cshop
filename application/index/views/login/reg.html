@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="x-ua-compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+
+<link rel="icon" href="<?php echo base_url('static/index/login_giant/favicon.ico'); ?>" type="image/x-icon" />
+<link rel="shortcut icon" href="<?php echo base_url('static/index/login_giant/favicon.ico'); ?>" type="image/x-icon" />
+
+<link rel="stylesheet" href="<?php echo base_url('static/index/login_giant/css/login_giant.css'); ?>">
+
+<title>Giant账号 - 账号注册</title>
+<style>
+
+
+</style>
+</head>
+
+<body class="">
+<!--
+不同品牌为 body 添加相应class
+login_giant
+login_mmt
+login_liv
+不填写品牌Class，将三个品牌轮播
+-->
+
+<div id="login_header">
+  <div id="giantcolor"></div>
+  <div id="giantlogo"></div>
+  <div id="mmtlogo"></div>
+  <div id="livlogo"></div>
+</div>
+
+
+
+
+<div id="" class="login_card">
+
+  <div class="title">账号注册</div>
+
+  <!-- <input type="text" id="phone" name="" placeholder="请输入11位手机号" autocomplete="on" value=""> -->
+
+  <!-- <div class="login_captcha_group">
+    <input type="text" id="captcha" name="" placeholder="短信验证码" autocomplete="off" value="">
+    <a class="btn">接收验证码</a>
+  </div> -->
+  
+  <input type="text" id="nickname" name="" placeholder="设置账号" autocomplete="on" value="">
+  
+  <input type="password" id="password" name="" placeholder="设置密码" value="">
+  
+  <div class="btn_group">
+    <button type="button" class="btn btn_register">立即注册</button>
+  </div>
+  
+  <div class="login_tips">点击注册，即表示您同意<a id="reg_term_show">服务条款及隐私政策</a></div>
+  
+  <div class="login_extra">
+    <a href="<?php echo site_url('Login'); ?>">有捷安特账号？直接登录</a>
+  </div>
+
+</div>
+
+
+
+
+
+<div id="copyright">捷安特（昆山）有限公司</div>
+
+
+<div id="reg_term">
+  <div class="reg_term_box">
+    <div class="title">服务条款</div>
+    <div class="text">
+      <ol>
+        <li>在本站注册的会员，必须遵守《互联网电子公告服务管理规定》，不得在本站发表诽谤他人，侵犯他人隐私，侵犯他人知识产权，传播病毒，政治言论，商业讯息等信息。
+  </li>
+        <li>在所有在本站发表的文章，本站都具有最终编辑权，并且保留用于印刷或向第三方发表的权利，如果你的资料不齐全，我们将有权不作任何通知使用你在本站发布的作品。
+  </li>
+        <li>在登记过程中，您将选择注册名和密码。注册名的选择应遵守法律法规及社会公德。您必须对您的密码保密，您将对您注册名和密码下发生的所有活动承担责任。
+  </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+
+
+<script type="text/javascript" src="<?php echo base_url('static/index/login_giant/js/jquery.min.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo base_url('static/index/login_giant/js/login_giant.js'); ?>"></script>
+
+
+<script>
+
+/*
+$( ".login_captcha_group .btn" ).on( "click", function(e){
+  var tmp_this = $(this);
+  if( tmp_this.hasClass("disabled") ) {
+    return false;
+  } else {
+
+    var InterValObj; //timer变量，控制时间
+    var curCount = 15;//当前剩余秒数
+    //timer处理函数
+    function SetRemainTime() {
+      if (curCount == 0) {                
+        window.clearInterval(InterValObj);//停止计时器
+        tmp_this.removeClass("disabled").html( "重发验证码" );//启用按钮
+      }
+      else {
+        curCount--;
+        tmp_this.html(curCount + "秒后重发");
+      }
+    }
+    tmp_this.addClass("disabled").html( curCount + "秒后重发" );
+    InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
+    
+    
+    //$("#btn_submit_enroll_individual").removeClass("disabled").html( "提交个人报名表" );
+  }
+});
+*/
+
+// $( ".login_captcha_group .btn" ).on( "click", function(e){
+//   var tmp_this = $(this);
+//   if( tmp_this.hasClass("disabled") ) {
+//     return false;
+//   } else {
+  
+//     var phone = $('#phone').val();
+//     if( !phone.match(/^[0-9]{11}$/) ) {
+//       $.fn.poptips({
+//         con: "请输入11位手机号码",
+//         btnOKClick: function (){
+//           $("#phone").focus().addClass("has-error");
+//         }
+//       });
+//       return false;
+//     }
+
+
+
+//     var InterValObj; //timer变量，控制时间
+//     var curCount = 60;//当前剩余秒数
+//     //timer处理函数
+//     function SetRemainTime() {
+//       if (curCount == 0) {                
+//         window.clearInterval(InterValObj);//停止计时器
+//         tmp_this.removeClass("disabled").html( "重发验证码" );//启用按钮
+//       }else {
+//         curCount--;
+//         tmp_this.html(curCount + "秒后重发");
+//       }
+//     }
+//     tmp_this.addClass("disabled").html( curCount + "秒后重发" );
+//     InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
+
+
+//     $.post("<?php echo site_url('Login/get_captcha'); ?>", {"phone":phone}, function(data){
+//       // $.fn.poptips( data );
+//       console.log(data);
+//     }, "json");    
+
+//   }
+// });
+
+
+
+
+//点击注册按钮
+$("html").on("click", ".btn_register", function() {
+
+  var phone = $('#phone').val();
+  var captcha = $('#captcha').val();
+  var nickname = $('#nickname').val();
+  var password = $('#password').val();
+
+  if( !phone.match(/^[0-9]{11}$/) ) {
+    $.fn.poptips({
+      con: "请输入11位手机号码",
+      btnOKClick: function (){
+        $("#phone").focus().addClass("has-error");
+      }
+    });
+    return false;
+  }
+
+  if( !captcha.match(/^[0-9]{4}$/) ) {
+    $.fn.poptips({
+      con: "请输入短信验证码",
+      btnOKClick: function (){
+        $("#captcha").focus().addClass("has-error");
+      }
+    });
+    return false;
+  }
+
+  if( nickname == '' ) {
+    $.fn.poptips({
+      con: "请输入昵称",
+      btnOKClick: function (){
+        $("#nickname").focus().addClass("has-error");
+      }
+    });
+    return false;
+  }
+
+  if( password == '' ) {
+    $.fn.poptips({
+      con: "请输入密码",
+      btnOKClick: function (){
+        $("#password").focus().addClass("has-error");
+      }
+    });
+    return false;
+  }
+
+  var data = {
+    'phone':phone, 
+    'captcha':captcha, 
+    'nickname':nickname, 
+    'password':password 
+  };
+
+
+  if( $(".btn_register").hasClass("disabled") ) {
+    return false;
+  } else {
+    $(".btn_register").addClass("disabled").html( "处理中..." );
+
+    $.post("<?php echo site_url('Login/reg_bll'); ?>", data, function(data){
+      if (data.status) {
+        window.location.href = "<?php echo site_url('Login'); ?>";
+      } else {
+        $(".btn_register").removeClass("disabled").html( "立即注册" );
+        $.fn.poptips( data.msg );
+      }
+      console.log(data);
+    }, "json");
+  }
+
+    
+});
+
+
+</script>
+
+</body>
+</html>

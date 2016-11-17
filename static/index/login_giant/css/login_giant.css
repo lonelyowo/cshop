@@ -1,0 +1,459 @@
+/** 通用 **/
+* {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+html {
+  font-family: sans-serif;
+  -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+img {
+  border: 0;
+  vertical-align: middle;
+}
+a {
+  text-decoration: none;
+}
+
+body {
+  font-family: Microsoft Yahei, sans-serif;
+  background-color: #e5e5e5;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+
+.btn {
+  border-radius: 3px;
+  box-shadow: 0 1px 2.5px rgba(0,0,0,.6);
+  letter-spacing: 0;
+  text-align: center;
+  cursor: pointer;
+  border: 0;
+  font-family: inherit;
+}
+.card {
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,.2);
+}
+
+
+
+
+
+/** 登陆/注册界面 **/
+
+body {
+  background-color: #fff;
+}
+
+#login_header {
+  position: relative;
+  height: 80px;
+}
+
+#giantcolor {
+  position: relative;
+  width: 100%;
+  height: 15px;
+  background-color: #653490;
+  overflow: hidden;
+}
+#giantcolor:before,
+#giantcolor:after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: -10%;
+  width: 40%;
+  height: 100%;
+  background-color: #0070bc;
+  -webkit-transform: skew(-30deg);
+}
+#giantcolor:after {
+  background-color: #e1002a;
+  right: -10%;
+  left: auto;
+}
+#giantlogo,
+#mmtlogo,
+#livlogo {
+  background-image: url(../img/giant_logo.png);
+  width: 100%;
+  height: 60px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto 50%;
+  position: absolute;
+  top: 20px;
+}
+#mmtlogo {
+  background-image: url(../img/mmt_logo.png);
+}
+#livlogo {
+  background-image: url(../img/liv_logo.png);
+}
+
+#giantlogo {
+  -webkit-animation: login_logo 9s linear 0s infinite both;
+  animation: login_logo 9s linear 0s infinite both;
+}
+#mmtlogo {
+  -webkit-animation: login_logo 9s linear 3s infinite both;
+  animation: login_logo 9s linear 3s infinite both;
+}
+#livlogo {
+  -webkit-animation: login_logo 9s linear 6s infinite both;
+  animation: login_logo 9s linear 6s infinite both;
+}
+@-webkit-keyframes login_logo {
+	0% {
+		opacity: 0;
+	}
+	15% {
+		opacity: 1;
+	}
+  33.333% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+@keyframes login_logo {
+	0% {
+		opacity: 0;
+	}
+	15% {
+		opacity: 1;
+	}
+  33.333% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+body.login_giant #giantlogo,
+body.login_giant #mmtlogo,
+body.login_giant #livlogo,
+body.login_mmt #giantlogo,
+body.login_mmt #mmtlogo,
+body.login_mmt #livlogo,
+body.login_liv #giantlogo,
+body.login_liv #mmtlogo,
+body.login_liv #livlogo {
+  -webkit-animation: none;
+  animation: none;
+}
+
+
+body.login_giant #mmtlogo,
+body.login_giant #livlogo,
+body.login_mmt #giantlogo,
+body.login_mmt #livlogo,
+body.login_liv #giantlogo,
+body.login_liv #mmtlogo {
+  display: none;
+}
+
+
+
+
+.login_card {
+  padding: 0 20px 20px 20px;
+  margin: 0 auto;
+  width: 480px;
+}
+
+@media (max-width:480px) {
+  .login_card {
+    width: auto;
+  }
+}
+
+.login_card .title {
+  font-size: 18px;
+  text-align: center;
+  padding-bottom: 25px;
+}
+
+.login_card input[type="text"],
+.login_card input[type="password"] {
+  font-family: inherit;
+  height: 42px;
+  padding: 0 10px;
+  width: 100%;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  font-size: 16px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.login_card input.has-error {
+  border: 1px solid #E11F00;
+  background-color: #FFF2F0;
+}
+.login_card input.has-error:focus {
+  outline: #E11F00 auto 5px;
+}
+.login_card .login_captcha_group {
+  position: relative;
+}
+.login_card .login_captcha_group input[type="text"] {
+  padding-right: 100px;
+}
+.login_card .login_captcha_group .btn {
+  position: absolute;
+  display: block;
+  top: 8px;
+  right: 4px;
+  line-height: 36px;
+  padding: 0 10px;
+  font-size: 12px;
+  background-color: #0070bc;
+  color: #fff;
+  box-shadow: 0 1px 2.5px #0070bc;
+}
+.login_card .login_captcha_group .btn:hover {
+  background-color: #0682D6;
+}
+.login_card .login_captcha_group .btn:active {
+  background-color: #0070bc;
+  box-shadow: none;
+}
+
+.login_card .login_captcha_group .btn.disabled,
+.login_card .login_captcha_group .btn.disabled:hover,
+.login_card .login_captcha_group .btn.disabled:active {
+  background-color: #e5e5e5;
+  color: #6b6b6b;
+  box-shadow: none;
+  cursor: default;
+}
+
+
+.login_card .btn_group {
+  padding-top: 20px;
+	display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row;
+  flex-flow: row;
+}
+
+.login_card .btn_group .btn {
+  display: inline-block;
+  font-size: 12px;
+  line-height: 40px;
+  background-color: #0378a4;
+  color: #fff;
+	-webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  cursor: pointer;
+  font-weight: bold;
+}
+.login_card .btn_group .btn_register {
+  background-color: #2da403;
+  font-size: 20px;
+  line-height: 45px;
+  box-shadow: 0 1px 2.5px rgba(45, 164, 3, .6);
+}
+.login_card .btn_group .btn_register:hover {
+  background-color: #3ACA07;
+}
+.login_card .btn_group .btn_register:active {
+  background-color: #2da403;
+  box-shadow: none;
+}
+
+.login_card .btn_group .btn_login {
+  background-color: #0070bc;
+  font-size: 20px;
+  line-height: 45px;
+  box-shadow: 0 1px 2.5px rgba(0, 112, 188, .6);
+}
+
+.login_card .btn_group .btn_login:hover {
+  background-color: #0682D6;
+}
+.login_card .btn_group .btn_login:active {
+  background-color: #0070bc;
+  box-shadow: none;
+}
+
+.login_card .btn_group .btn_reset {
+  background-color: #E22608;
+  font-size: 20px;
+  line-height: 45px;
+  box-shadow: 0 1px 2.5px rgba(226,38,8,0.6);
+}
+.login_card .btn_group .btn_reset:hover {
+  background-color: #F13213;
+}
+.login_card .btn_group .btn_reset:active {
+  background-color: #E22608;
+  box-shadow: none;
+}
+
+.login_tips {
+  font-size: 12px;
+  padding-top: 10px;
+  color: #9d9d9d;
+}
+.login_tips a {
+  cursor: pointer;
+  font-weight: bold;
+  color: #333;
+  padding: 0 5px;
+}
+.login_extra {
+  color: #777;
+  font-size: 14px;
+  padding-top: 20px;
+}
+.login_extra a {
+  color: #777;
+}
+.login_extra a:hover {
+  color: #0070bc;
+}
+.login_extra .reset_password {
+  float: right;
+}
+
+/** 服务条款 **/
+#reg_term_show {
+  cursor: pointer;
+}
+
+#reg_term {
+  background-color: rgba(0, 0, 0, .6);
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  display: none;
+  cursor: pointer;
+}
+.reg_term_show #reg_term {
+  display: block;
+}
+.reg_term_box {
+  background-color: #fff;
+  position: fixed;
+  bottom: 0;
+  padding: 40px 10px;
+  font-size: 12px;
+  box-shadow: 0 -1px 2.5px rgba(0, 0, 0, .6);
+  width: 100%;
+}
+.reg_term_box .title {
+  font-size: 16px;
+}
+.reg_term_box ol {
+  padding-left: 30px;
+}
+.reg_term_box li {
+  padding-bottom: 10px;
+}
+
+
+
+
+/** 版权信息 **/
+#copyright {
+  text-align: center;
+  color: #999999;
+  font-size: 12px;
+  padding: 10px;
+}
+
+
+/** 通用弹出 **/
+#poptips {
+  display: none;
+}
+#poptips.show {
+  display: block;
+  cursor: pointer;
+}
+#poptips:before {
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.8);
+}
+#poptips .poptips_box {
+  display: inline-block;
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  min-width: 90%;
+  margin: 0 auto;
+  -webkit-transform: translate(-50%, 0);
+  transform: translate(-50%, 0);
+  background-color: #fff;
+  padding: 20px;
+  z-index: 900;
+}
+#poptips .title {
+  font-weight: bold;
+  text-align: center;
+  padding-bottom: 20px;
+}
+#poptips .con {
+  color: #757575;
+  font-size: 14px;
+}
+#poptips .con.center {
+  text-align: center;
+}
+#poptips .btn_group {
+  padding-top: 20px;
+	display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row;
+  flex-flow: row;
+}
+
+#poptips .btn_group .btn {
+  display: inline-block;
+  font-size: 12px;
+  line-height: 40px;
+  background-color: #0378a4;
+  color: #fff;
+	-webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  cursor: pointer;
+  font-weight: bold;
+}
+#poptips .btn_group .cancel {
+  background-color: #e5e5e5;
+  color: #424242;
+  margin-right: 10px;
+}
