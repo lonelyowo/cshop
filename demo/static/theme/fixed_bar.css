@@ -1,0 +1,9 @@
+.fixed_bar{
+	background: #333;
+}
+
+.fixed_bar .login{
+	color: #fff;
+	float: right;
+	line-height: 67px;
+}
