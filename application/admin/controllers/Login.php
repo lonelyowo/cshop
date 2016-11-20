@@ -30,7 +30,7 @@ class Login extends CI_Controller {
 			$res = $this->db->query($sql)->row_array();
 			if ($res) {
 				$this->login_session($res);
-				redirect( base_url() );
+				redirect( site_url() );
 			}else{
 				$this->Public_model->history_back('账号或密码错误');
 			}

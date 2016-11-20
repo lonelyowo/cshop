@@ -64,10 +64,15 @@
             </div>
           </div> -->
 
-          <p>页面加载时间 <strong>{elapsed_time}</strong> 秒.</p>
-          <p><?php echo 'CodeIgniter 版本 <strong>' . CI_VERSION . '</strong>' ?>.</p>   
+          <p><?php echo 'PHP 版本 <strong>' . phpversion() . '</strong>' ?>.</p> 
+          <p><?php echo 'Apache 版本 <strong>' . apache_get_version() . '</strong>' ?>.</p> 
+          <p><?php echo 'MySQL 版本 <strong>' . $this->db->version() . '</strong>' ?>.</p> 
 
+          <p><?php echo 'CodeIgniter 版本 <strong>' . CI_VERSION . '</strong>' ?>.</p>   
+          <p>页面加载时间 <strong>{elapsed_time}</strong> 秒.</p>
           
+
+
         </div>
 
 

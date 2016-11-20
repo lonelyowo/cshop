@@ -1,0 +1,24 @@
+.fixed_bar{
+	background: #333;
+}
+
+.fixed_bar .login{
+	margin: 30px 0px 10px 0px;
+	color: #fff;
+	float: right;
+	line-height: 67px;
+	font-size: 30px;
+	text-align:center;
+	margin-right: 30px;
+	width: 20%;
+}
+.fixed_bar .fanfan{
+	margin-top: 30px;
+	color: #fff;
+	width:600px;
+	line-height: 67px;
+	font-size: 55px;
+	font-family: 微软雅黑;
+	float: left;
+	text-align: right;
+}

@@ -12,7 +12,7 @@ class Logout extends CI_Controller {
 	{
 		session_unset();
 		session_destroy();
-		redirect( base_url() );
+		redirect( site_url() );
 	}
 
 }

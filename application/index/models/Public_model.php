@@ -38,4 +38,23 @@ class Public_model extends CI_Model {
 		return $output;
  	}
 
+ 	public function history_back($msg='')
+    {
+    	exit("
+    		<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    		<script>
+    			alert('".$msg."');
+    			history.back();
+    		</script>
+    		");
+    }
+
+    // 检查登陆状态
+    public function check_login()
+    {
+        if ( !isset($_SESSION['login']) ) {
+            redirect('Login');
+        }
+    }
+
 }
