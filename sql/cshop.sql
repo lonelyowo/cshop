@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2016-11-17 17:20:26
+-- Generation Time: 2016-11-21 14:06:42
 -- 服务器版本： 5.6.17
 -- PHP Version: 5.5.12
 
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `admin_article` (
   `content` text NOT NULL,
   `time` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `admin_menu` (
   `name` varchar(100) NOT NULL COMMENT '菜单名',
   `url` varchar(100) NOT NULL COMMENT '菜单url',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
 
 --
 -- 转存表中的数据 `admin_menu`
@@ -68,7 +68,9 @@ CREATE TABLE IF NOT EXISTS `admin_menu` (
 
 INSERT INTO `admin_menu` (`id`, `name`, `url`) VALUES
 (1, '文章管理', 'Index/article'),
-(2, 'API管理', 'Index/api');
+(2, 'API管理', 'Index/api'),
+(3, '分类管理', 'Index/cate'),
+(4, '商品管理', 'Index/goods');
 
 -- --------------------------------------------------------
 
@@ -113,6 +115,38 @@ CREATE TABLE IF NOT EXISTS `admin_user` (
 INSERT INTO `admin_user` (`id`, `name`, `password`, `identity`, `time`) VALUES
 (1, 'root', 'root', 'root', '1478829283'),
 (2, 'sunqi', 'sunqi', 'user', '1479094884');
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `cate`
+--
+
+CREATE TABLE IF NOT EXISTS `cate` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `sort` int(10) unsigned NOT NULL COMMENT '排序 默认值100 越小排序越前',
+  `name` varchar(100) NOT NULL,
+  `img` varchar(300) NOT NULL,
+  `time` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `goods`
+--
+
+CREATE TABLE IF NOT EXISTS `goods` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `cate_id` int(10) unsigned NOT NULL,
+  `sort` int(10) unsigned NOT NULL,
+  `name` varchar(300) NOT NULL,
+  `img` varchar(300) NOT NULL,
+  `price` varchar(20) NOT NULL,
+  `time` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

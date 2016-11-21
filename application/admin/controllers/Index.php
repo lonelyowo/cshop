@@ -17,6 +17,102 @@ class Index extends CI_Controller {
 		$this->load->view('chenjp.html',$data);
 	}
 
+	public function cate()
+	{
+		$data['sidebar_active']['Index/cate'] = 'active';
+		$data['data'] = $this->Index_model->get_cate();
+		$this->load->view('cate/cate.html', $data);
+	}
+
+	public function cate_add()
+	{
+		$data['sidebar_active']['Index/cate'] = 'active';
+		$this->load->view('cate/add.html', $data);
+	}
+
+	public function cate_del($id='')
+	{
+		$this->db->delete('cate', array('id' => $id));
+		redirect( site_url('Index/cate') );
+	}
+
+	public function cate_bll()
+	{
+		$res = $this->cate_img_upload();
+		$img = '';
+		if ($res['status']) {
+			$img = $res['img_path'];
+		}else{
+			echo $res['error'];
+			exit();
+		}
+		$name = $_POST['name'];
+		$sort = $_POST['sort'];
+		$data = array(
+			'sort'=>$sort,
+			'name'=>$name,
+			'img'=>$img,
+			'time'=>time(),
+			);
+		$this->db->insert('cate', $data);
+		redirect('Index/cate');
+	}
+
+	public function cate_img_upload()
+    {
+        $config['upload_path']      = FCPATH.'data/uploads/cate/';
+        $config['allowed_types']    = 'gif|jpg|png';
+        $config['file_name']     = time();        
+
+        $this->load->library('upload', $config);
+
+        if ( ! $this->upload->do_upload('img'))
+        {
+            $error = $this->upload->display_errors();
+			$arr = array(
+				'status'=>0,
+				'error'=>$error
+				);
+			return $arr;
+        }
+        else
+        {
+            $data = $this->upload->data();
+            $arr = array(
+				'status'=>1,
+				'img_path'=>'data/uploads/cate/'.$data['file_name']
+				);
+			return $arr;
+        }
+    }
+
+	public function goods()
+	{
+		$data['sidebar_active']['Index/goods'] = 'active';
+		$data['data'] = $this->Index_model->get_goods();
+		$this->load->view('goods/goods.html', $data);
+	}
+
+	public function goods_bll()
+	{
+		$cate_id = '';
+		$sort = $_POST['sort'];
+		$name = $_POST['name'];
+		$img = '';
+		$price = '';
+
+		$data = array(
+			'cate_id'=>$cate_id,
+			'sort'=>$sort,
+			'name'=>$name,
+			'img'=>$img,
+			'price'=>$price,
+			'time'=>time(),
+			);
+		$this->db->insert('goods', $data);
+		redirect('Index/goods');
+	}
+
 	public function dline()
 	{
 		$data['sidebar_active']['Index/dline'] = 'active';

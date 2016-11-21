@@ -20,6 +20,19 @@ class Index_model extends CI_Model {
         return $query->result_array();
     }
 
+    public function get_cate(){
+        $sql = "SELECT * FROM cate ORDER BY sort";
+        $query = $this->db->query($sql);
+        return $query->result_array();
+    }
+
+    public function get_goods(){
+        $sql = "SELECT * FROM goods ORDER BY sort";
+        $query = $this->db->query($sql);
+        return $query->result_array();
+    }
+
+
     public function user(){
         $sql = "SELECT * FROM admin_user ORDER BY id DESC";
         $query = $this->db->query($sql);

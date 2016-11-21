@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="控制台 后台管理">
+    <meta name="author" content="Chenjp">
+    <!-- <link rel="icon" href="http://v3.bootcss.com/favicon.ico"> -->
+
+    <title>Chenjp</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="http://v3.bootcss.com/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="http://v3.bootcss.com/examples/dashboard/dashboard.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="http://v3.bootcss.com/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="http://v3.bootcss.com/assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <?php $this->load->view('public/navbar.html'); ?>
+
+    <div class="container-fluid">
+      <div class="row">
+      
+        <?php $this->load->view('public/sidebar.html'); ?>
+
+
+      
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          
+          <form class="form-horizontal" role="form" action="<?php echo site_url('Index/cate_bll'); ?>" method="post" enctype="multipart/form-data">
+            
+            <div class="form-group">
+              <label for="name" class="col-sm-1 control-label">分类名:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="name" name="name" placeholder="分类名" value="">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="img" class="col-sm-1 control-label">分类图片:</label>
+              <div class="col-sm-10">
+                <input type="file" id="img" name="img">
+                <p class="help-block">上传一张分类图片.</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="sort" class="col-sm-1 control-label">排序:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="sort" name="sort" placeholder="自然数排序" value="100">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-sm-offset-1 col-sm-10">
+                <button type="submit" id="submit" class="btn btn-danger">提交</button>
+              </div>
+            </div>
+          
+          </form>
+
+        </div>
+
+
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://v3.bootcss.com/dist/js/bootstrap.min.js"></script>
+    <!-- <script src="http://v3.bootcss.com/assets/js/docs.min.js"></script> -->
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="http://v3.bootcss.com/assets/js/ie10-viewport-bug-workaround.js"></script>
+
+    <script>
+      $(function(){
+        $('#submit').click(function(){
+
+          var name = $.trim($('#name').val());
+          if ( name=='' ) {
+            alert('输入不能为空');
+            return false;
+          }
+          
+        });
+      });
+    </script>
+  
+
+  </body>
+</html>
