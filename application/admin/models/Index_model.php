@@ -32,6 +32,11 @@ class Index_model extends CI_Model {
         return $query->result_array();
     }
 
+    public function get_goods_detail($id){
+        $sql = "SELECT * FROM goods WHERE id={$id} LIMIT 1";
+        return $this->db->query($sql)->row_array();
+    }
+
 
     public function user(){
         $sql = "SELECT * FROM admin_user ORDER BY id DESC";

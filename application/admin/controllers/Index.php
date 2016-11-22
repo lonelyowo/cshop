@@ -93,13 +93,71 @@ class Index extends CI_Controller {
 		$this->load->view('goods/goods.html', $data);
 	}
 
+	public function goods_edit($id='')
+	{
+		$data['sidebar_active']['Index/goods'] = 'active';
+		$data['data'] = $this->Index_model->get_goods_detail($id);
+		$this->load->view('goods/edit.html', $data);
+	}
+
+	public function goods_del($id='')
+	{
+		$this->db->delete('goods', array('id' => $id));
+		redirect( site_url('Index/goods') );
+	}
+
+	public function goods_add()
+	{
+		$data['sidebar_active']['Index/goods'] = 'active';
+		$this->load->view('goods/add.html', $data);
+	}
+
+	public function goods_img_upload()
+    {
+        $config['upload_path']      = FCPATH.'data/uploads/goods/';
+        $config['allowed_types']    = 'gif|jpg|png';
+        $config['file_name']     = time();        
+
+        $this->load->library('upload', $config);
+
+        if ( ! $this->upload->do_upload('img'))
+        {
+            $error = $this->upload->display_errors();
+			$arr = array(
+				'status'=>0,
+				'error'=>$error
+				);
+			return $arr;
+        }
+        else
+        {
+            $data = $this->upload->data();
+            $arr = array(
+				'status'=>1,
+				'img_path'=>'data/uploads/goods/'.$data['file_name']
+				);
+			return $arr;
+        }
+    }
+
 	public function goods_bll()
 	{
-		$cate_id = '';
+		/*var_dump($_POST);
+		var_dump($_FILES);*/
+
+		$res = $this->goods_img_upload();
+		$img = '';
+		if ($res['status']) {
+			$img = $res['img_path'];
+		}else{
+			echo $res['error'];
+			exit();
+		}
+
+		$cate_id = $_POST['cate_id'];
 		$sort = $_POST['sort'];
 		$name = $_POST['name'];
-		$img = '';
-		$price = '';
+		$price = $_POST['price'];
 
 		$data = array(
 			'cate_id'=>$cate_id,
@@ -110,6 +168,34 @@ class Index extends CI_Controller {
 			'time'=>time(),
 			);
 		$this->db->insert('goods', $data);
+		redirect('Index/goods');
+	}
+
+	public function goods_edit_bll($id)
+	{
+		$res = $this->goods_img_upload();
+		$img = '';
+		if ($res['status']) {
+			$img = $res['img_path'];
+		}else{
+			echo $res['error'];
+			exit();
+		}
+
+		$cate_id = $_POST['cate_id'];
+		$sort = $_POST['sort'];
+		$name = $_POST['name'];
+		$price = $_POST['price'];
+
+		$data = array(
+			'cate_id'=>$cate_id,
+			'sort'=>$sort,
+			'name'=>$name,
+			'img'=>$img,
+			'price'=>$price
+			);
+		$this->db->where('id', $id);
+		$this->db->update('goods', $data);
 		redirect('Index/goods');
 	}
 
