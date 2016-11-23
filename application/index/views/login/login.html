@@ -39,7 +39,7 @@ login_liv
 <form id="form_login">
   <div class="title">账号登录</div>
 
-  <input type="text" id="loginname" name="" placeholder="账号" autocomplete="on" value="">
+  <input type="text" id="name" name="" placeholder="账号" autocomplete="on" value="">
   
   <input type="password" id="password" name="" placeholder="密码" value="">
   
@@ -89,17 +89,16 @@ login_liv
 
 <script>
 
-//$("html").on("click", ".btn_login", function() {
 $("#form_login").submit( function() {
 
-  var loginname = $('#loginname').val();
+  var name = $('#name').val();
   var password = $('#password').val();
 
-  if( loginname=='' ) {
+  if( name=='' ) {
     $.fn.poptips({
-      con: "请输入手机号或邮箱",
+      con: "请输入用户名",
       btnOKClick: function (){
-        $("#loginname").focus().addClass("has-error");
+        $("#name").focus().addClass("has-error");
       }
     });
     return false;
@@ -124,21 +123,11 @@ $("#form_login").submit( function() {
     $.ajax({
       type: "POST",
       url: "<?php echo site_url('Login/login'); ?>",
-      data: { "username":loginname,"password":password },
+      data: { "name":name,"password":password },
       dataType: "json",
       success: function(data){
         if (data.status) {
-          
-          var client = "<?php echo $_SESSION['client']; ?>";
-        
-          if (client == 'pc') {
-            window.location.href = "<?php echo isset($_SESSION['history_url'])?$_SESSION['history_url']:base_url(); ?>";
-          }
-
-          if (client == 'weixin') {
-            window.location.href = "<?php echo site_url('Login/bind'); ?>";
-          }
-
+          window.location.href = "<?php echo site_url(); ?>";
         } else {
           $(".btn_login").removeClass("disabled").html( "登录" );
           $.fn.poptips(data.msg);
@@ -159,32 +148,6 @@ $("#form_login").submit( function() {
   return false;
 
 });
-
-
-
-
-/*
-//点击注册按钮
-$("html").on("click", ".btn_login", function() {
-
-
-
-if( 1 ) {
-  $.fn.poptips({
-    con: "请输入手机号码",
-    btnOKClick: function (){
-      $("#xxxx").focus().addClass("has-error");
-    }
-  });
-  return false;
-}
-
-
-
-
-
-});
-*/
 
 </script>
 

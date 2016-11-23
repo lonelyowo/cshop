@@ -48,7 +48,7 @@ login_liv
     <a class="btn">接收验证码</a>
   </div> -->
   
-  <input type="text" id="nickname" name="" placeholder="设置账号" autocomplete="on" value="">
+  <input type="text" id="name" name="" placeholder="设置账号" autocomplete="on" value="">
   
   <input type="password" id="password" name="" placeholder="设置密码" value="">
   
@@ -173,36 +173,14 @@ $( ".login_captcha_group .btn" ).on( "click", function(e){
 //点击注册按钮
 $("html").on("click", ".btn_register", function() {
 
-  var phone = $('#phone').val();
-  var captcha = $('#captcha').val();
-  var nickname = $('#nickname').val();
+  var name = $('#name').val();
   var password = $('#password').val();
 
-  if( !phone.match(/^[0-9]{11}$/) ) {
+  if( name == '' ) {
     $.fn.poptips({
-      con: "请输入11位手机号码",
+      con: "请输入用户名",
       btnOKClick: function (){
-        $("#phone").focus().addClass("has-error");
-      }
-    });
-    return false;
-  }
-
-  if( !captcha.match(/^[0-9]{4}$/) ) {
-    $.fn.poptips({
-      con: "请输入短信验证码",
-      btnOKClick: function (){
-        $("#captcha").focus().addClass("has-error");
-      }
-    });
-    return false;
-  }
-
-  if( nickname == '' ) {
-    $.fn.poptips({
-      con: "请输入昵称",
-      btnOKClick: function (){
-        $("#nickname").focus().addClass("has-error");
+        $("#name").focus().addClass("has-error");
       }
     });
     return false;
@@ -219,9 +197,7 @@ $("html").on("click", ".btn_register", function() {
   }
 
   var data = {
-    'phone':phone, 
-    'captcha':captcha, 
-    'nickname':nickname, 
+    'name':name, 
     'password':password 
   };
 
@@ -238,7 +214,7 @@ $("html").on("click", ".btn_register", function() {
         $(".btn_register").removeClass("disabled").html( "立即注册" );
         $.fn.poptips( data.msg );
       }
-      console.log(data);
+      // console.log(data);
     }, "json");
   }
 

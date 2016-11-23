@@ -1,0 +1,12 @@
+<div class="smart-banner is-fixed fixed_bar" style="display: block; top: 0px;">
+  	<div class="fanfan">Cshop</div>
+
+	<a class="login" href="<?php echo site_url('Logout'); ?>">退出</a>
+	
+	<?php if ( isset($_SESSION['login']) && $_SESSION['login']) : ?>
+	  	<a class="login" href="<?php echo site_url('User'); ?>"><?php echo $_SESSION['user']['name']; ?></a>
+	<?php else: ?>
+  		<a class="login" href="<?php echo site_url('Login'); ?>">登录</a>
+	<?php endif; ?>
+
+</div>

@@ -11,7 +11,6 @@ class Login extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		// $this->load->model('Login_model');
 	}
 
 	public function index()
@@ -36,9 +35,36 @@ class Login extends CI_Controller {
 	 */
 	public function reg_bll()
 	{
-		
-		$data = $_POST;
-		$res = $this->Api_model->reg($data);
+		$name = $_POST['name'];
+		$password = $_POST['password'];
+
+		$bool = $this->db->where('name', $name)->get('user')->row_array(); 
+		if ($bool) {
+			$res = array(
+				'status'=>0,
+				'msg'=>'用户名已存在',
+				);
+			echo json_encode($res);
+			exit();
+		}
+
+		$data = array(
+		    'name' => $name,
+		    'password' => $password,
+		    'time' => time(),
+		);
+		$this->db->insert('user', $data);
+		if ($this->db->affected_rows() == 1) {
+			$res = array(
+				'status'=>1,
+				'msg'=>'注册成功',
+				);
+		}else{
+			$res = array(
+				'status'=>0,
+				'msg'=>'注册失败',
+				);
+		}
 		echo json_encode($res);
 	}
 
@@ -104,6 +130,12 @@ class Login extends CI_Controller {
 		echo json_encode($res);
 	}
 	
+	public function login_session($userdata)
+	{
+		$_SESSION['login'] = 1;
+		$_SESSION['user'] = $userdata;
+	}
+
 	/**
  	 * 登陆
  	 * @param  string $username 账号 手机或邮箱
@@ -115,34 +147,29 @@ class Login extends CI_Controller {
 	{
 		if ($this->input->post()) {
 			
-			$username = $this->input->post('username');
+			$username = $this->input->post('name');
 			$password = $this->input->post('password');
 		
 			if ($username && $password) {
 				
+				$res = $this->db->where('name', $username)
+					->where('password', $password)
+					->get('user')->row_array();
 				
-				$res = $this->Api_model->login($username, $password);
-				if (!$res['status']) {
-					// 'msg'=>'接口登陆失败'
+				if ($res) {
+
+					$this->login_session($res);
+					
 					$json_arr = array(
-						'status'=>0,
-						'msg'=>'用户名或密码错误'
-						);
-					echo json_encode($json_arr);
-					exit();
-				}
-				
-				$userid = $this->check_user($res['Data']['loginName']);
-				if (!$userid) {
-					$userid = $this->add_user($res['Data']);
-				}
-				$userdata = $this->Init_model->get_user($userid);
-				$this->Init_model->login_session($userdata);
-				
-				$json_arr = array(
 						'status'=>1,
 						'msg'=>'登陆成功'
 						);
+				}else{
+					$json_arr = array(
+						'status'=>0,
+						'msg'=>'用户名或密码不正确'
+						);
+				}
 				echo json_encode($json_arr);
 			}
 		
