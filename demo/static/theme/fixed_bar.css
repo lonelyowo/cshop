@@ -1,24 +1,28 @@
-.fixed_bar{
-	background: #333;
-}
 
+.smart-banner.is-fixed {
+  height: 2rem;
+  background: #F30443;
+}
 .fixed_bar .login{
-	margin: 30px 0px 10px 0px;
 	color: #fff;
 	float: right;
-	line-height: 67px;
-	font-size: 30px;
+	line-height: 2rem;
+	font-size: .72rem;
 	text-align:center;
-	margin-right: 30px;
 	width: 20%;
 }
 .fixed_bar .fanfan{
-	margin-top: 30px;
 	color: #fff;
-	width:600px;
-	line-height: 67px;
-	font-size: 55px;
+	width: 8rem;
+	line-height: 2rem;
+	font-size: .72rem;
 	font-family: 微软雅黑;
 	float: left;
-	text-align: right;
+	text-align: left;
+  padding-left: .5rem;
+}
+
+
+#super {
+  padding-top: 1rem;
 }
