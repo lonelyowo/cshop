@@ -49,7 +49,9 @@
               
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th>商品名</th>
+                  <th>推广链接</th>
                   <th>图片</th>
                   <th>价格 (元)</th>
                   <th>添加时间</th>
@@ -63,7 +65,11 @@
                 <?php if ($data) : ?>
                   <?php foreach ($data as $row) : ?>
                   <tr>
+                    <td><?php echo $row['id']; ?></td>
                     <td><?php echo $row['name']; ?></td>
+                    <td>
+                      <a class="btn btn-success" target="_blank" href="<?php echo prep_url($row['url']); ?>" role="button">查看</a>
+                    </td>
                     <td>
                       <a class="btn btn-success" target="_blank" href="<?php echo base_url($row['img']); ?>" role="button">查看</a>
                     </td>

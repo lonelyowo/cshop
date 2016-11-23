@@ -158,11 +158,13 @@ class Index extends CI_Controller {
 		$sort = $_POST['sort'];
 		$name = $_POST['name'];
 		$price = $_POST['price'];
+		$url = $_POST['url'];
 
 		$data = array(
 			'cate_id'=>$cate_id,
 			'sort'=>$sort,
 			'name'=>$name,
+			'url'=>$url,
 			'img'=>$img,
 			'price'=>$price,
 			'time'=>time(),

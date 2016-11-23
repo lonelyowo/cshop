@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
 <meta name="data-spm" content="1002"> 
-<title>诗米克店庆周，我3岁啦</title>  
+<title>cshop</title>  
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"> 
 <meta name="format-detection" content="telephone=no"> 
 <meta name="apple-mobile-web-app-capable" content="yes"> 
@@ -44,18 +44,18 @@
 
 <ul id="J_list" class="item-list">
 
-
+  <?php foreach ($goods_list as $row) : ?>
   <li class="item">
-      <a class="box " href="http://awp.m.etao.com/h5/m-super/detail.html?id=539048844709&amp;item_id=539048844709">
+      <a class="box" target="_blank" href="<?php echo prep_url($row['url']); ?>">
           <div class="img pr">
-              <img src="<?php echo base_url('static/index/goods_list/img/4.png'); ?>">
+              <img src="<?php echo base_url($row['img']); ?>">
               <div class="brand-tag tag-dijia"></div>
           </div>
           <h3 class="title">
-            女宝宝加厚T恤保暖上衣婴儿1-2-3-4岁加绒小女童长袖加绒打底衫冬
+            <?php echo $row['name']; ?>
           </h3>
           <div class="info">
-            <span class="activity-price">¥65</span>
+            <span class="activity-price">¥<?php echo $row['price']; ?></span>
             <!-- <span class="discount-fan">再返40.95</span> -->
           </div>
           <!-- <div class="info">
@@ -63,21 +63,8 @@
           </div> -->
       </a>
   </li>
+  <?php endforeach; ?>
 
-  <li class="item">
-      <a class="box " href="http://awp.m.etao.com/h5/m-super/detail.html?id=539048844709&amp;item_id=539048844709">
-          <div class="img pr">
-              <img src="<?php echo base_url('static/index/goods_list/img/4.png'); ?>">
-              <div class="brand-tag tag-dijia"></div>
-          </div>
-          <h3 class="title">
-            女宝宝加厚T恤保暖上衣婴儿1-2-3-4岁加绒小女童长袖加绒打底衫冬
-          </h3>
-          <div class="info">
-            <span class="activity-price">¥65</span>
-          </div>
-      </a>
-  </li>
 
 
 </ul> 
@@ -86,7 +73,17 @@
 
 <!-- <div class="brand-feature"></div>  -->
 
-<div class="no-more-list split-line"> <div class="line left-line"></div> <div class="txt">没有更多啦</div> <div class="line right-line"></div> </div> </div> </div> 
+<?php if (empty($goods_list)) : ?>
+<div class="no-more-list split-line"> 
+  <div class="line left-line"></div> 
+  <div class="txt">没有更多啦</div> 
+  <div class="line right-line"></div> 
+</div> 
+<?php endif; ?>
+
+
+</div> 
+</div> 
 
 
 <div class="dialog hide pos-middle dlg-animate msg-dialog">
@@ -124,7 +121,7 @@
 
 
 <div class="smart-banner is-fixed fixed_bar" style="display: block; top: 0px;">
-  <div class="fanfan">叫什么好呢？</div>
+  <div class="fanfan">Cshop</div>
   <a class="login" href="<?php echo site_url('Login'); ?>">登录</a>
 </div>  
 

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2016-11-21 14:06:42
+-- Generation Time: 2016-11-23 23:40:03
 -- 服务器版本： 5.6.17
 -- PHP Version: 5.5.12
 
@@ -129,7 +129,15 @@ CREATE TABLE IF NOT EXISTS `cate` (
   `img` varchar(300) NOT NULL,
   `time` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+
+--
+-- 转存表中的数据 `cate`
+--
+
+INSERT INTO `cate` (`id`, `sort`, `name`, `img`, `time`) VALUES
+(4, 100, 'test', 'data/uploads/cate/1479831536.jpg', '1479831536'),
+(5, 100, '考拉', 'data/uploads/cate/1479913956.jpg', '1479913956');
 
 -- --------------------------------------------------------
 
@@ -142,11 +150,33 @@ CREATE TABLE IF NOT EXISTS `goods` (
   `cate_id` int(10) unsigned NOT NULL,
   `sort` int(10) unsigned NOT NULL,
   `name` varchar(300) NOT NULL,
+  `url` text NOT NULL,
   `img` varchar(300) NOT NULL,
   `price` varchar(20) NOT NULL,
   `time` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+
+--
+-- 转存表中的数据 `goods`
+--
+
+INSERT INTO `goods` (`id`, `cate_id`, `sort`, `name`, `url`, `img`, `price`, `time`) VALUES
+(1, 1, 100, 'test', 'www.baidu.com', 'data/uploads/goods/1479905197.jpg', '10', '1479905197');
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `user`
+--
+
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `time` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
