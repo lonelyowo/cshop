@@ -86,10 +86,19 @@ class Index extends CI_Controller {
         }
     }
 
-	public function goods()
+	public function goods($cid='')
 	{
 		$data['sidebar_active']['Index/goods'] = 'active';
-		$data['data'] = $this->Index_model->get_goods();
+		
+		if ($cid) {
+			$data['data'] = $this->Index_model->get_goods_by_cid($cid);
+			$data['cate_name'] = $this->Index_model->get_cate_name_by_id($cid);
+		}else{
+			$data['data'] = $this->Index_model->get_goods();
+			$data['cate_name'] = '';
+		}
+
+		// var_dump($data['cate_name']);exit();
 		$this->load->view('goods/goods.html', $data);
 	}
 
@@ -97,6 +106,8 @@ class Index extends CI_Controller {
 	{
 		$data['sidebar_active']['Index/goods'] = 'active';
 		$data['data'] = $this->Index_model->get_goods_detail($id);
+		$data['cate_list'] = $this->Index_model->get_cate();
+		// var_dump($data);exit();
 		$this->load->view('goods/edit.html', $data);
 	}
 
@@ -109,6 +120,7 @@ class Index extends CI_Controller {
 	public function goods_add()
 	{
 		$data['sidebar_active']['Index/goods'] = 'active';
+		$data['cate_list'] = $this->Index_model->get_cate();
 		$this->load->view('goods/add.html', $data);
 	}
 
@@ -142,16 +154,23 @@ class Index extends CI_Controller {
 
 	public function goods_bll()
 	{
-		/*var_dump($_POST);
+		/*
 		var_dump($_FILES);*/
+		// var_dump($_POST);exit();
 
-		$res = $this->goods_img_upload();
 		$img = '';
-		if ($res['status']) {
-			$img = $res['img_path'];
-		}else{
-			echo $res['error'];
-			exit();
+		$res = $this->goods_img_upload();
+		if ($_FILES['img']['size']) {
+			if ($res['status']) {
+				$img = $res['img_path'];
+			}else{
+				echo $res['error'];
+				exit();
+			}
+		}
+
+		if (empty($img)) {
+			$this->Public_model->history_back('请上传商品图片');
 		}
 
 		$cate_id = $_POST['cate_id'];
@@ -175,13 +194,20 @@ class Index extends CI_Controller {
 
 	public function goods_edit_bll($id)
 	{
-		$res = $this->goods_img_upload();
-		$img = '';
-		if ($res['status']) {
-			$img = $res['img_path'];
-		}else{
-			echo $res['error'];
-			exit();
+		// var_dump($_POST);exit();
+		$img = $_POST['hide_img'];
+		if ($_FILES['img']['size']) {
+			$res = $this->goods_img_upload();
+			if ($res['status']) {
+				$img = $res['img_path'];
+			}else{
+				echo $res['error'];
+				exit();
+			}
+		}
+
+		if (empty($img)) {
+			$this->Public_model->history_back('请上传商品图片');
 		}
 
 		$cate_id = $_POST['cate_id'];

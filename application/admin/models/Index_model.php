@@ -26,6 +26,20 @@ class Index_model extends CI_Model {
         return $query->result_array();
     }
 
+    public function get_cate_name_by_id($id){
+        $sql = "SELECT name FROM cate WHERE id={$id} LIMIT 1";
+        $query = $this->db->query($sql);
+        $res = $query->row_array();
+        return $res['name'];
+    }
+
+    public function get_goods_by_cid($cid='')
+    {
+        $sql = "SELECT * FROM goods WHERE cate_id={$cid} ORDER BY sort";
+        $query = $this->db->query($sql);
+        return $query->result_array();
+    }
+
     public function get_goods(){
         $sql = "SELECT * FROM goods ORDER BY sort";
         $query = $this->db->query($sql);
