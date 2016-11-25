@@ -1,0 +1,437 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('Index/index_event'); ?>"><i class="material-icons">&#xe88a;</i></a>
+    <a class="btn" href="<?php echo site_url('activity/add'); ?>"><i class="material-icons">&#xe145;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('Index/index_event'); ?>" );
+});
+</script>
+
+
+<!-- 置顶区 开始 -->
+<div class="main_top needfixed" id="event_list_main_top">
+  <div class="main_top_box">
+  
+  
+    <div id="event_list_search_box" class="search_box">
+      <form method="get" class="form_search" autocomplete="on">
+        <!-- 用户输入的搜索框 -->
+        <input type="search" name="s" class="input_search" placeholder="输入活动名称">
+        <i class="icon material-icons"></i>
+        <button type="submit" class="btn_search btn btn_shadow btn_color_1">搜索</button>
+      </form>
+      <!-- 当前的搜索关键词 -->
+      <input type="hidden" name="keyword">
+    </div>
+    
+    <hr>
+  
+  
+    <div id="event_list_tab_filter" class="tab_filter">
+      <div class="tab_filter_item tab_filter_item_toggle">
+        <input type="hidden" name="area">
+        <a class="on" rel="1">同城</a>
+        <a class="off" rel="0">全部区域</a>
+      </div>
+      <div class="tab_filter_item">
+        <input type="hidden" name="qual" value="">
+        <a class="dropdown active">不限资质</a>
+        <div id="" class="dropdown_menu">
+          <a class="menu_item active" rel="0">不限资质</a>
+          <a class="menu_item" rel="1">俱乐部</a>
+          <a class="menu_item " rel="2">官方</a>
+          <a class="menu_item" rel="3">个人</a>
+        </div>
+      </div>
+      <div class="tab_filter_item">
+        <input type="hidden" name="sort">
+        <a class="dropdown active">智能排序</a>
+        <div id="" class="dropdown_menu">
+          <a class="menu_item active" rel="0">智能排序</a>
+          <a class="menu_item" rel="1">离我最近</a>
+          <a class="menu_item" rel="2">人气最高</a>
+          <a class="menu_item" rel="3">最新</a>
+        </div>
+      </div>
+      <input type="hidden" name="longitude" id="longitude">
+      <input type="hidden" name="latitude" id="latitude">
+      <input type="hidden" name="city" id="city">
+    </div>
+  <script src="http://api.map.baidu.com/api?v=2.0&ak=6n5d8gKH4ycOwtb92lkqdANbpP41t81S"></script>
+  <script>
+  
+  $( "#event_list_tab_filter .dropdown_menu" ).menuSort();
+
+  $("#event_list_tab_filter .tab_filter_item_toggle").tabFilterToggle(function(){
+    $('.list_event').empty();
+    $("#event_list_main .main_more").data( "page", 0 ).click();
+    //--------------------改---------------
+    //切换搜索条件是，清空活动列表
+    //$('.list_event').empty();
+    //--------------------改---------------
+  });
+  
+  $("#event_list_tab_filter .tab_filter_item .dropdown_menu").tabFilterMenu(function(tmp_is_change){
+    if( tmp_is_change ) {
+      $('.list_event').empty();
+      $( "#event_list_tab_filter .dropdown_menu" ).menuSort();
+      $("#event_list_main .main_more").data( "page", 0 ).click();
+      //--------------------改---------------
+      //切换搜索条件是，清空活动列表
+      //$('.list_event').empty();
+      //--------------------改---------------
+    }
+  });
+   //百度地图API功能
+    //根据浏览器定位
+    var geolocation = new BMap.Geolocation();
+    geolocation.getCurrentPosition(function(r) {
+      if(this.getStatus() == BMAP_STATUS_SUCCESS) 
+      {
+        
+        $("#longitude").val(r.point.lng);
+        $("#latitude").val(r.point.lat);
+       /* if(r.address.province != '')
+        {
+          $("#city").val(r.address.province);
+        }
+        if(r.address.city != '')
+        {
+          $("#city").val(r.address.city);
+        }
+        if(r.address.district != '')
+        {
+          $("#city").val(r.address.district);
+        }*/
+        var point = new BMap.Point(r.point.lng,r.point.lat);
+        var geoc = new BMap.Geocoder();
+        geoc.getLocation(point, function(rs){
+          var addComp = rs.addressComponents;
+          if(addComp.province != '')
+            $("#city").val(addComp.province);
+          if(addComp.city != '')
+            $("#city").val(addComp.city);
+          // if(addComp.district != '')
+          //   $("#city").val(addComp.district);
+        });        
+        $("#event_list_main .main_more").data( "page", 0 ).click();
+      }
+      else
+      {
+        $("#event_list_main .main_more").data( "page", 0 ).click();
+      }         
+    }, {enableHighAccuracy: true});
+  </script>
+    
+  </div>
+</div>
+<!-- 置顶区 结束 -->
+
+<!-- 页面主体 开始 -->
+<div class="main" id="event_list_main">
+
+  <div class="pullsurprise">
+    <style>
+    #event_list_main .pullsurprise {
+      text-align: center;
+      padding: 20px 0;
+      position: absolute;
+      left: 0;
+      top: -150px;
+      width: 100%;
+    }
+    #event_list_main .pullsurprise dl {
+      padding: 0;
+      margin: 0;
+    }
+    #event_list_main .pullsurprise dd {
+      padding: 0;
+      margin: 0;
+      line-height: 20px;
+    }
+    #event_list_main .pullsurprise .heart {
+      position: relative;
+      color: #F94848;
+    }
+    #event_list_main .pullsurprise .heart:after {
+      content: "\e87d";
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      -webkit-animation: popheart 2s infinite;
+      animation: popheart 2s infinite;
+    }
+    </style>
+    <div class="imcomming" style="display: none;">不说了，我要刷新啦！<br><br><i class="material-icons loop">&#xe028;</i></div>
+    <dl style="display: none;">
+    <dd>我会为你刷页面</dd>
+    <dd>……</dd>
+    <dd>……</dd>
+    <dd>你猜怎么着</dd>
+    <dd>你为我刷三观</dd>
+    <dd>你是我的一切</dd>
+    <dd>……</dd>
+    <dd>因为我的<i class="material-icons heart">&#xe87d;</i>怦怦直跳</dd>
+    <dd>……</dd>
+    <dd>请紧紧拉住我的手</dd>
+    </dl>
+  </div>
+  
+  <div class="list_event">
+
+  </div>
+  
+  <a class="main_more">载入中…</a>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+<script>
+
+  var scrollload_event_list = 0;
+  
+
+  //获取当前的搜索关键词
+  $("#event_list_search_box [name=keyword], #event_list_search_box [name=s]").val( getQueryString("s") );
+  
+  //搜索框显示搜索按钮
+  $("#event_list_search_box [name=s]").on("focus", function(){
+    $("#event_list_search_box [type=submit]").show();
+  });
+  
+  //搜索框提交
+  $("#event_list_search_box .form_search").submit( function() {
+    if( $(this).find("[name=s]").val() == "" ) {
+      $.fn.winktips("什么也没写，你让我找啥？！(⊙ˍ⊙)");
+      return false;
+    }
+  });
+  
+  
+  //载入活动数据
+  $("#event_list_main").on("click", ".main_more", function(){
+  
+    //暂停滚动载入新内容
+    scrollload_event_list = 0;
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_event_page = $(this).data("page")?$(this).data("page"):0;
+    
+    var tmp_params = $("#event_list_search_box [name=keyword],#event_list_tab_filter input").serialize() + "&page=" + tmp_event_page;
+    
+    // console.log( tmp_params );
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "<?php echo base_url('static/index/demo/json/event.json'); ?>",
+      url: "<?php echo site_url('activity/lists/'); ?>",
+      data: tmp_params,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){//typeof
+        
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        // if(data.city)
+        // {
+        //   alert(data.city);
+        // }
+        // console.log(data.sql);
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          // console.log('len'+data.event.length)
+          //没有更多内容了
+          if( data.event.length == 0 ) {
+            //-----------------改-------------
+            if(data.area )//同城
+            {
+              if(tmp_event_page ==0)
+                $tmp_this_card_more.html( "没有发现同城活动" );
+              else
+                $tmp_this_card_more.html( "没有更多同城活动" );
+            }
+            else
+            {
+              $tmp_this_card_more.html( "没有更多内容了" );
+            }
+            //-----------------改-------------
+            // $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          if(data.area)
+          {
+            if(data.locktion_msg != '')
+            {
+              $.fn.winktips("定位失败 （/TДT)/");
+            }
+          }
+          for(var i = 0; i < data.event.length; i++) {
+            var tmp_author_avatar,
+                tmp_author_name,
+                tmp_cover,
+                tmp_event_state,
+                tmp_distance;
+          
+            switch( data.event[i].state ) {
+              case 1:
+                tmp_event_state = "stat_enroll";
+                tmp_event_state_text = "报名中";
+                break;
+              case 2:
+                tmp_event_state = "stat_enrollend";
+                tmp_event_state_text = "报名结束";
+                break;
+              case 3:
+                tmp_event_state = "stat_ing";
+                tmp_event_state_text = "活动进行中";
+                break;
+              case 4:
+                tmp_event_state = "stat_end";
+                tmp_event_state_text = "活动结束";
+                break;
+              default:
+                tmp_event_state = "stat_prepare";
+                tmp_event_state_text = "失效";
+            }
+          
+            if( data.event[i].club_id ) {
+              if( data.event[i].club_logo ) {
+                tmp_author_avatar = "data-lazybgimg=\"" + data.event[i].club_logo + "\"";
+              } else {
+                tmp_author_avatar = "";
+              }
+              tmp_author_name = data.event[i].club_name;
+            } else {
+              if( data.event[i].author_avatar ) {
+                tmp_author_avatar = "data-lazybgimg=\"" + data.event[i].author_avatar + "\"";
+              } else {
+                tmp_author_avatar = "";
+              }
+              tmp_author_name = data.event[i].author_name;
+            }
+
+            if( data.event[i].cover ) {
+              tmp_cover = "data-lazybgimg=\"" + data.event[i].cover + "\"";
+            } else {
+              tmp_cover = "";
+            }
+
+            if( data.event[i].distance )
+            {
+              tmp_distance = " <div class=\"distance\"><i class=\"material-icons\">&#xe569;</i><span class=\"num\">" + data.event[i].distance + "</span></div>";
+              // console.log(data.event[i].distance);
+            }
+            else
+            {
+              tmp_distance = "";
+            }
+          
+           /* tmp_html += "<a class=\"item card " + tmp_event_state + "\" " + tmp_cover + " href=\"./event.html?id=" + data.event[i].id + "\">" +
+            "<div class=\"eventinfo\"><div class=\"author\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + tmp_author_name + "</div></div><div class=\"title\">" + data.event[i].title + "</div><div class=\"subinfo\">" + data.event[i].subinfo + "</div></div><div class=\"price\">" + data.event[i].price + "</div>" +
+            "<div class=\"state\">" + tmp_event_state_text + " | <small>已报名" + data.event[i].actornum + "人</small></div></a>";*/
+             tmp_html += "<a class=\"item card " + tmp_event_state + "\" " + tmp_cover + " href=\"<?php echo base_url();?>" + "index.php/activity/details/" + data.event[i].id + "\">" +
+            "<div class=\"eventinfo\"><div class=\"author\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + tmp_author_name + "</div></div><div class=\"title\">" + data.event[i].title + "</div><div class=\"subinfo\">" + data.event[i].subinfo + tmp_distance + "</div></div></div><div class=\"price\">" + data.event[i].price + "</div>" +
+            "<div class=\"state\">" + tmp_event_state_text + " | <small>已报名" + data.event[i].actornum + "人</small></div><div class=\"stati\"><div class=\"item_stati stati_view\"><i class=\"material-icons\">&#xe8f4;</i><span class=\"num\">" + data.event[i].view_num + "</span></div><div class=\"item_stati stati_zan\"><i class=\"material-icons\">&#xe87d;</i><span class=\"num\">" + data.event[i].zan_num + "</span></div></div></a>";
+            
+          }
+          if( tmp_event_page ) {
+            //$("#event_list_main .list_event").append( tmp_html );
+            $(tmp_html).hide().appendTo( "#event_list_main .list_event" ).fadeIn();
+          } else {
+            $("#event_list_main .list_event").html( tmp_html ).hide().fadeIn();
+          }
+          
+          //允许滚动载入新内容
+          scrollload_event_list = 1;
+          
+          //页数累加
+          tmp_event_page++;
+          $tmp_this_card_more.data( "page", tmp_event_page );
+          lazy();
+          $tmp_this_card_more.html( "载入中…" );
+          if( data.end == 1 ) {
+             if(data.area)//同城
+            {
+              $tmp_this_card_more.html( "没有更多同城活动" );
+            }
+            else
+            {
+              $tmp_this_card_more.html( "没有更多内容了" );
+            }
+            return false;
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "载入失败，点击重试" );
+          $.fn.winktips("活动载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "载入失败，点击重试" );
+        $.fn.winktips("活动载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  // $("#event_list_main .main_more").data( "page", 0 ).click();
+  
+  //滚动载入新内容
+  $(window).scroll(function() {
+    if( scrollload_event_list ) {
+      scrollLoad( $("#event_list_main .main_more") );
+    }
+  });
+  
+  
+//小彩蛋 下拉刷新
+$(".main").pullsurprise({
+  offset: 250,
+  limit: 1,
+  ing: function (a){
+    if( a > 250 ) {
+      $(".pullsurprise .imcomming").show();
+      $(".pullsurprise dl").hide();
+      $(".pullsurprise .loop").css( "transform", "rotateZ("+(a*10)+"deg)" );
+    } else {
+      $(".pullsurprise .imcomming").hide();
+      $(".pullsurprise dl").show();
+    }
+  },
+  end: function (){
+    location.reload(true);
+  }
+});
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

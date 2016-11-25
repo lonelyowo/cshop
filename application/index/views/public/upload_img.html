@@ -1,0 +1,43 @@
+<!-- 上传图片 开始 -->
+<!-- 
+2016-09-28 10:54
+ -->
+<div id="part_imgupload" class="subplate part_imgupload">
+  <a class="btn_cancel btn btn_color_4"><i class="material-icons">&#xe5cd;</i></a>
+  <div class="imgupload_preview_box">
+    <img data-blank="<?php echo base_url();?>static/index/club/img/img_blank.png" src="<?php echo base_url();?>static/index/club/img/img_blank.png" id="imgupload_preview" class="imgupload_preview">
+    <label class="imgupload_preview_label" for="imgupload_file"></label>
+  </div>
+  <input type="file" name="imgupload_file" id="imgupload_file" style="position:absolute;clip:rect(0 0 0 0);">
+
+  <input type="hidden" id="imgupload_file_data" name="imgupload_file_data">
+
+  <!-- 底栏 开始 -->
+  <div id="imgupload_bottombar" class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+      
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_4">取消</a>
+      
+      <label class="bottombar_btn btn btn_color_1" for="imgupload_file">选择文件</label>
+      
+      <a class="bottombar_btn btn btn_color_2" id="submit_imgupload">
+        <span>提交图片</span>
+      </a>
+      
+    </div>
+  </div>
+  <div id="crop_bottombar" class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn btn btn_color_4" id="btn_crop_cancel">取消裁切</a>
+      
+      <a class="bottombar_btn btn btn_color_1" id="btn_crop_ok">
+        <span>确认裁切</span>
+      </a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<!-- 上传图片 结束 -->

@@ -1,0 +1,42 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo base_url(); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo base_url(); ?>" );
+});
+</script>
+
+<!-- 页面主体 开始 -->
+<div class="main">
+    
+    <?php foreach($about_lists as $about):if(!empty($about['content'])):?>
+    <div id="event_enroll_note" class="card">
+      <div class="richtext">
+        <!-- 关于 图文内容 开始 -->
+        <?php echo $about['content']; ?>
+
+        <!-- 关于 图文内容 结束 -->
+      </div>
+    </div>
+    <?php endif;endforeach; ?>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

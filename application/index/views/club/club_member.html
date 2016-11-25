@@ -1,0 +1,231 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('Index/index_club'); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('Index/index_club'); ?>" );
+});
+</script>
+
+<!-- 置顶区 开始 -->
+<div class="main_top needfixed" id="club_member_main_top">
+  <div class="main_top_box">
+    <?php if($manage): ?>
+    <!-- 仅具有管理权限的才显示 -->
+    <div id="club_member_tab_nav" class="tab_nav">
+      <a class="active" href="javascript:location.replace('<?php echo site_url('club/members/'.$club_id); ?>');">成员</a>
+      <a href="javascript:location.replace('<?php echo site_url('club/apply/'.$club_id); ?>');">待审核</a>
+    </div>
+    <?php endif; ?>
+    
+    
+    
+    <hr>
+  
+    <div id="club_member_search_box" class="search_box">
+      <form method="get" class="form_search" autocomplete="on">
+        <!-- 用户输入的搜索框 -->
+        <input type="search" name="s" class="input_search" placeholder="输入昵称、ID">
+        <i class="icon material-icons"></i>
+        <button type="submit" class="btn_search btn btn_shadow btn_color_1">搜索</button>
+      </form>
+      <!-- 当前的搜索关键词 -->
+      <input type="hidden" name="keyword">
+    </div>
+
+  </div>
+</div>
+<!-- 置顶区 结束 -->
+
+<!-- 页面主体 开始 -->
+<div class="main" id="club_member_main">
+
+  
+  <div class="card card_member_list">
+    <div class="list">
+
+<!--
+      <div class="item qual_2">
+        <div class="qual">
+          <i class="material-icons">&#xe7fd;</i>
+        </div>
+        <a class="avatar_wrap" href="./u.html?id=23">
+          <div class="avatar" style="background-image:url(./demo/img/club_01.jpg)"></div>
+          <div class="name">用户名</div>
+        </a>
+        <div class="tool">
+          <a class="btn btn_kick">踢出</a>
+          <a class="btn btn_color_2 btn_fired">解除</a>
+          <a class="btn btn_color_1 btn_promote">提升</a>
+          
+        </div>
+      </div>
+-->
+      
+      
+
+    </div>
+    <div class="card_more"><span>点击载入更多成员</span></div>
+  </div>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+<script>
+
+var scrollload = {};
+
+  //获取当前的搜索关键词
+  // $("#club_member_search_box [name=s]").val( getQueryString("s") );
+   //获取当前的搜索关键词
+  $("#club_member_search_box [name=keyword], #club_list_search_box [name=s]").val( getQueryString("s") );
+  //搜索框显示搜索按钮
+  $("#club_member_search_box [name=s]").on("focus", function(){
+    $("#club_member_search_box [type=submit]").show();
+  });
+  
+  //搜索框提交
+  $("#club_member_search_box .form_search").submit( function() {
+    if( $(this).find("[name=s]").val() == "" ) {
+      $.fn.winktips("什么也没写，你让我找啥？！(⊙ˍ⊙)");
+      return false;
+    }
+  });
+  
+  
+
+  //载入俱乐部列表数据
+  $("#club_member_main").on("click", ".card_more", function(){
+  
+    //暂停滚动载入新内容
+    scrollload.club_member = 0;
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_club_member_page = $(this).data("page")?$(this).data("page"):0;
+    
+    // var tmp_params = "page=" + tmp_club_member_page;
+    var tmp_params = $("#club_member_search_box [name=keyword]").serialize() + "&page=" + tmp_club_member_page;
+    
+    console.log( tmp_params );
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "<?php echo base_url('static/index/demo/json/club_member.json'); ?>",
+      url: "<?php echo site_url('club/members_lists/'.$club_id); ?>",
+      data: tmp_params,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.club_member.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.club_member.length; i++) {
+            var tmp_avatar, tmp_sex;
+          
+            if( data.club_member[i].avatar ) {
+              tmp_avatar = "data-lazybgimg=\"" + data.club_member[i].avatar + "\"";
+            } else {
+              tmp_avatar = "";
+            }
+            
+            if( data.club_member[i].sex == 0 ) {
+              tmp_sex = "sex_0";
+            } else if( data.club_member[i].sex == 1 ) {
+              tmp_sex = "sex_1";
+            }
+            
+            tmp_html += "<div class=\"item qual_" + data.club_member[i].type + "\"><div class=\"qual\"><i class=\"material-icons\">&#xe7fd;</i></div>";
+
+            tmp_html += "<a class=\"avatar_wrap\" href=\"<?php echo base_url();?>index.php/user/details/" + data.club_member[i].id + "\"><div class=\"avatar\" " + tmp_avatar + "></div><div class=\"name\">" + data.club_member[i].name + "</div><div class=\"sex " + tmp_sex + "\"></div></a>";
+
+            if( data.club_member[i].manage )
+            {
+              tmp_html += "<div class=\"tool\"><a class=\"btn btn_kick\" href=\"<?php echo base_url();?>index.php/club/kickout/" + data.club_member[i].id + "/" + data.club_member[i].club_id + "\">踢出</a><a class=\"btn btn_color_2 btn_fired\"  href=\"<?php echo base_url();?>index.php/club/demotion/" + data.club_member[i].id + "/" + data.club_member[i].club_id + "\">解除</a><a class=\"btn btn_color_1 btn_promote\"  href=\"<?php echo base_url();?>index.php/club/promotion/" + data.club_member[i].id + "/" + data.club_member[i].club_id + "\">提升</a></div>";
+            }
+            if( data.club_member[i].admin && data.club_member[i].type ==0 )
+            {
+               tmp_html += "<div class=\"tool\"><a class=\"btn btn_kick\" href=\"<?php echo base_url();?>index.php/club/kickout/" + data.club_member[i].id + "/" + data.club_member[i].club_id + "\">踢出</a></div>";
+            }
+            
+            tmp_html += "</div>";
+            
+          }
+          if( tmp_club_member_page ) {
+            $(tmp_html).hide().appendTo( "#club_member_main .card_member_list .list" ).fadeIn();
+          } else {
+            $("#club_member_main .card_member_list .list").html( tmp_html ).hide().fadeIn();
+          }
+          
+          //允许滚动载入新内容
+          scrollload.club_member = 1;
+          
+          //页数累加
+          tmp_club_member_page++;
+          $tmp_this_card_more.data( "page", tmp_club_member_page );
+          lazy();
+          $tmp_this_card_more.html( "<span>载入中…</span>" );
+          if(data.end)
+          {
+            $tmp_this_card_more.html( "没有更多内容了" );
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+          $.fn.winktips("成员载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+        $.fn.winktips("成员载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  $("#club_member_main .card_more").data( "page", 0 ).click();
+  
+  //滚动载入新内容
+  $(window).scroll(function() {
+    if( scrollload.club_member ) {
+      scrollLoad( $("#club_member_main .card_more") );
+    }
+  });
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

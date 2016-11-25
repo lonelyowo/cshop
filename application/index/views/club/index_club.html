@@ -1,0 +1,260 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<script>
+  $("#header .header_leftarea").html("");
+</script>
+
+<!-- 一级底栏 开始 -->
+<?php $this->load->view('public/index_bottombar.html'); ?>
+<!-- 一级底栏 结束 -->
+
+<!-- 置顶区 开始 -->
+<div class="main_top">
+  <div class="main_top_box">
+  
+    <div id="index_club_banner">
+      <link rel="stylesheet" href="<?php echo base_url('static/index/club/js/swiper/swiper.min.css'); ?>">
+      <script src="<?php echo base_url('static/index/club/js/swiper/swiper.jquery.min.js'); ?>"></script>
+      
+      <div class="banner swiper-container">
+        <div class="swiper-wrapper">
+        <?php foreach ($banner_list as $banner):?>
+           <a class="swiper-slide" href="<?php echo $banner['url']; ?>" <?php if(!empty($banner['img'])):?> style="background-image:url(<?php echo $banner['img']; ?>);" <?php endif; ?>>
+          </a>
+        <?php endforeach; ?>
+        </div>
+        <div class="banner_pagination"></div>
+        <a class="banner_prev"><i class="material-icons">&#xe408;</i></a>
+        <a class="banner_next"><i class="material-icons">&#xe409;</i></a>
+      </div>
+      
+      <script>
+        var swiper = new Swiper("#index_club_banner .banner", {
+          pagination: "#index_club_banner .banner_pagination",
+          //paginationClickable: true,
+          //grabCursor: true,
+          nextButton: ".banner_next",
+          prevButton: ".banner_prev",
+          loop: true,
+          autoplay: 5000
+        });
+      </script>
+
+    </div>
+    
+  </div>
+</div>
+<!-- 置顶区 结束 -->
+
+<!-- 页面主体 开始 -->
+<div id="index_club_main" class="main">
+
+  <div class="card">
+    <div id="index_club_tool">
+      <a class="item color_1" href="<?php echo site_url('my/management_club');?>">
+        <i class="icon iconfont">&#xe603;</i>
+        <span>我的俱乐部</span>
+      </a>
+      <a class="item color_2"  href="<?php echo site_url('Index/club_list'); ?>">
+        <i class="icon iconfont">&#xe612;</i>
+        <span>发现俱乐部</span>
+      </a>
+      <a class="item color_3 btn_sign_tody">
+        <i class="icon iconfont">&#xe605;</i>
+        <span>签到</span>
+      </a>
+      
+      <a class="item color_4" href="<?php echo site_url('activity/add');?>">
+        <i class="icon iconfont">&#xe610;</i>
+        <span>发起活动</span>
+      </a>
+      <a class="item color_5"  href="<?php echo site_url('my/management_activity');?>">
+        <i class="icon iconfont">&#xe60f;</i>
+        <span>管理活动</span>
+      </a>
+      <a class="item color_6" href="<?php echo site_url('travels/add');?>">
+        <i class="icon iconfont">&#xe606;</i>
+        <span>发表游记</span>
+      </a>
+    </div>
+  </div>
+  
+  <div class="main_title">
+    <i class="icon iconfont" style="color: #0081e6;">&#xe603;</i>
+    <span>向你推荐</span>
+  </div>
+
+  <div class="list_club">
+  </div>
+  <a id="btn_otherclub" class="main_more"><i class="material-icons">&#xe5d5;</i> <span>换一批俱乐部</span></a>
+  <a id="btn_moremoreclub" class="main_more" href="<?php echo site_url('Index/club_list'); ?>" style="display: none;"><i class="material-icons">&#xe8b6;</i> <span>发现更多俱乐部</span></a>
+  
+</div>
+<form id="area">
+<input type="hidden" id="province" name="province">
+<input type="hidden" id="city" name="city">
+<input type="hidden" id="district" name="district">
+</form>
+<!-- 页面主体 结束 -->
+<script src="http://api.map.baidu.com/api?v=2.0&ak=6n5d8gKH4ycOwtb92lkqdANbpP41t81S"></script>
+<script>
+    //百度地图API功能
+    //根据浏览器定位
+    var geolocation = new BMap.Geolocation();
+    geolocation.getCurrentPosition(function(r) {
+      if(this.getStatus() == BMAP_STATUS_SUCCESS) 
+      {
+        // $("#longitude").val(r.point.lng);
+        // $("#latitude").val(r.point.lat);
+        if(r.address.province != '')
+        {
+          $("#province").val(r.address.province);
+        }
+        if(r.address.city != '')
+        {
+          $("#city").val(r.address.city);
+        }
+        if(r.address.district != '')
+        {
+          $("#district").val(r.address.district);
+        }
+        $("#btn_otherclub").click();
+      }
+      else
+      {
+        $("#btn_otherclub").click();
+      }         
+    }, {enableHighAccuracy: true});
+$(function(){
+  
+  //签到
+  $(".btn_sign_tody").on("click", function(){
+  
+  <?php if(!isset($_SESSION['login'])):?>
+    // 如果没有登录，则跳转至登录页面，只有登录才可投诉
+    window.location.replace("<?php echo site_url('login');?>");
+    return false;
+  <?php endif;?>
+  $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: "<?php echo site_url('my/signin');?>",
+          success: function(data){
+            // console.log(data);
+            if( data.state == 1 ) {
+              $.fn.winktips(data.msg);
+             
+            }
+            if( data.state == 0 ) {
+              $.fn.winktips( data.msg );
+            }
+          }
+    });
+    
+  });
+  
+  
+  
+  //载入俱乐部列表数据
+  $("#btn_otherclub").on("click", function(){
+    
+
+    var $tmp_this_card_more = $(this);
+
+    var tmp_club_page = $(this).data("page")?$(this).data("page"):0;
+
+    var params = $('#area').serialize();
+    // console.log('params:' + params);
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "./demo/json/club.json",
+      url: "<?php echo site_url('index/index_club_list'); ?>",
+      data: params,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在搜寻…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        // console.log(data)
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.club.length == 0 ) {
+            //$tmp_this_card_more.html( "没有更多内容了" );
+            $("#btn_otherclub").hide();
+            $("#btn_moremoreclub").show();
+            return false;
+          }
+          
+          for(var i = 0; i < data.club.length; i++) {
+            var tmp_club_logo, tmp_club_qual;
+          
+            if( data.club[i].logo ) {
+              tmp_club_logo = "data-lazybgimg=\"" + data.club[i].logo + "\"";
+            } else {
+              tmp_club_logo = "";
+            }
+            if( data.club[i].qual ) {
+              tmp_club_qual = "<div class=\"clubqual\">G</div>";
+            } else {
+              tmp_club_qual = "";
+            }
+            
+            tmp_html += "<a class=\"item card\" href=\"<?php echo base_url();?>index.php/club/details/" + data.club[i].id + "\"><div class=\"clublogowrap\"><div class=\"clublogo\" " + tmp_club_logo + "></div>" + 
+            tmp_club_qual +
+            "</div><div class=\"clubname\">" + data.club[i].name + "</div><div class=\"clubinfo\"><div class=\"clubstar clubstar" + "\"  style=\"background-image: url(" + data.club[i].pic + ");\"></div><div class=\"clubslogan\">" + data.club[i].slogan + "</div></div><div class=\"clubpeople\">" + data.club[i].people + "人</div></a>";
+            
+          }
+//          if( tmp_club_page ) {
+//            $(tmp_html).hide().appendTo( "#index_club_main .list_club" ).fadeIn();
+//          } else {
+            $("#index_club_main .list_club").html( tmp_html ).hide().fadeIn();
+//          }
+          
+          //页数累加
+          tmp_club_page++;
+          $tmp_this_card_more.data( "page", tmp_club_page );
+          lazy();
+          // console.log(tmp_club_page);
+          $tmp_this_card_more.html( "<i class=\"material-icons\">&#xe5d5;</i> <span>换一批俱乐部</span>" );
+          if( tmp_club_page >= 5 ) {
+            $("#btn_otherclub").hide();
+            $("#btn_moremoreclub").show();
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "载入失败，点击重试" );
+          $.fn.winktips("俱乐部载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "载入失败，点击重试" );
+        $.fn.winktips("俱乐部载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  //$("#btn_otherclub").click();
+  
+  
+});
+</script>
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

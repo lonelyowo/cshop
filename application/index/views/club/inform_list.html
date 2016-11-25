@@ -1,0 +1,191 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('Index/index_club'); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('Index/index_club'); ?>" );
+});
+</script>
+
+<!-- 页面主体 开始 -->
+<div class="main" id="inform_list_main">
+
+  
+  <div class="list_inform">
+  
+  <!--
+  notshow   对普通用户隐藏
+  -->
+<!--
+
+    <div class="item card notshow">
+      <div class="title">8月公告</div>
+      <div class="text">新会员请修改名字，在：我~资料~昵称，名字同QQ群内一致，很重要。</div>
+      <hr>
+      <a class="author" href="./u.html?id=6">
+        <div class="avatar" style="background-image:url(./demo/img/avatar_demo01.jpg)"></div>
+        <div class="name">靠山屯的京东大萝卜</div>
+        <div class="time">2016-08-16 发布</div>
+      </a>
+      <a class="update" href="./u.html?id=6">
+        <div class="avatar" style="background-image:url(./demo/img/avatar_demo02.jpg)"></div>
+        <div class="name">和发动机阿凡达</div>
+        <div class="time">2016-08-16 最后一次修改</div>
+      </a>
+      
+      <div class="tool">
+        <a class="btn btn_edit">修改</a>
+        <a class="btn btn_del">删除</a>
+      </div>
+      <div class="state">本条公告已隐藏</div>
+    </div>
+-->
+
+  </div>
+  
+  <a class="main_more">点击载入更多公告</a>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+<script>
+var scrollload = {};
+
+  //载入公告数据
+  $("#inform_list_main").on("click", ".main_more", function(){
+  
+    //暂停滚动载入新内容
+    scrollload.inform_list = 0;
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_inform_page = $(this).data("page")?$(this).data("page"):0;
+    
+    var tmp_params = "page=" + tmp_inform_page;
+    
+    //console.log( tmp_params );
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "<?php echo base_url('static/index/demo/json/inform.json'); ?>",
+      url: "<?php echo site_url('club/notices_lists/'.$club_id); ?>",
+      data: tmp_params,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        // console.log(data);
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.inform.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.inform.length; i++) {
+            var tmp_state,
+                tmp_author_avatar,
+                tmp_update_avatar;
+          
+            if( data.inform[i].state ) {
+              tmp_state = "";
+            } else {
+              tmp_state = "notshow";
+            }
+            
+            
+            if( data.inform[i].author_avatar ) {
+              tmp_author_avatar = "data-lazybgimg=\"" + data.inform[i].author_avatar + "\"";
+            } else {
+              tmp_author_avatar = "";
+            }
+          
+          
+            tmp_html += "<div class=\"item card " + tmp_state + "\"><div class=\"title\">" + data.inform[i].title + "</div><div class=\"text\">" + data.inform[i].text + "</div><hr>";
+            
+            tmp_html += "<a class=\"author\" href=\"<?php echo base_url(); ?>index.php/user/details/" + data.inform[i].author_id + "\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + data.inform[i].author_name + "</div><div class=\"time\">" + data.inform[i].time + " 发布</div></a>";
+            // console.log(data.inform[i].update_id);
+            if( data.inform[i].update_id ) {
+              if( data.inform[i].update_avatar ) {
+                tmp_update_avatar = "data-lazybgimg=\"" + data.inform[i].update_avatar + "\"";
+              } else {
+                tmp_update_avatar = "";
+              }
+              tmp_html += "<a class=\"update\" href=\"<?php echo base_url(); ?>index.php/user/details/" + data.inform[i].update_id + "\"><div class=\"avatar\" " + tmp_update_avatar + "></div><div class=\"name\">" + data.inform[i].update_name + "</div><div class=\"time\">" + data.inform[i].update_time + " 最后一次修改</div></a>";
+            }
+            
+            if( data.inform[i].manage ) {
+              //修改与删除
+              tmp_html += "<div class=\"tool\"><a class=\"btn btn_edit\" href=\"<?php echo base_url(); ?>index.php/club/edit_inform/" + data.inform[i].id + "\">修改</a><a class=\"btn btn_del\" href=\"<?php echo base_url(); ?>index.php/club/delete_inform/" + data.inform[i].id + "\">删除</a></div>";
+            }
+            
+            tmp_html += "<div class=\"state\">本条公告已隐藏</div></div>";
+
+          }
+
+          $(tmp_html).hide().appendTo( "#inform_list_main .list_inform" ).fadeIn();
+          
+          //允许滚动载入新内容
+          scrollload.inform_list = 1;
+          
+          //页数累加
+          tmp_inform_page++;
+          $tmp_this_card_more.data( "page", tmp_inform_page );
+          lazy();
+          $tmp_this_card_more.html( "点击载入更多公告" );
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "载入失败，点击重试" );
+          $.fn.winktips("活动载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "载入失败，点击重试" );
+        $.fn.winktips("活动载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  $("#inform_list_main .main_more").data( "page", 0 ).click();
+  
+  //滚动载入新内容
+  $(window).scroll(function() {
+    if( scrollload.inform_list ) {
+      scrollLoad( $("#inform_list_main .main_more") );
+    }
+  });
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

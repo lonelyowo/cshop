@@ -1,0 +1,152 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('My'); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('My'); ?>" );
+});
+</script>
+
+<!-- 置顶区 开始 -->
+<div class="main_top needfixed" id="user_order_main_top">
+  <div class="main_top_box">
+
+    <?php $this->load->view('public/tab_nav.html'); ?>
+
+  </div>
+</div>
+<!-- 置顶区 结束 -->
+
+<!-- 页面主体 开始 -->
+<div class="main" id="user_order_main">
+
+  
+  <div class="card card_order_list">
+    <div class="list">
+<!-- 
+      <a class="item" href="./order.html?id=12">
+        <div class="title">某某某活动</div>
+        <div class="time">32533324</div>
+        <div class="money">25元</div>
+      </a>
+-->
+    </div>
+    <div class="card_more"><span>点击载入更多</span></div>
+  </div>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+<script>
+
+  
+  
+
+
+  //载入订单列表数据
+  $("#user_order_main").on("click", ".card_more", function(){
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_user_order_page = $(this).data("page")?$(this).data("page"):0;
+    
+    var tmp_params = "page=" + tmp_user_order_page;
+    
+    //console.log( tmp_params );
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      url: "<?php echo site_url('Wallet/getjson_userreceipt') ?>",
+      // url: "<?php echo base_url('static/index').'/demo/json/user_order.json'; ?>",
+      data: tmp_params,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.user_order.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          
+          for(var i = 0; i < data.user_order.length; i++) {
+            var tmp_user_order_state = "";
+            
+            if( data.user_order[i].state == 2 ) {
+              tmp_user_order_state = "<em class=\"ok\">可提</em>";
+            } else if( data.user_order[i].state == 1 ) {
+              tmp_user_order_state = "<em>冻结中</em>";
+            } else {
+              tmp_user_order_state = "";
+            }
+            
+            
+            tmp_html += "<a class=\"item\" href=\"./order_receipt/" + data.user_order[i].orderid + "\"><div class=\"title\">" + data.user_order[i].text + "</div><div class=\"time\">" + data.user_order[i].time + "</div><div class=\"money\">" + data.user_order[i].money + "元" + tmp_user_order_state + "</div></a>";
+            
+          }
+          if( tmp_user_order_page ) {
+            $(tmp_html).hide().appendTo( "#user_order_main .card_order_list .list" ).fadeIn();
+          } else {
+            $("#user_order_main .card_order_list .list").html( tmp_html ).hide().fadeIn();
+          }
+          
+          
+          //页数累加
+          tmp_user_order_page++;
+          $tmp_this_card_more.data( "page", tmp_user_order_page );
+          lazy();
+          $tmp_this_card_more.html( "<span>点击载入更多</span>" );
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+          $.fn.winktips("载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+        $.fn.winktips("载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  $("#user_order_main .card_more").data( "page", 0 ).click();
+  
+
+  
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

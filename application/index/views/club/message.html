@@ -1,0 +1,208 @@
+<?php $this->load->view('public/header.html'); ?>
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('Index/index_message'); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('Index/index_message'); ?>" );
+});
+</script>
+
+
+<!-- 页面主体 开始 -->
+<div class="main" id="message_list_main">
+
+  
+  <a class="main_more">点击载入更多的消息</a>
+  
+  <div class="list_message">
+
+  </div>
+  
+  
+
+
+</div>
+<!-- 页面主体 结束 -->
+<?php if($f_userid != 0): ?>
+<!-- 底栏 开始 -->
+<div id="message_list_bottombar" class="bottombar">
+  <form>
+  <div class="bottombar_box">
+    <div class="message_list_input bottombar_btn">
+      <input type="text" name="input_message_list" class="form_input" placeholder="输入想说的话">
+      <input type="hidden" name="msg" id="input_msg">
+      <input type="hidden" name="userid" value="<?php echo $f_userid; ?>">
+      <input type="hidden" name="username" value="<?php echo $username; ?>">
+    </div>
+    <button type="submit" class="bottombar_btn btn btn_color_3" id="btn_message_list_post">发送</button>
+  </div>
+  </form>
+</div>
+<!-- 底栏 结束 -->
+
+<?php endif; ?>
+
+
+<script>
+$(function(){
+
+
+
+  //载入对话数据
+  $("#message_list_main").on("click", ".main_more", function(){
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_message_page = $(this).data("page")?$(this).data("page"):0;
+    
+    var tmp_params = "page=" + tmp_message_page;
+    
+    //console.log( tmp_params );
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "<?php echo base_url(); ?>static/index/demo/json/message.json",
+      url: "<?php echo site_url('index/message_list/'.$f_userid); ?>",
+      data: tmp_params,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.message.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.message.length; i++) {
+            var tmp_isme,
+                tmp_author_avatar;
+          
+            if( data.message[i].isme ) {
+              tmp_isme = "isme";
+            } else {
+              tmp_isme = "";
+            }
+            
+            if( data.message[i].avatar ) {
+              tmp_author_avatar = "data-lazybgimg=\"" + data.message[i].avatar + "\"";
+            } else {
+              tmp_author_avatar = "";
+            }
+            var tmp_href = '';
+            if( data.message[i].user_id != 0 )
+            {
+              tmp_href = " href=\"<?php echo base_url();?>index.php/user/details/" + data.message[i].user_id + "\"";
+            }
+          
+            tmp_html += "<div class=\"item " + tmp_isme + "\"><a class=\"avatar\" " + tmp_author_avatar + tmp_href + "\"></a><div class=\"name\">" + data.message[i].name + "</div><div class=\"text_wrap card\"><div class=\"text\">" + data.message[i].text + "</div><div class=\"time\">" + data.message[i].time + "</div></div></div>";
+
+          }
+
+          $(tmp_html).hide().prependTo( "#message_list_main .list_message" ).fadeIn();
+          
+          if( tmp_message_page == 0 ) {
+            //滚动至页底 未考虑内容是否载入
+            $("html, body").animate( {scrollTop: $("body").height()}, "slow" );
+          }
+          
+          
+          //页数累加
+          tmp_message_page++;
+          $tmp_this_card_more.data( "page", tmp_message_page );
+          lazy();
+          $tmp_this_card_more.html( "点击载入更多的消息" );
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "载入失败，点击重试" );
+          $.fn.winktips("消息载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "载入失败，点击重试" );
+        $.fn.winktips("消息载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  $("#message_list_main .main_more").data( "page", 0 ).click();
+  
+  
+  
+  <?php if($f_userid != 0): ?>
+  //$('#btn_message_list_post').on('click',function(){
+  $("#message_list_bottombar form").submit( function() {
+    <?php if(!isset($_SESSION['login'])):?>
+    // 如果没有登录，则跳转至登录页面
+    window.location.replace("<?php echo site_url('login');?>");
+    return false;
+    <?php endif;?>
+    var content = $('[name=input_message_list]').val();
+    var params;
+    
+    $("#input_msg").val( utf16toEntities(content) );
+    params = $('#message_list_bottombar form').serialize();
+    
+    // console.log(params);
+    // console.log(content);
+    $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: "<?php echo site_url('index/send_msg/'.$f_userid);?>",
+          data: params,
+          success: function(data){
+            //console.log(data);
+            if( data.state == 1 ) {
+              var tmp_html = '<div class="item isme"><a class="avatar" href="<?php echo site_url('my'); ?>" "="" style="background-image: url(&quot;<?php echo $_SESSION['user']['avatar']; ?>&quot;);"></a><div class="name"><?php echo $_SESSION['user']['nickname']; ?></div><div class="text_wrap card"><div class="text">' + content + '</div><div class="time">刚刚</div></div></div>';
+              $('#message_list_main .list_message').append(tmp_html);
+              $(".form_input").val('');
+            }
+            if( data.state == 0 ) {
+              $.fn.winktips( data.msg );
+            }
+          }
+    });
+    return false;
+  });
+  <?php endif; ?>
+
+  
+  
+  
+  
+  
+});
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

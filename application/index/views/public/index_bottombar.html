@@ -1,0 +1,20 @@
+<div id="index_bottombar" class="bottombar">
+  <div id="index_bottombar_box" class="bottombar_box">
+    <a class="item <?php echo isset($index_bottombar_active['index_event'])?$index_bottombar_active['index_event']:''; ?>" id="index_bottombar_event" href="<?php echo site_url('Index/index_event'); ?>">
+      <i class="icon iconfont">&#xe611;</i>
+      <span>活动</span>
+    </a>
+    <a class="item <?php echo isset($index_bottombar_active['index_club'])?$index_bottombar_active['index_club']:''; ?>" id="index_bottombar_club" href="<?php echo site_url('Index/index_club'); ?>">
+      <i class="icon iconfont">&#xe603;</i>
+      <span>俱乐部</span>
+    </a>
+    <a class="item <?php echo isset($index_bottombar_active['index_message'])?$index_bottombar_active['index_message']:'';if(isset($hasnew) && $hasnew) echo " hasnew"; ?>" id="index_bottombar_message" href="<?php echo site_url('Index/index_message'); ?>">
+      <i class="icon iconfont">&#xe602;</i>
+      <span>消息</span>
+    </a>
+    <a class="item <?php echo isset($index_bottombar_active['index_me'])?$index_bottombar_active['index_me']:''; ?>" id="index_bottombar_me" href="<?php echo site_url('my'); ?>">
+      <i class="icon iconfont">&#xe601;</i>
+      <span>我</span>
+    </a>
+  </div>
+</div>

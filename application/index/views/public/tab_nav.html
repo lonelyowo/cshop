@@ -1,0 +1,5 @@
+<div class="tab_nav">
+  <a class="<?php echo isset($user_order)?$user_order:''; ?>" href="javascript:location.replace('<?php echo site_url('Index/user_order'); ?>');">待付</a>
+  <a class="<?php echo isset($user_order_over)?$user_order_over:''; ?>" href="javascript:location.replace('<?php echo site_url('Index/user_order_over'); ?>');">已付</a>
+  <a class="<?php echo isset($user_receipt)?$user_receipt:''; ?>" href="javascript:location.replace('<?php echo site_url('Index/user_receipt'); ?>');">收款</a>
+</div>

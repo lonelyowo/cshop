@@ -1,0 +1,425 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<script>
+  $(function(){
+    $.header_back( "<?php echo site_url('Index/index_club'); ?>" );
+  });
+</script>
+
+
+
+<!-- 页面主体 开始 -->
+<div class="main">
+  
+  <div id="" class="">
+  <form id="club_form" action="<?php echo site_url('club/dosave');?>" method="post">
+
+    
+    <div class="card card_form">
+      <div class="form_item form_item_plane form_item_club_logo">
+        <div class="form_label">俱乐部LOGO</div>
+        <div class="form_item_con">
+          <div class="avatar form_imgupload" <?php if(!empty($club_details['logos'])): ?> style="background-image:url(<?php echo $club_details['logos'];?>);"<?php endif; ?>></div>
+          <input type="hidden" name="club_logo" value="">
+          <input type="hidden" name="old_club_logo" value="<?php echo $club_details['logos'];?>">
+        </div>
+      </div>
+    
+      <label class="form_item form_item_plane">
+        <div class="form_label">名称</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="club_name" placeholder="要有个响亮的名字" value="<?php echo $club_details['name'];?>" maxlength="80">
+          <input type="hidden" name="id" value="<?php echo $club_details['id'];?>">
+        </div>
+      </label>
+      <div class="form_item form_item_plane ">
+        <div class="form_label">地区</div>
+        <div class="form_item_con select_zone" id="club_place">
+          <div class="form_input dropdown"> <span class="province"></span> <span class="city"></span> <span class="area"></span> </div>
+          <div class="dropdown_menu" id="" style="display: none;">
+            <div class="form_select">
+              <select class="form_input" name="club_province" id="province">
+              </select>
+            </div>
+            <div class="form_select">
+              <select class="form_input" name="club_city" id="city">
+              </select>
+            </div>
+            <div class="form_select">
+              <select class="form_input" name="club_area" id="area">
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--
+      <label class="form_item form_item_plane">
+        <div class="form_label">详细地址</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="club_address" placeholder="仅供参考，酌情填写" value="">
+        </div>
+      </label>
+      -->
+      <div class="form_item form_item_plane">
+        <div class="form_label">项目</div>
+        <div class="form_item_con">
+          <input type="hidden" name="club_sports_items" class="form_input" value="<?php echo $club_details['projects'];?>" />
+          <div id="sports_items_box" class="selecttag_box">
+            <div class="curr_sports_items selecttag_curr"><div class="curr_list"></div><a class="btn btn_selecttag_add"><i class="material-icons">&#xe146;</i></a></div>
+            
+          </div>
+        </div>
+      </div>
+      
+
+      <label class="form_item form_item_plane">
+        <div class="form_label">口号</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="club_slogan" placeholder="简明扼要，朗朗上口" value="<?php echo $club_details['slogan'];?>" maxlength="">
+        </div>
+      </label>
+      
+      <label class="form_item form_item_plane form_textarea">
+        <div class="form_label">简介</div>
+        <div class="form_item_con">
+          <textarea class="form_input" id="input_club_intro" name="club_intro" placeholder="">
+            <?php echo $club_details['content'];?>
+          </textarea>
+        </div>
+      </label>
+      
+      <label class="form_item form_item_plane">
+        <div class="form_label">加入审核</div>
+        <div class="form_item_con">
+          <label class="form_check"><input type="checkbox" name="club_opened" value="1" <?php if($club_details['ischeck'] == 1) echo "checked='checked'";?> ></label>
+        </div>
+        <div class="form_help">申请加入本俱乐部是否需要审核？</div>
+      </label>
+      
+    </div>
+    
+    
+    <!--底部按钮 开始-->
+    <div class="bottombar">
+      <div class="bottombar_box">
+      	 <button type="submit" class="bottombar_btn btn btn_color_1">提交</button>
+   		</div>
+    </div>
+    <!--底部按钮 结束-->
+    
+    
+
+
+
+    
+    
+    
+    
+    
+    
+    <!--<div id="shadow" style="display: block"></div>-->
+    </form>
+  </div>
+</div>
+<!-- 页面主体 结束 -->
+
+
+
+<!-- 选择运动标签 开始 -->
+<!-- 
+2016-09-29 10:54
+ -->
+<div class="subplate subplate_selecttag">
+
+  <div class="subplate_title">选择运动标签：</div>
+
+  <div class="selecttag_origi origi_sports_items"></div>
+
+  <!-- 底栏 开始 -->
+  <div class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_1">完成</a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<!-- 选择运动标签 结束 -->
+
+
+
+<!-- 上传图片 开始 -->
+<!-- 
+2016-09-28 10:54
+ -->
+<div id="part_imgupload" class="subplate part_imgupload">
+  <a class="btn_cancel btn btn_color_4"><i class="material-icons">&#xe5cd;</i></a>
+  <div class="imgupload_preview_box">
+  <?php if(empty($club_details['logos'])):?>
+    <img data-blank="<?php echo base_url();?>static/index/club/img/img_blank.png" src="<?php echo base_url();?>static/index/club/img/img_blank.png" id="imgupload_preview" class="imgupload_preview">
+  <?php else:?>
+    <img data-blank="<?php echo $club_details['logos'];?>" src="<?php echo $club_details['logos'];?>" id="imgupload_preview" class="imgupload_preview">
+  <?php endif;?>
+    <label class="imgupload_preview_label" for="imgupload_file"></label>
+  </div>
+  <input type="file" name="imgupload_file" id="imgupload_file" style="position:absolute;clip:rect(0 0 0 0);">
+
+  <input type="hidden" id="imgupload_file_data" name="imgupload_file_data">
+
+  <!-- 底栏 开始 -->
+  <div id="imgupload_bottombar" class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+      
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_4">取消</a>
+      
+      <label class="bottombar_btn btn btn_color_1" for="imgupload_file">选择文件</label>
+      
+      <a class="bottombar_btn btn btn_color_2" id="submit_imgupload">
+        <span>提交图片</span>
+      </a>
+      
+    </div>
+  </div>
+  <div id="crop_bottombar" class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn btn btn_color_4" id="btn_crop_cancel">取消裁切</a>
+      
+      <a class="bottombar_btn btn btn_color_1" id="btn_crop_ok">
+        <span>确认裁切</span>
+      </a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<!-- 上传图片 结束 -->
+
+
+<script src="<?php echo base_url();?>static/index/club/js/geo.js"></script>
+
+<script src="<?php echo base_url();?>static/index/club/js/exif.js"></script>
+<script src="<?php echo base_url();?>static/index/club/js/getimgdata.js"></script>
+<script src="<?php echo base_url();?>static/index/club/js/jcrop/js/jquery.Jcrop.js"></script>
+<link rel="stylesheet" href="<?php echo base_url();?>static/index/club/js/jcrop/css/jquery.Jcrop.css" type="text/css" />
+<script src="<?php echo base_url();?>static/index/club/js/tinymce/tinymce.min.js"></script>
+
+<script>
+
+  function tinymce_imgupload() {
+    $("#submit_imgupload").html( "<span>插入图片</span>" );
+    //console.log(this);
+    $.fn.cropimgupload({
+      btnOKClick: function( data ){
+
+        var params = $("#imgupload_file_data").serialize();
+
+        $.ajax({
+          type: "POST",
+          datatype: "json",
+          // url: "./demo/imgupload.php",
+          url: "<?php echo site_url('club/upload_ajax');?>",
+          //data: "imgupload_file_data=" + data,
+          data: params,
+          success: function(data){
+            if( typeof data != "object" ) {
+              data = $.parseJSON(data);
+            }
+            if( data.state == 1 ) {
+              //console.log( data.msg );
+              tinyMCE.execCommand("mceInsertContent",!1,"<p><img src=\"" + data.msg + "\"></p>");
+              $("#imgupload").hide();
+            }
+            if( data.state == 0 ) {
+              //alert( data.msg );
+              $.fn.winktips( data.msg );
+            }
+            return false;
+            
+          }
+
+        });
+        
+      }
+    });
+  }
+
+
+
+$(function(){
+
+  //地址三级联动 感谢腾讯
+  setup();
+  preselect('<?php if($club_details['province'] != "省份") echo $club_details['province'];?>');//省
+  cityselect('<?php if($club_details['city'] != "地级市") echo $club_details['city'];?>');//市
+  townselect('<?php if($club_details['district'] != "市、县级市、县" ) echo $club_details['district'];?>');//区
+  province_textshow();
+
+  $( "#province, #city, #area" ).on( "change", function(){
+    province_textshow();
+  });
+
+  function province_textshow() {
+    var tmp_province = ( $("#province").val() != "省份" )?$("#province").val():"--";
+    var tmp_city = ( $("#city").val() != "地级市" )?$("#city").val():"";
+    var tmp_area = ( $("#area").val() != "市、县级市、县" )?$("#area").val():"";
+
+    $( "#club_place .province" ).html( tmp_province );
+    $( "#club_place .city" ).html( tmp_city );
+    $( "#club_place .area" ).html( tmp_area );
+  }
+
+
+  //上传俱乐部logo
+  $(".form_item_club_logo").cropimgupload({
+    "file_data": "[name=club_logo]",
+    btnOKClick: function( data ){
+      $( ".form_item_club_logo .form_imgupload" ).css( "background-image", "url("+ data +")" );
+    }
+  });
+
+  //运动
+  // var origi_sports_items = [ "骑行", "徒步", "爬山", "其他" ];
+  var origi_sports_items = <?php echo $club_projects; ?>;
+  var curr_sports_items = $("[name=club_sports_items]").val().split(",");
+  
+  var selectTag_sports_items = {
+    tag_input: "[name=club_sports_items]",
+    origi_box: ".origi_sports_items",
+    curr_box: ".curr_sports_items .curr_list",
+    arr_origi: origi_sports_items,
+    arr_curr: curr_sports_items,
+    origi_item: "<a class=\"item_one [[active]]\" data-text=\"[[tag]]\">[[tag]]</a>",
+    curr_item: "<a class=\"item_one\" data-text=\"[[tag]]\">[[tag]]</a>",
+    origi_update_fn: function (){},
+    curr_update_fn: function (){}
+  }
+  
+  
+  $.fn.selectTag( selectTag_sports_items, "update" );
+
+  $("#sports_items_box").on("click", function(){
+    $.fn.hasShadow();
+    $(".subplate_selecttag").show();
+  });
+  
+  $(".subplate_selecttag").on("click", ".bottombar_btn_cancel", function(){
+    $.fn.hasShadow("hide");
+    $(".subplate_selecttag").hide();
+  });
+
+
+  //俱乐部简介富文本
+  tinyMCE.init({
+    selector: "#input_club_intro",
+    toolbar: "bold underline textmark | face hr imgupload",
+    plugins: [
+      "hr textmark face paste imgupload",
+      "autosave",
+      //"link code fullscreen media wordcount",
+      "autoresize"
+    ],
+    paste_as_text: true,
+    autosave_ask_before_unload: false,
+    menu: {
+      view: {title: 'Happy', items: 'code fullscreen'}
+    },
+    //menubar: true,
+    menubar: false,
+    statusbar: false,
+    content_css: "<?php echo base_url();?>static/index/club/css/richtext.css",
+    //content_css: "./club/css/style.css",
+    language: "zh_CN",
+    autoresize_max_height: 250,
+    //autoresize_min_height: 150,
+    autoresize_on_init: true,
+    convert_urls: false
+    
+  });
+
+  if (window.localStorage) {
+    if( localStorage.getItem( "tinymce-autosave-" + window.location.pathname + window.location.search + "-input_club_intro-draft" ) ) {
+      $.fn.winktips("已自动载入上次未保存的草稿");
+    }
+  }
+
+  
+  
+  //提交
+  $("#club_form").submit( function() {
+  
+    //俱乐部名称
+    if( !$("[name=club_name]").val() ) {
+
+      $.fn.poptips({
+        con: "俱乐部没有「<strong>名称</strong>」？！",
+        btnOKClick: function (){
+          $("[name=club_name]").focus();
+        }
+      });
+
+      $("[name=club_name]").checktips({
+        parent: $("[name=club_name]").closest(".form_item"),
+        tips: "请输入俱乐部名称！"
+      });
+      
+      return false;
+    } else {
+      $("[name=club_name]").checktips({
+        parent: $("[name=club_name]").closest(".form_item"),
+        act: "hide"
+      });
+    }
+    
+    //所在地区
+    if( $("[name=club_province]").val() == "省份" 
+        || $("[name=club_city]").val() == "地级市"
+        || $("[name=club_area]").val() == "市、县级市、县" ) {
+
+      $.fn.poptips({
+        con: "请选择「<strong>所在地区</strong>」？！",
+        btnOKClick: function (){}
+      });
+      
+      return false;
+    }
+  
+  
+  
+  });
+  
+  
+  
+  
+  
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+</body>
+</html>

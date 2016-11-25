@@ -3,7 +3,7 @@
 
 	<?php if ( isset($_SESSION['login']) && $_SESSION['login']) : ?>
 		<a class="login" href="<?php echo site_url('Logout'); ?>">退出</a>
-	  	<a class="login" href="<?php echo site_url('User'); ?>"><?php echo $_SESSION['user']['name']; ?></a>
+	  	<a class="login" href="<?php echo site_url('My'); ?>"><?php echo $_SESSION['user']['name']; ?></a>
 	<?php else: ?>
   		<a class="login" href="<?php echo site_url('Login'); ?>">登录</a>
 	<?php endif; ?>

@@ -1,0 +1,163 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<script>
+  $(function(){
+    $.header_back( "<?php echo base_url(); ?>" );
+  });
+</script>
+
+
+<!-- 页面主体 开始 -->
+<div class="main">
+  
+  <div id="" class="">
+  <form id="photo_form" action="<?php echo site_url('photos/dosave'); ?>" method='post'>
+    
+
+    <div class="card card_form">
+    
+      <div id="btn_photo_file_upload" class="imgupload_big">
+        <img src="<?php echo $photos_details['img']; ?>">
+        <input type="hidden" name="photo_file_data" value="">
+        <input type="hidden" name="old_img" value="<?php echo $photos_details['img']; ?>">
+        <input type="hidden" name="activity_id" value="<?php echo $photos_details['activity_id']; ?>">
+        <input type="hidden" name="id" value="<?php echo $photos_details['id']; ?>">
+      </div>
+      
+      <hr>
+      
+      <label class="form_item form_item_plane form_textarea">
+        <div class="form_label">描述</div>
+        <div class="form_item_con">
+          <textarea class="form_input" name="user_profile_sign" placeholder="选填，不超过250个(汉字)" maxlength="250">
+            <?php echo $photos_details['content']; ?>
+          </textarea>
+        </div>
+      </label>
+    </div>
+    
+    <!--底部按钮 开始-->
+    <div id="club_index_manage_bottombar" class="bottombar">
+      <div class="bottombar_box">
+        <button type="submit" id="btn_submit_user_profile" class="bottombar_btn btn btn_color_1">保存</button>     
+      </div>
+    </div>
+    <!--底部按钮 结束-->
+    
+
+    </form>
+  </div>
+</div>
+<!-- 页面主体 结束 -->
+
+
+
+<!-- 上传图片 开始 -->
+<!-- 
+2016-09-28 10:54
+ -->
+<div id="part_imgupload" class="subplate part_imgupload">
+  <a class="btn_cancel btn btn_color_4"><i class="material-icons">&#xe5cd;</i></a>
+  <div class="imgupload_preview_box">
+    <img data-blank="<?php echo $photos_details['img']; ?>" src="<?php echo $photos_details['img']; ?>" id="imgupload_preview" class="imgupload_preview">
+    <label class="imgupload_preview_label" for="imgupload_file"></label>
+  </div>
+  <input type="file" name="imgupload_file" id="imgupload_file" style="position:absolute;clip:rect(0 0 0 0);">
+
+  <input type="hidden" id="imgupload_file_data" name="imgupload_file_data">
+
+  <!-- 底栏 开始 -->
+  <div id="imgupload_bottombar" class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+      
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_4">取消</a>
+      
+      <label class="bottombar_btn btn btn_color_1" for="imgupload_file">选择文件</label>
+      
+      <a class="bottombar_btn btn btn_color_2" id="submit_imgupload">
+        <span>提交图片</span>
+      </a>
+      
+    </div>
+  </div>
+  <div id="crop_bottombar" class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn btn btn_color_4" id="btn_crop_cancel">取消裁切</a>
+      
+      <a class="bottombar_btn btn btn_color_1" id="btn_crop_ok">
+        <span>确认裁切</span>
+      </a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<!-- 上传图片 结束 -->
+
+
+
+
+
+
+<script src="<?php echo base_url(); ?>static/index/club/js/exif.js"></script>
+<script src="<?php echo base_url(); ?>static/index/club/js/getimgdata.js"></script>
+<script src="<?php echo base_url(); ?>static/index/club/js/jcrop/js/jquery.Jcrop.js"></script>
+<link rel="stylesheet" href="<?php echo base_url(); ?>static/index/club/js/jcrop/css/jquery.Jcrop.css">
+
+<script>
+$(function(){
+
+  $("#btn_photo_file_upload").cropimgupload({
+    "file_data": "[name=photo_file_data]",
+    btnOKClick: function(){
+      $( "#btn_photo_file_upload img" ).attr( "src", $("#imgupload_file_data").val() );
+    }
+  });
+
+  
+  $("#photo_form").submit( function() {
+
+  
+    //是否有照片
+    //数据框为空 且 预览图为默认图片 则 提示
+    if( !$("[name=photo_file_data]").val() && $("#btn_photo_file_upload img").attr("src").match("img_photo.png") ) {
+
+      $.fn.poptips({
+        con: "没有选择照片？",
+        btnOKClick: function (){
+          
+        }
+      });
+      
+      return false;
+    }
+    
+
+  });
+
+
+});
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

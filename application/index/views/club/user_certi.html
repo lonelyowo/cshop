@@ -1,0 +1,293 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('My'); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('My'); ?>" );
+});
+</script>
+
+<!-- 页面主体 开始 -->
+<div class="main">
+  
+  <div id="user_certi" class="">
+  <form id="user_certi_form" method='post' action="<?php echo site_url('Wallet/identity_verify'); ?>">
+
+    
+    <div class="card card_form">
+    
+    	<div class="form_item form_item_tips form_item_plane">
+        <div class="form_label null">提示</div>
+        <div class="form_item_con">
+          <div class="form_static">身份认证后不可修改，审核通过方可提现。</div>
+        </div>
+      </div>
+    
+    	<label class="form_item form_item_plane">
+        <div class="form_label">姓名</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="user_idcard_name" placeholder="请务必如实填写" value="<?php echo isset($info)?$info['real_name']:''; ?>">
+        </div>
+      </label>
+      
+      <label class="form_item form_item_plane">
+        <div class="form_label">二代身份证</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="user_idcard_num" placeholder="18位" maxlength="18" value="<?php echo isset($info)?$info['identity_card_id']:''; ?>">
+        </div>
+      </label>
+      
+      <div class="form_item form_item_plane" id="btn_idcard_front">
+        <div class="form_label">身份证正面</div>
+        <div class="form_item_con">
+          <div class="cover form_imgupload"  <?php echo isset($info)?'style=background-image:url(\''.base_url($info['identity_card_pic_1']).'\');':''; ?> ></div>
+          <input type="hidden" name="user_idcard_front" value="">
+        </div>
+      </div>
+      <div class="form_item form_item_plane" id="btn_idcard_back">
+        <div class="form_label">身份证反面</div>
+        <div class="form_item_con">
+          <div class="cover form_imgupload" <?php echo isset($info)?'style=background-image:url(\''.base_url($info['identity_card_pic_2']).'\');':''; ?> ></div>
+          <input type="hidden" name="user_idcard_back" value="">
+        </div>
+      </div>
+       <div class="form_item form_item_plane" id="btn_idcard_photo">
+        <div class="form_label">手持身份证拍照</div>
+        <div class="form_item_con">
+          <div class="cover form_imgupload" <?php echo isset($info)?'style=background-image:url(\''.base_url($info['identity_card_pic_3']).'\');':''; ?> ></div>
+          <input type="hidden" name="user_idcard_photo" value="">
+        </div>
+        <div class="form_help">要求：上半身照，可看清证件上的主要信息。</div>
+      </div>
+
+      
+      
+
+    </div>
+    
+    <!--底部按钮 开始-->
+    <div id="" class="bottombar">
+      <div class="bottombar_box">
+        <button type="submit" class="bottombar_btn btn btn_color_1">提交认证</button>
+      </div>
+    </div>
+    <!--底部按钮 结束-->
+
+    
+    </form>
+  </div>
+</div>
+<!-- 页面主体 结束 -->
+
+
+
+
+
+
+<!-- 上传图片 开始 -->
+<!-- 
+2016-09-28 10:54
+ -->
+<div id="part_imgupload" class="subplate part_imgupload">
+  <a class="btn_cancel btn btn_color_4"><i class="material-icons">&#xe5cd;</i></a>
+  <div class="imgupload_preview_box">
+    <img data-blank="<?php echo base_url('static/index').'/club/img/img_blank.png'; ?>" src="<?php echo base_url('static/index').'/club/img/img_blank.png'; ?>" id="imgupload_preview" class="imgupload_preview">
+    <label class="imgupload_preview_label" for="imgupload_file"></label>
+  </div>
+  <input type="file" name="imgupload_file" id="imgupload_file" style="position:absolute;clip:rect(0 0 0 0);">
+
+  <input type="hidden" id="imgupload_file_data" name="imgupload_file_data">
+
+  <!-- 底栏 开始 -->
+  <div id="imgupload_bottombar" class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+      
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_4">取消</a>
+      
+      <label class="bottombar_btn btn btn_color_1" for="imgupload_file">选择文件</label>
+      
+      <a class="bottombar_btn btn btn_color_2" id="submit_imgupload">
+        <span>提交图片</span>
+      </a>
+      
+    </div>
+  </div>
+  <div id="crop_bottombar" class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn btn btn_color_4" id="btn_crop_cancel">取消裁切</a>
+      
+      <a class="bottombar_btn btn btn_color_1" id="btn_crop_ok">
+        <span>确认裁切</span>
+      </a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<!-- 上传图片 结束 -->
+
+
+
+
+
+
+<script src="<?php echo base_url('static/index').'/club/js/exif.js'; ?>"></script>
+<script src="<?php echo base_url('static/index').'/club/js/getimgdata.js'; ?>"></script>
+<script src="<?php echo base_url('static/index').'/club/js/jcrop/js/jquery.Jcrop.js'; ?>"></script>
+
+<link rel="stylesheet" href="<?php echo base_url('static/index').'/club/js/jcrop/css/jquery.Jcrop.css'; ?>">
+
+<script>
+
+
+
+  //上传身份证图片开始
+
+  $("#btn_idcard_front").cropimgupload({
+    "file_data": "[name=user_idcard_front]",
+    btnOKClick: function(){
+      $( "#btn_idcard_front .form_imgupload" ).css( "background-image", "url("+ $("[name=user_idcard_front]").val() +")" );
+    }
+  });
+  $("#btn_idcard_back").cropimgupload({
+    "file_data": "[name=user_idcard_back]",
+    btnOKClick: function(){
+      $( "#btn_idcard_back .form_imgupload" ).css( "background-image", "url("+ $("[name=user_idcard_back]").val() +")" );
+    }
+  });
+  $("#btn_idcard_photo").cropimgupload({
+    "file_data": "[name=user_idcard_photo]",
+    btnOKClick: function(){
+      $( "#btn_idcard_photo .form_imgupload" ).css( "background-image", "url("+ $("[name=user_idcard_photo]").val() +")" );
+    }
+  });
+
+  //上传身份证图片结束
+
+
+  //提交表单必填项
+  $("#user_certi_form").submit( function() {
+
+    //检查姓名
+    if( !$("[name=user_idcard_name]").val() ) {
+
+      $.fn.poptips({
+        con: "请输入真实的姓名！",
+        btnOKClick: function (){
+          $("[name=user_idcard_name]").focus();
+        }
+      });
+
+
+      $("[name=user_idcard_name]").checktips({
+        parent: $("[name=user_idcard_name]").closest(".form_item"),
+        tips: "请输入真实的姓名！"
+      });
+      
+      return false;
+    } else {
+      $("[name=user_idcard_name]").checktips({
+        parent: $("[name=user_idcard_name]").closest(".form_item"),
+        act: "hide"
+      });
+    }
+    
+    //检查身份证号
+    if( !$("[name=user_idcard_num]").val() ) {
+
+      $.fn.poptips({
+        con: "请输入18位二代身份证号码！",
+        btnOKClick: function (){
+          $("[name=user_idcard_num]").focus();
+        }
+      });
+
+
+      $("[name=user_idcard_num]").checktips({
+        parent: $("[name=user_idcard_num]").closest(".form_item"),
+        tips: "请输入18位二代身份证号码！"
+      });
+      
+      return false;
+    } else {
+      $("[name=user_idcard_num]").checktips({
+        parent: $("[name=user_idcard_num]").closest(".form_item"),
+        act: "hide"
+      });
+    }
+    
+    //检查身份证正面
+    if( !$("[name=user_idcard_front]").val() ) {
+
+      $.fn.poptips({
+        con: "请提供清晰的身份证<strong>正面</strong>照片！",
+        btnOKClick: function (){
+          $("#btn_idcard_front").click();
+        }
+      });
+
+      return false;
+    }
+    
+    //检查身份证反面
+    if( !$("[name=user_idcard_back]").val() ) {
+
+      $.fn.poptips({
+        con: "请提供清晰的身份证<strong>反面</strong>照片！",
+        btnOKClick: function (){
+          $("#btn_idcard_back").click();
+        }
+      });
+
+      return false;
+    }
+    
+    //检查手持身份证拍照
+    if( !$("[name=user_idcard_photo]").val() ) {
+
+      $.fn.poptips({
+        con: "请提供<strong>本人手持身份证</strong>的清晰照片！",
+        btnOKClick: function (){
+          $("#btn_idcard_photo").click();
+        }
+      });
+
+      return false;
+    }
+    
+    
+    
+
+  });
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

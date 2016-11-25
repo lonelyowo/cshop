@@ -1,0 +1,424 @@
+<?php $this->load->view('public/header.html'); ?>
+<!-- 以上为页头 -->
+
+<script>
+  $(function(){
+    $.header_back( "<?php echo base_url(); ?>" );
+  });
+</script>
+
+
+
+
+
+
+
+<!-- 页面主体 开始 -->
+<div class="main" id="travelogue_add_main">
+
+  <div id="travelogue_add" class="">
+  <form id="travelogue_add_form" action="<?php echo site_url('travels/dosave');?>" method="post">
+  
+    <div class="card card_form">
+  
+  
+  
+      <label class="form_item form_item_plane">
+      <div class="form_label">标题</div>
+      <div class="form_item_con">
+        <input type="text" class="form_input" name="travelogue_title" placeholder="请输入标题" value="<?php echo $travels_details['title'];?>">
+        <input type="hidden" name="id" value="<?php echo $travels_details['id'];?>">
+      </div>
+      </label>
+      
+      <div class="form_item form_item_plane form_imgupload_box">
+        <div class="form_label">封面</div>
+        <div class="form_item_con">
+          <div class="travelogue_cover form_imgupload" <?php if(!empty($travels_details['img'])): ?> style="background-image:url(<?php echo $travels_details['img'];?>);"<?php endif; ?>></div>
+          <input type="hidden" id="input_travelogue_cover" name="input_travelogue_cover" >
+          <input type="hidden" name="old_cover" value="<?php echo $travels_details['img'];?>">
+        </div>
+      </div>
+      
+      
+
+      </label>
+
+      <div class="form_item form_item_plane form_textarea">
+        <div class="form_label">正文</div>
+        <div class="form_item_con">
+          <textarea id="input_travelogue_text" class="form_input" name="input_travelogue_text" placeholder="请尽情书写吧！"><?php echo $travels_details['content'];?></textarea>
+        </div>
+      </div>
+
+      <!-- 如果从活动页进入请填入活动id及活动名称等信息 -->
+      <div id="travelogue_select_event_show" class="form_item form_item_plane">
+        <div class="form_label">来自</div>
+        <div class="form_item_con">
+          <div class="form_static"><?php echo $travels_details['a_title'];?></div>
+          <input type="hidden" name="travelogue_eventid" value="<?php echo $travels_details['activity_id'];?>">
+        </div>
+      </div>
+      
+    
+    </div>
+    
+    
+    <!-- 底栏 开始 -->
+    <div id="" class="bottombar">
+      <div  class="bottombar_box">
+        <button type="submit" id="btn_submit_travelogue_add" class="bottombar_btn btn btn_color_3">修改</button>
+      </div>
+    </div>
+    <!-- 底栏 结束 -->
+    
+    
+  </form>
+  </div>
+</div>
+<!-- 页面主体 结束 -->
+
+
+
+
+
+
+<!-- 选择俱乐部 开始 -->
+<!-- <div id="part_travelogue_select_event" class="subplate subplate_select_event">
+
+  <div class="subplate_title">请选择游记所属的活动：</div>
+  
+  <div class="search_box">
+    <input type="search" class="input_search" placeholder="搜索">
+    <i class="icon material-icons"></i>
+  </div>
+  <hr> -->
+  
+  <!--  -->
+  <!-- <div class="list_event">  
+  </div> -->
+
+  <!-- 底栏 开始 -->
+  <!-- <div class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_4">取消</a>
+      
+    </div>
+  </div> -->
+  <!-- 底栏 结束 -->
+
+<!-- </div> -->
+<!-- 选择俱乐部 结束 -->
+
+
+
+
+
+
+<!-- 上传图片 开始 -->
+<!-- 
+2016-09-28 10:54
+ -->
+<div id="part_imgupload" class="subplate part_imgupload">
+  <a class="btn_cancel btn btn_color_4"><i class="material-icons">&#xe5cd;</i></a>
+  <div class="imgupload_preview_box">
+    <img data-blank="<?php echo $travels_details['img'];?>" src="<?php echo $travels_details['img'];?>" id="imgupload_preview" class="imgupload_preview">
+    <label class="imgupload_preview_label" for="imgupload_file"></label>
+  </div>
+  <input type="file" name="imgupload_file" id="imgupload_file" style="position:absolute;clip:rect(0 0 0 0);">
+
+  <input type="hidden" id="imgupload_file_data" name="imgupload_file_data">
+
+  <!-- 底栏 开始 -->
+  <div id="imgupload_bottombar" class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+      
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_4">取消</a>
+      
+      <label class="bottombar_btn btn btn_color_1" for="imgupload_file">选择文件</label>
+      
+      <a class="bottombar_btn btn btn_color_2" id="submit_imgupload">
+        <span>提交图片</span>
+      </a>
+      
+    </div>
+  </div>
+  <div id="crop_bottombar" class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn btn btn_color_4" id="btn_crop_cancel">取消裁切</a>
+      
+      <a class="bottombar_btn btn btn_color_1" id="btn_crop_ok">
+        <span>确认裁切</span>
+      </a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<!-- 上传图片 结束 -->
+
+
+
+
+
+
+
+
+<script src="<?php echo base_url();?>static/index/club/js/exif.js"></script>
+<script src="<?php echo base_url();?>static/index/club/js/getimgdata.js"></script>
+<script src="<?php echo base_url();?>static/index/club/js/jcrop/js/jquery.Jcrop.js"></script>
+<link rel="stylesheet" href="<?php echo base_url();?>static/index/club/js/jcrop/css/jquery.Jcrop.css" type="text/css" />
+<script src="<?php echo base_url();?>static/index/club/js/tinymce/tinymce.min.js"></script>
+<script>
+
+  function tinymce_imgupload() {
+    $("#submit_imgupload").html( "<span>插入图片</span>" );
+    //console.log(this);
+    $.fn.cropimgupload({
+      btnOKClick: function( data ){
+
+        var params = $("#imgupload_file_data").serialize();
+        // console.log(params);
+        $.ajax({
+          type: "POST",
+          datatype: "json",
+          // url: "./demo/imgupload.php",
+          url: "<?php echo site_url('travels/upload_ajax');?>",
+          //data: "imgupload_file_data=" + data,
+          data: params,
+          success: function(data){
+            if( typeof data != "object" ) {
+              data = $.parseJSON(data);
+            }
+            if( data.state == 1 ) {
+              console.log( data.msg );
+              tinyMCE.execCommand("mceInsertContent",!1,"<p><img src=\"" + data.msg + "\"></p>");
+              $("#imgupload").hide();
+            }
+            if( data.state == 0 ) {
+              //alert( data.msg );
+              $.fn.winktips( data.msg );
+            }
+            return false;
+            
+          }
+
+        });
+        
+      }
+    });
+  }
+
+
+$(function(){
+
+  //显示选择活动面板
+  $("#travelogue_select_event_show").on("click", function(){
+    $.fn.hasShadow();
+    $("#part_travelogue_select_event").show();
+  });
+  
+  //将活动信息填入表单
+  $("#part_travelogue_select_event").on("click", ".item", function(){
+    $(this).addClass("active").siblings(".item").removeClass("active");
+    $("#travelogue_select_event_show .form_static").html( $(this).find(".title").html() );
+    $("[name=travelogue_eventid]").val( $(this).data("eventid") );
+    $("#part_travelogue_select_event").hide();
+    $.fn.hasShadow("hide");
+  });
+  //取消选择活动
+  $("#part_travelogue_select_event .bottombar_btn_cancel").on("click", function(){
+    $("#part_travelogue_select_event").hide();
+    $.fn.hasShadow("hide");
+  });
+  
+  //如果没有选择活动，弹出选择活动面板
+  if( !parseInt($("[name=travelogue_eventid]").val()) ) {
+    $("#travelogue_select_event_show").click();
+  }
+  
+  //快速筛选活动
+  $("#part_travelogue_select_event .input_search").on( "click keyup change blur",function(){
+    var tag = $(this).val();
+    $("#part_travelogue_select_event .item").hide().children("div").filter(":contains('" + tag + "')").parent(".item").show();
+    
+    if( tag != "" && $("#part_travelogue_select_event .item[style^=display]").length == $("#part_travelogue_select_event .item").length ) {
+      if( !$("#part_travelogue_select_event .list_event .nothing").length ) {
+        $("#part_travelogue_select_event .list_event").append("<div class=\"nothing\">没有找到符合条件的活动</div>");
+      }
+      $("#part_travelogue_select_event .list_event .nothing").show();
+    } else {
+      $("#part_travelogue_select_event .list_event .nothing").hide();
+    }
+  });
+  
+  
+  $(".travelogue_cover").cropimgupload({
+    "file_data": "#input_travelogue_cover",
+    btnOKClick: function( data ){
+      $( ".travelogue_cover" ).css( "background-image", "url("+ data +")" );
+    }
+  });
+
+
+
+
+
+
+  tinyMCE.init({
+    selector: "#input_travelogue_text",
+    toolbar: "bold underline textmark | face hr imgupload",
+    plugins: [
+      "hr textmark face paste imgupload",
+      "autosave",
+      //"link code fullscreen media wordcount",
+      "autoresize"
+    ],
+    paste_as_text: true,
+    autosave_ask_before_unload: false,
+    menu: {
+      view: {title: 'Happy', items: 'code fullscreen'}
+    },
+    //menubar: true,
+    menubar: false,
+    statusbar: false,
+    content_css: "<?php echo base_url();?>static/index/club/css/richtext.css",
+    //content_css: "./club/css/style.css",
+    language: "zh_CN",
+    autoresize_max_height: 250,
+    //autoresize_min_height: 150,
+    autoresize_on_init: true,
+    convert_urls: false
+  });
+
+  if (window.localStorage) {
+    if( localStorage.getItem( "tinymce-autosave-" + window.location.pathname + window.location.search + "-input_travelogue_text-draft" ) ) {
+      $.fn.winktips("已自动载入上次未保存的草稿");
+    }
+  }
+
+  /*
+  if (window.localStorage) {
+    if( localStorage.getItem( "tinymce-autosave-" + window.location.pathname + window.location.search + "-input_travelogue_text-draft" ) ) {
+      $.fn.poptips({
+        con: "是否载入上次未保存的草稿？",
+        btnOK: true,
+        btnCancel: true,
+        btnOKClick: function (){
+          console.log("你点了确认");
+        },
+        btnCancelClick: function (){
+          localStorage.removeItem( "tinymce-autosave-" + window.location.pathname + window.location.search + "-input_travelogue_text-draft" );
+          localStorage.removeItem( "tinymce-autosave-" + window.location.pathname + window.location.search + "-input_travelogue_text-time" );
+        }
+      });
+    }
+  }
+  */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  $("#travelogue_add_form").submit( function() {
+
+
+
+
+
+    //tinyMCE.triggerSave(true);
+
+
+    
+
+    
+    if ( !$("[name=travelogue_title]").val() ) {
+      $.fn.poptips({
+        con: "万众瞩目的游记怎么能没有「<strong>标题</strong>」？！",
+        btnOKClick: function (){
+          $("[name=travelogue_title]").focus();
+        }
+      });
+      return false;
+    }
+    
+    /*
+    tinymce.activeEditor.off();
+
+    tinymce.activeEditor.on("GetContent", function(e) {
+      
+      if ( !e.content.replace(/<[^>].*?>/g,"") ) {
+      //console.log(e.content);
+        $.fn.poptips({
+          con: "无字天书？「<strong>游记正文</strong>」居然一个字都没有？！",
+          btnOKClick: function (){
+            //$("[name=input_travelogue_text]").focus();
+            tinyMCE.activeEditor.focus();
+          }
+        });
+        return false;
+      }
+    });
+    */
+    
+    //console.log(tinymce.get('input_travelogue_text').getContent({format: 'raw'}));
+    
+    //if ( !$("[name=input_travelogue_text]").val() ) {
+    if ( !tinymce.get('input_travelogue_text').getContent({format: 'raw'}).replace(/<[^>].*?>/g,"") ) {
+      $.fn.poptips({
+        con: "无字天书？「<strong>游记正文</strong>」居然一个字都没有？！",
+        btnOKClick: function (){
+          //$("[name=input_travelogue_text]").focus();
+          tinyMCE.activeEditor.focus();
+        }
+      });
+      return false;
+    }
+
+    
+    if ( !parseInt($("[name=travelogue_eventid]").val()) ) {
+      $.fn.poptips({
+        con: "请选择发表在哪个「<strong>活动</strong>」",
+        btnOKClick: function (){
+          $("#travelogue_select_event_show").click();
+        }
+      });
+      return false;
+    }
+    
+    
+    
+    
+
+    // return false;
+
+  });
+  
+  
+});
+</script>
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

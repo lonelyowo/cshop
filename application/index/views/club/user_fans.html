@@ -1,0 +1,250 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('My'); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('My'); ?>" );
+});
+</script>
+
+<!-- 置顶区 开始 -->
+<div class="main_top needfixed" id="user_fans_main_top">
+  <div class="main_top_box">
+  
+    <!-- 仅具有管理权限的才显示 -->
+    <div class="tab_nav">
+      <a class="<?php if($ctrl == 'friends_list') echo "active";?>" href="javascript:location.replace('<?php echo site_url('my/friends'); ?>');">我关注的</a>
+      <a class="<?php if($ctrl == 'fans_list') echo "active";?>" href="javascript:location.replace('<?php echo site_url('my/fans'); ?>');">我的粉丝</a>
+    </div>
+
+    
+    
+
+  </div>
+</div>
+<!-- 置顶区 结束 -->
+
+<!-- 页面主体 开始 -->
+<div class="main" id="user_fans_main">
+
+  
+  <div class="card card_fans_list">
+    <div class="list">
+
+    </div>
+    <div class="card_more"><span>点击载入更多成员</span></div>
+  </div>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+<script>
+var scrollload = {};
+  
+  //取消关注
+  $("#user_fans_main .card_fans_list").on("click", ".btn_sorry, .btn_relation", function(){
+      var $tmp_this = $(this);
+      
+      $.fn.poptips({
+        con: "确认对 <strong>" + $(this).closest(".item").find(".name").text() + "</strong> 取消关注？",
+        btnCancel: true,
+        btnOKClick: function (){
+          //该好友的 userid
+          // console.log( $tmp_this.closest(".item").data("id") );
+          var userid = $tmp_this.closest(".item").data("id");
+          $.ajax({
+              type: "POST",
+              dataType: "json",
+              url: '<?php echo base_url('index.php/my/unfollow/'); ?>' + '/' + userid,
+              success: function(data){
+                console.log(data);
+                if( data.state == 1 ) {
+                  $.fn.winktips( data.msg );
+                  if( $tmp_this.closest(".item").hasClass("state_2") ) 
+                  {
+                    $tmp_this.closest(".item").removeClass("state_0 state_1 state_2 state_3").addClass( "state_0" );
+                  } else {
+                    //$tmp_this.closest(".item").fadeOut();
+                    $tmp_this.closest(".item").removeClass("state_0 state_1 state_2 state_3").addClass( "state_3" );
+                  }
+                }
+                if( data.state == 0 ) {
+                  $.fn.winktips( data.msg );
+                }
+              }
+            });
+          
+
+        }
+      });
+    
+  });
+  
+  //加关注
+  $("#user_fans_main .card_fans_list").on("click", ".btn_love", function(){
+      var $tmp_this = $(this);
+      
+      
+      
+      
+      //该好友的 userid
+      console.log( $tmp_this.closest(".item").data("id") );
+      var userid = $tmp_this.closest(".item").data("id");
+          $.ajax({
+              type: "POST",
+              dataType: "json",
+              url: '<?php echo base_url('index.php/my/follow/'); ?>' + '/' + userid,
+              success: function(data){
+                console.log(data);
+                if( data.state == 1 ) {
+                  $.fn.winktips( data.msg );
+                  if( $tmp_this.closest(".item").hasClass("state_0") ) 
+                  {
+                    $tmp_this.closest(".item").removeClass("state_0 state_1 state_2 state_3").addClass( "state_2" );
+                  } else {
+                    $tmp_this.closest(".item").removeClass("state_0 state_1 state_2 state_3").addClass( "state_1" );
+                  }
+                }
+                if( data.state == 0 ) {
+                  $.fn.winktips( data.msg );
+                }
+              }
+            });
+
+    
+  });
+  
+
+  //载入俱乐部列表数据
+  $("#user_fans_main").on("click", ".card_more", function(){
+  
+    //暂停滚动载入新内容
+    scrollload.user_fans = 0;
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_user_fans_page = $(this).data("page")?$(this).data("page"):0;
+    
+    var tmp_params = "page=" + tmp_user_fans_page;
+    
+    //console.log( tmp_params );
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "./demo/json/user_fans.json",
+      url: "<?php echo site_url('my/'.$ctrl); ?>",
+      data: tmp_params,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.user_fans.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.user_fans.length; i++) {
+            var tmp_avatar;
+          
+            if( data.user_fans[i].avatar ) {
+              tmp_avatar = "data-lazybgimg=\"" + data.user_fans[i].avatar + "\"";
+            } else {
+              tmp_avatar = "";
+            }
+            
+            
+            tmp_html += "<div class=\"item state_" + data.user_fans[i].state + "\" data-id=\"" + data.user_fans[i].userid + "\">";
+
+            tmp_html += "<a class=\"avatar_wrap\" href=\"<?php echo base_url(); ?>index.php/user/details/" + data.user_fans[i].userid + "\"><div class=\"avatar\" " + tmp_avatar + "></div><div class=\"name\">" + data.user_fans[i].name + "</div></a>";
+            
+            
+            tmp_html += "<div class=\"tool\">";
+            
+            <!-- 2 互相关注 -->
+            tmp_html += "<div class=\"btn btn_color_4 btn_relation\">已互相关注</div>";
+            
+            <!-- 1 对方尚未关注我 | 仅出现在“我关注的” -->
+            tmp_html += "<a class=\"btn btn_color_4 btn_sorry\">取消关注</a>";
+            
+            <!-- 0 我尚未关注对方 | 仅出现在“我的粉丝” -->
+            tmp_html += "<a class=\"btn btn_color_1 btn_love\">关注</a>";
+            
+            tmp_html += "</div></div>";
+            
+          }
+          if( tmp_user_fans_page ) {
+            $(tmp_html).hide().appendTo( "#user_fans_main .card_fans_list .list" ).fadeIn();
+          } else {
+            $("#user_fans_main .card_fans_list .list").html( tmp_html ).hide().fadeIn();
+          }
+          
+          //允许滚动载入新内容
+          scrollload.user_fans = 1;
+          
+          //页数累加
+          tmp_user_fans_page++;
+          $tmp_this_card_more.data( "page", tmp_user_fans_page );
+          lazy();
+          $tmp_this_card_more.html( "<span>载入中…</span>" );
+          if(data.end)
+          {
+             $tmp_this_card_more.html( "没有更多内容了" );
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+          $.fn.winktips("载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+        $.fn.winktips("载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  $("#user_fans_main .card_more").data( "page", 0 ).click();
+  
+  //滚动载入新内容
+  $(window).scroll(function() {
+    if( scrollload.user_fans ) {
+      scrollLoad( $("#user_fans_main .card_more") );
+    }
+  });
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

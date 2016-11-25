@@ -1,0 +1,165 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('My'); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('My'); ?>" );
+});
+</script>
+
+<!-- 置顶区 开始 -->
+<div class="main_top needfixed" id="user_club_main_top">
+  <div class="main_top_box">
+  
+  
+    <div id="user_club_tab_nav" class="tab_nav">
+      <a class="<?php if($ctrl == 'management_club_list') echo "active";?>" href="javascript:location.replace('<?php echo site_url('my/management_club');?>');">我管理的</a>
+      <a class="<?php if($ctrl == 'join_club_list') echo "active";?>" href="javascript:location.replace('<?php echo site_url('my/join_club');?>');">我加入的</a>
+    </div>
+
+    
+    
+    
+  </div>
+</div>
+<!-- 置顶区 结束 -->
+
+<!-- 页面主体 开始 -->
+<div class="main" id="user_club_main">
+
+  
+  <div class="list_club">
+
+  </div>
+  
+  <a class="main_more">点击载入更多俱乐部</a>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+<script>
+var scrollload = {};
+
+  //载入俱乐部列表数据
+  $("#user_club_main").on("click", ".main_more", function(){
+  
+    //暂停滚动载入新内容
+    scrollload.user_club = 0;
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_club_page = $(this).data("page")?$(this).data("page"):0;
+    
+    var tmp_params = "page=" + tmp_club_page;
+    
+    //console.log( tmp_params );
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "./demo/json/club.json",
+      url: "<?php echo site_url('my/'.$ctrl);?>",
+      data: tmp_params,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.club.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.club.length; i++) {
+            var tmp_club_logo, tmp_club_qual;
+          
+            if( data.club[i].logo ) {
+              tmp_club_logo = "data-lazybgimg=\"" + data.club[i].logo + "\"";
+            } else {
+              tmp_club_logo = "";
+            }
+            if( data.club[i].qual ) {
+              tmp_club_qual = "<div class=\"clubqual\">G</div>";
+            } else {
+              tmp_club_qual = "";
+            }
+            
+            tmp_html += "<a class=\"item card\" href=\"<?php echo base_url();?>index.php/club/details/" + data.club[i].id + "\"><div class=\"clublogowrap\"><div class=\"clublogo\" " + tmp_club_logo + "></div>" + 
+            tmp_club_qual +
+            "</div><div class=\"clubname\">" + data.club[i].name + "</div><div class=\"clubinfo\"><div class=\"clubstar" + "\"  style=\"background-image: url(" + data.club[i].pic + ");\"></div><div class=\"clubslogan\">" + data.club[i].slogan + "</div></div><div class=\"clubpeople\">" + data.club[i].people + "人</div></a>";
+            
+          }
+          if( tmp_club_page ) {
+            $(tmp_html).hide().appendTo( "#user_club_main .list_club" ).fadeIn();
+          } else {
+            $("#user_club_main .list_club").html( tmp_html ).hide().fadeIn();
+          }
+          
+          //允许滚动载入新内容
+          scrollload.user_club = 1;
+          
+          //页数累加
+          tmp_club_page++;
+          $tmp_this_card_more.data( "page", tmp_club_page );
+          lazy();
+          $tmp_this_card_more.html( "载入中…" );
+          if(data.end)
+          {
+            $tmp_this_card_more.html( "没有更多内容了" );
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "载入失败，点击重试" );
+          $.fn.winktips("俱乐部载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "载入失败，点击重试" );
+        $.fn.winktips("俱乐部载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  $("#user_club_main .main_more").data( "page", 0 ).click();
+  
+  //滚动载入新内容
+  $(window).scroll(function() {
+    if( scrollload.user_club ) {
+      scrollLoad( $("#user_club_main .main_more") );
+    }
+  });
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

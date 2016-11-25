@@ -1,0 +1,132 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('My'); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('My'); ?>" );
+});
+</script>
+
+<!-- 置顶区 开始 -->
+<div id="order_receipt_main_top" class="main_top order_main_top">
+  <div class="main_top_box">
+    
+    <div class="title"><?php echo $info['title']; ?></div>
+
+    <div class="param">
+      <dl>
+        <dt>活动时间</dt>
+        <dd><?php echo date('Y/m/d H:i',$info['start_date']); ?> - <?php echo date('Y/m/d H:i',$info['end_date']); ?></dd>
+      </dl>
+      <dl class="address">
+        <dt>活动地点</dt>
+        <dd>
+          <span><?php echo $info['province'].$info['city'].$info['district'].$info['address']; ?></span>
+        </dd>
+      </dl>
+    </div>
+
+    <div class="money">
+      <div class="actual">
+        <span>在线实收</span>
+        <span class="num"><?php echo $real_get; ?></span>
+        <span>元</span>
+      </div>
+      <div class="expect">
+        <span>（应收</span>
+        <span class="num"><?php echo $should_get; ?></span>
+        <span>元）</span>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+<!-- 置顶区 结束 -->
+
+
+<!-- 页面主体 开始 -->
+<div id="" class="main">
+
+
+  <div class="card">
+    <div class="list_planemenu">
+      <!-- <a class="planemenu_item" href="./event.html"> -->
+      <a class="planemenu_item" href="<?php echo site_url('activity/details/'.$info['id']); ?>">
+        <i class="icon material-icons">&#xeb3e;</i>
+        <span>查看相关活动</span>
+        <i class="enter material-icons">&#xe315;</i>
+      </a>
+      <!-- <a id="user_wallet_certi" class="planemenu_item" href="./event_member.html"> -->
+      <a id="user_wallet_certi" class="planemenu_item" href="<?php echo site_url('activity/members/'.$info['id']); ?>">
+        <i class="icon material-icons">&#xe7ef;</i>
+        <span>报名人列表</span>
+        
+        <em class="btn_color_1"><?php echo $count_apply_num; ?>人付款</em>
+
+        <i class="enter material-icons">&#xe315;</i>
+      </a>
+    </div>
+  </div>
+
+  <div class="order_state">
+  
+  <?php 
+    if ($info['is_into_avail_cash']==1) {
+      echo '<a class="btn disabled">已转款到钱包余额</a>';
+    }else{
+      // 7*24*60*60    24*60*60=86400
+      $into_wallet_day_time = $sys_set['into_wallet_day']['sval']*86400;
+      if ( time() > $info['end_date']+$into_wallet_day_time ) {
+        // 可提取
+        echo '<a class="btn btn_shadow btn_color_3" href="'.site_url('Wallet/into_avail_cash/'.$info['id'].'/'.$real_get).'">转款到钱包余额</a>';
+      }else{
+        echo '<a class="btn disabled">暂时冻结中...</a>';
+      }
+    }
+   ?>
+
+
+  <!-- 未到活动结束7天后 -->
+    <!-- <a class="btn disabled">暂时冻结中...</a> -->
+  
+  <!-- 可提取 -->
+    <!-- <a class="btn btn_shadow btn_color_3">转款到钱包余额</a> -->
+    
+  <!-- 已提款 -->
+    <!-- <a class="btn disabled">已转款到钱包余额</a> -->
+    
+
+
+  </div>
+  
+  <div class="main_tips">
+    个人发起活动的实收金额将于活动结束后 <strong><?php echo $sys_set['into_wallet_day']['sval']; ?>天</strong> 进行提取，届时可以提现。
+  </div>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

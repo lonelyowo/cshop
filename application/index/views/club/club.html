@@ -1,0 +1,872 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('Index/index_club'); ?>"><i class="material-icons">&#xe88a;</i></a>
+    <a class="btn dropdown"><i class="material-icons">&#xe5d4;</i></a>
+    <div id="subject_enroll_group_select" class="dropdown_menu">
+      <div class="btn_share_show menu_item">分享</div>
+      
+      <!-- 有管理权限显示该项目 -->
+      <?php if($manage):?>
+      <a class="menu_item" href="<?php echo site_url('club/edit/'.$club_details['id']);?>">修改俱乐部资料</a>
+      <a class="menu_item" href="<?php echo site_url('club/add_inform/'.$club_details['id']);?>">发布公告</a>
+      <?php endif;?>
+      
+      <!-- 普通用户显示该项目 -->
+      <?php if(!$manage): ?>
+      <div class="btn_feedback_show menu_item">投诉举报</div>
+      <?php endif; ?>
+      <!-- 会长不显示该项目 -->
+      <?php if($is_club_user && !$is_club_manage): ?>
+      <a class="menu_item" href='<?php echo site_url('club/quit_club/'.$club_details['id']); ?>'>退出俱乐部</a>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+<script>
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('Index/index_club'); ?>" );
+</script>
+
+<!-- 置顶区 开始 -->
+<div class="main_top" id="club_main_top">
+  <div class="main_top_box">
+
+    <div class="clubinfo">
+      <div class="clublogowrap">
+        <div class="clublogo" <?php if(!empty($club_details['logos'])): ?> style="background-image:url(<?php echo $club_details['logos']; ?>)" <?php endif; ?>></div>
+        <?php if($club_details['shopno'] !='' and $club_details['shopno'] != '0'):?>
+        <div class="clubqual">G</div>
+        <?php endif;?>
+      </div>
+      <div class="clubname"><?php echo $club_details['name'];?></div>
+      <div class="stati">
+        <div class="item stati_id">
+          <span>ID</span>
+          <span class="num"><?php echo $club_details['num'];?></span>
+        </div>
+        <div class="item stati_people">
+          <i class="material-icons">&#xe7ef;</i>
+          <span class="num"><?php echo $club_details['people_num'];?></span>
+        </div>
+      </div>
+      <div class="clubslogan"><?php echo $club_details['slogan'];?></div>
+      <div class="clubstar" style="background-image: url(<?php echo base_url().$club_details['pic'];?>);"></div>
+    </div>
+    
+    <?php if(!empty($club_notices)): ?>
+    <a class="inform" href="<?php echo site_url('club/notices/'.$club_details['id']);?>">
+      <div class="inform_title"><?php echo $club_notices['title'];?></div>
+      <div class="inform_text"><?php echo $club_notices['content'];?></div>
+      <i class="icon iconfont"></i>
+    </a>
+    <?php endif; ?>
+    <div id="club_main_top_qunp">
+      <a class="btn btn_color_1" href="##">加入群聊</a>
+    </div>
+    
+    <div id="club_tab_nav" class="tab_nav tab_nav_switch">
+      <a class="active" data-for="#club_tab_plate_index">主页</a>
+      <a data-for="#club_tab_plate_event">活动</a>
+      <a id="yyy" class="yyy" data-for="#club_tab_plate_album">相册</a>
+      <a data-for="#club_tab_plate_travelogue">游记</a>
+    </div>
+    
+  </div>
+</div>
+<!-- 置顶区 结束 -->
+
+
+
+<!-- 底栏_未加入 开始 -->
+<!-- 仅未加入状况下会显示 -->
+<?php if(!$is_club_user):?>
+<div id="club_hurryup" class="bottombar" >
+  <div class="bottombar_box">
+  
+    <!-- 俱乐部不开放要加 disabled 同时改文字为 加入申请不开放 -->
+    <a class="bottombar_btn btn btn_color_3" id="btn_iwantenroll" href="<?php echo site_url('club/join/'.$club_details['id']); ?>">
+      <span>我要加入</span>
+    </a>
+    
+  </div>
+</div>
+<?php endif; ?>
+<!-- 底栏_未加入 结束 -->
+
+<!-- 底栏_管理员 开始 -->
+<!-- 仅有管理权限的用户会显示 -->
+<?php if($manage):?>
+<div id="club_index_manage_bottombar" class="bottombar">
+  <div class="bottombar_box">
+
+    <a class="bottombar_btn btn btn_color_1" id="btn_iwantenroll" href="<?php echo site_url('activity/add'); ?>"> 
+      <span>发起活动</span>
+    </a>
+    
+  </div>
+</div>
+<?php endif; ?>
+<!-- 底栏_管理员 结束 -->
+
+
+
+
+<!-- 页面主体 开始 -->
+<div class="main">
+
+  <!-- 俱乐部主页 开始 -->
+  <div id="club_tab_plate_index" class="tab_plate active">
+
+    <div id="card_club_info" class="card folded">
+    <?php if($manage): ?>
+      <!-- 仅管理员可见 -->
+      <a href="<?php echo site_url('club/club_exp/'.$club_details['id']); ?>"><dl>
+        <dt>经验值</dt>
+        <dd><?php echo $club_details['experience'];?></dd>
+      </dl></a>
+    <?php endif; ?>
+      <dl>
+        <dt>所在地</dt>
+        <dd><?php echo $club_details['province'].' '.$club_details['city'].' '.$club_details['district']?></dd>
+      </dl>
+      <dl class="project">
+        <dt>项目</dt>
+        <dd>
+        <?php $project_arr = explode(',', $club_details['projects']);foreach ($project_arr as $project):?>
+          <span><?php echo $project;?></span>
+        <?php endforeach;?>
+        </dd>
+      </dl>
+      <div class="stati">
+        <div class="item stati_event">
+          <div>举办活动</div>
+          <span class="num" style="color:#ff5736;"><?php echo $club_details['activitys_num'];?></span>
+        </div>
+        <div class="item stati_persontime">
+          <div>参与人次</div>
+          <span class="num" style="color:#00c525;"><?php echo $club_details['peoples'];?></span>
+        </div>
+        <div class="item stati_event">
+          <div>游记</div>
+          <span class="num" style="color:#0081e6;"><?php echo $club_details['travels_num'];?></span>
+        </div>
+      </div>
+    </div>
+    
+  <!--
+    <div id="" class="card card_zan">
+      <div class="card_title">他们觉得很赞：</div>
+      <a class="">
+        <i class="material-icons">&#xe87d;</i>
+        <span class="num">256</span>
+      </a>
+      <a class="list" href="">
+        <div class="avatar" style="background-image:url(./demo/img/avatar_demo01.jpg)"></div>
+      </a>
+    </div>
+  -->
+
+    <div id="" class="card card_enrolled">
+      <div class="card_title">成员（<?php echo $club_details['people_num'];?>）：</div>
+      <div class="list_enrolled">
+        <div class="list">
+        <?php foreach($club_members as $member):?>
+          <a href="<?php echo site_url('user/details/'.$member['userid']);?>" class="item avatar" <?php if(!empty($member['avatar'])): ?> style="background-image:url(<?php echo $member['avatar']; ?>)" <?php endif;?>></a>
+        <?php endforeach;?>
+        </div>
+        <a class="list_right_more" href="<?php echo site_url('club/members/'.$club_details['id']); ?>"><span>查看所有</span><i class="icon iconfont">&#xe60a;</i></a>
+      </div>
+    </div>
+    
+    <div id="club_detail" class="card_text_detail card folded">
+      <div class="richtext">
+        <!-- 活动详说明 图文内容 开始 -->
+       <?php echo $club_details['content']; ?>
+
+        <!-- 活动详说明 图文内容 结束 -->
+      </div>
+      <div class="card_more card_more_bg"><span>展开全部</span></div>
+    </div>
+    
+
+
+  </div>
+  <!-- 俱乐部主页 结束 -->
+  
+  <!-- 俱乐部活动页 开始 -->
+  <div id="club_tab_plate_event" class="tab_plate">
+    <div class="main_title">
+      <span>共 <?php echo $club_details['activitys_num'];?> 个活动</span>
+    </div>
+    <div class="list_event">
+    </div>
+    <a class="main_more">载入中…</a>
+  </div>
+  <!-- 俱乐部活动页 结束 -->
+  
+  <!-- 俱乐部相册页 开始 -->
+  <div id="club_tab_plate_album" class="tab_plate">
+  
+    <div class="main_title">
+      <span>共 <?php echo $club_details['albums_num'];?> 个相册</span>
+    </div>
+  
+    <div class="list_album">
+<!--
+      <a class="item card" href="./photo_list.html">
+        <div class="cover" style="background-image:url(./demo/img/photo_demo01.jpg)"></div>
+        <div class="title">猴子捞月</div>
+        <div class="enter">
+          <span class="num">25</span>
+          <i class="material-icons">&#xe5cc;</i>
+        </div>
+      </a>
+-->
+    </div>
+    
+    <a class="main_more">点击载入更多相册</a>
+
+  </div>
+  <!-- 俱乐部相册页 结束 -->
+  
+  <!-- 俱乐部游记页 开始 -->
+  <div id="club_tab_plate_travelogue" class="tab_plate">
+  
+    <div class="main_title">
+      <span>共 <?php echo $club_details['travels_num'];?> 篇</span>
+    </div>
+  
+    <div class="list_travelogue">
+<!--
+      <a class="item card" href="./event.html">
+        <div class="cover" style="background-image:url(./demo/img/photo_demo05.jpg)"></div>
+        <div class="title">记十二月中旬玉虚山摘空虚老道的桃子</div>
+        <div class="event">八公里攀爬玉虚山这里是活动标题</div>
+        <div class="clearfix"><hr></div>
+        <div class="author">
+          <div class="avatar" style="background-image:url(./demo/img/avatar_demo02.jpg)"></div>
+          <div class="name">靠山屯的京东大萝卜</div>
+          <div class="time">2015-05-05 05:05</div>
+        </div>
+        <div class="stati">
+          <div class="item stati_view">
+            <i class="material-icons">&#xe8f4;</i>
+            <span class="num">1203</span>
+          </div>
+          <div class="item stati_comment">
+            <i class="material-icons">&#xe0b9;</i>
+            <span class="num">56</span>
+          </div>
+          <div class="item stati_zan">
+            <i class="material-icons">&#xe87d;</i>
+            <span class="num">256</span>
+          </div>
+        </div>
+      </a>
+-->
+    </div>
+    
+    <a class="main_more">点击载入更多游记</a>
+    
+  </div>
+  <!-- 俱乐部游记页 结束 -->
+  
+  
+  
+  
+
+  
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+<script>
+var scrollload = {};
+$(function(){
+
+
+
+
+  //载入活动数据
+  $("#club_tab_plate_event").on("click", ".main_more", function(){
+  
+    //暂停滚动载入新内容
+    scrollload = {};
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_event_page = $(this).data("page")?$(this).data("page"):0;
+    
+    var tmp_params = $("#event_list_search_box [name=keyword],#event_list_tab_filter input").serialize() + "&page=" + tmp_event_page;
+    
+    // console.log( tmp_params );
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "<?php echo base_url('static/index/demo/json/event.json'); ?>",
+      url: "<?php echo site_url('club/activities/'.$club_details['id']); ?>",
+      data: tmp_params,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) { //载入成功
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.event.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.event.length; i++) {
+            var tmp_author_avatar,
+                tmp_author_name,
+                tmp_cover,
+                tmp_event_state;
+          
+            switch( data.event[i].state ) {
+              case 1:
+                tmp_event_state = "stat_enroll";
+                tmp_event_state_text = "报名中";
+                break;
+              case 2:
+                tmp_event_state = "stat_enrollend";
+                tmp_event_state_text = "报名结束";
+                break;
+              case 3:
+                tmp_event_state = "stat_ing";
+                tmp_event_state_text = "活动进行中";
+                break;
+              case 4:
+                tmp_event_state = "stat_end";
+                tmp_event_state_text = "活动结束";
+                break;
+              default:
+                tmp_event_state = "stat_prepare";
+                tmp_event_state_text = "失效";
+            }
+          
+            if( data.event[i].club_id ) {
+              if( data.event[i].club_logo ) {
+                tmp_author_avatar = "data-lazybgimg=\"" + data.event[i].club_logo + "\"";
+              } else {
+                tmp_author_avatar = "";
+              }
+              tmp_author_name = data.event[i].club_name;
+            } else {
+              if( data.event[i].author_avatar ) {
+                tmp_author_avatar = "data-lazybgimg=\"" + data.event[i].author_avatar + "\"";
+              } else {
+                tmp_author_avatar = "";
+              }
+              tmp_author_name = data.event[i].author_name;
+            }
+
+            if( data.event[i].cover ) {
+              tmp_cover = "data-lazybgimg=\"" + data.event[i].cover + "\"";
+            } else {
+              tmp_cover = "";
+            }
+          
+          /*  tmp_html += "<a class=\"item card " + tmp_event_state + "\" " + tmp_cover + " href=\"./event.html?id=" + data.event[i].id + "\">" +
+            "<div class=\"eventinfo\"><div class=\"author\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + tmp_author_name + "</div></div><div class=\"title\">" + data.event[i].title + "</div><div class=\"subinfo\">" + data.event[i].subinfo + "</div></div><div class=\"price\">" + data.event[i].price + "</div>" +
+            "<div class=\"state\">" + tmp_event_state_text + " | <small>已报名" + data.event[i].actornum + "人</small></div></a>";*/
+            //改链接
+             tmp_html += "<a class=\"item card " + tmp_event_state + "\" " + tmp_cover + " href=\"<?php echo base_url();?>" + "index.php/activity/details/" + data.event[i].id + "\">" +
+            "<div class=\"eventinfo\"><div class=\"author\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + tmp_author_name + "</div></div><div class=\"title\">" + data.event[i].title + "</div><div class=\"subinfo\">" + data.event[i].subinfo + "</div></div><div class=\"price\">" + data.event[i].price + "</div>" +
+            "<div class=\"state\">" + tmp_event_state_text + " | <small>已报名" + data.event[i].actornum + "人</small></div><div class=\"stati\"><div class=\"item_stati stati_view\"><i class=\"material-icons\">&#xe8f4;</i><span class=\"num\">" + data.event[i].view_num + "</span></div><div class=\"item_stati stati_zan\"><i class=\"material-icons\">&#xe87d;</i><span class=\"num\">" + data.event[i].zan_num + "</span></div></div></a>";
+            
+          }
+
+          $(tmp_html).hide().appendTo( "#club_tab_plate_event .list_event" ).fadeIn(function(){
+
+            //通过缓存记录内容
+            if( window.sessionStorage ) {
+              sessionStorage.setItem("event_list", $("#club_tab_plate_event .list_event").html());
+              sessionStorage.setItem("event_page", tmp_event_page);
+            }
+          
+          });
+
+          //允许滚动载入新内容评论
+          scrollload.club_event = 1;
+
+          
+          //页数累加
+          tmp_event_page++;
+          $tmp_this_card_more.data( "page", tmp_event_page );
+          lazy();
+          $tmp_this_card_more.html( "载入中…" );
+          if(data.end)
+          {
+            $tmp_this_card_more.html( "没有更多内容了" );
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "载入失败，点击重试" );
+          $.fn.winktips("活动载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "载入失败，点击重试" );
+        $.fn.winktips("活动载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  $("#event_list_main .main_more").data( "page", 0 ).click();
+
+
+  //载入相册数据
+  $("#club_tab_plate_album").on("click", ".main_more", function(){
+  
+    //暂停滚动载入新内容
+    scrollload = {};
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_album_page = $(this).data("page")?$(this).data("page"):0;
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "<?php echo base_url('static/index/demo/json/album.json'); ?>",
+      url: "<?php echo site_url('club/albums/'.$club_details['id']); ?>",
+      data: "page=" + tmp_album_page,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.album.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.album.length; i++) {
+            var tmp_cover = "";
+          
+            if( data.album[i].cover ) {
+              tmp_cover = "data-lazybgimg=\"" + data.album[i].cover + "\"";
+            } else {
+              tmp_cover = "";
+            }
+          
+            /*tmp_html += "<a class=\"item card\" href=\"./photo_list.html?=" + data.album[i].id + "\"><div class=\"cover\" " + tmp_cover + "></div><div class=\"title\">" + data.album[i].title + "</div><div class=\"enter\"><span class=\"num\">" + data.album[i].total + "</span><i class=\"material-icons\">&#xe5cc;</i></div></a>";*/
+            //改链接
+            tmp_html += "<a class=\"item card\" href=\"<?php echo base_url();?>" + "index.php/albums/lists/" + data.album[i].id + "\"><div class=\"cover\" " + tmp_cover + "></div><div class=\"title\">" + data.album[i].title + "</div><div class=\"enter\"><span class=\"num\">" + data.album[i].total + "</span><i class=\"material-icons\">&#xe5cc;</i></div></a>";
+          }
+
+          $(tmp_html).hide().appendTo( "#club_tab_plate_album .list_album" ).fadeIn(function(){
+          
+            //通过缓存记录内容
+            if( window.sessionStorage ) {
+              sessionStorage.setItem("album_list", $("#club_tab_plate_album .list_album").html());
+              sessionStorage.setItem("album_page", tmp_album_page);
+            }
+          
+          });
+          
+          //允许滚动载入新内容
+          scrollload.club_album = 1;
+          
+          //页数累加
+          tmp_album_page++;
+          $tmp_this_card_more.data( "page", tmp_album_page );
+          lazy();
+          $tmp_this_card_more.html( "载入中…" );
+          if(data.end)
+          {
+            $tmp_this_card_more.html( "没有更多内容了" );
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "载入失败，点击重试" );
+          $.fn.winktips("相册载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "载入失败，点击重试" );
+        $.fn.winktips("相册载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  
+
+  //载入游记数据
+  $("#club_tab_plate_travelogue").on("click", ".main_more", function(){
+  
+    //暂停滚动载入新内容
+    scrollload = {};
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_travelogue_page = $(this).data("page")?$(this).data("page"):0;
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "<?php echo base_url('static/index/demo/json/travelogue.json'); ?>",
+      url: "<?php echo site_url('club/travels/'.$club_details['id']); ?>",
+      data: "page=" + tmp_travelogue_page,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.travelogue.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.travelogue.length; i++) {
+            var tmp_author_avatar = tmp_cover = "";
+          
+            if( data.travelogue[i].author_avatar ) {
+              tmp_author_avatar = "data-lazybgimg=\"" + data.travelogue[i].author_avatar + "\"";
+            } else {
+              tmp_author_avatar = "";
+            }
+            if( data.travelogue[i].cover ) {
+              tmp_cover = "data-lazybgimg=\"" + data.travelogue[i].cover + "\"";
+            } else {
+              tmp_cover = "";
+            }
+          
+            /*tmp_html += "<a class=\"item card\" href=\"./travelogue.html?id=" + data.travelogue[i].id + "\">" +
+                        "<div class=\"cover\" " + tmp_cover + "></div><div class=\"title\">" + data.travelogue[i].title + "</div><div class=\"event\">" + data.travelogue[i].event + "</div><div class=\"clearfix\"><hr></div><div class=\"author\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + data.travelogue[i].author_name + "</div><div class=\"time\">" + data.travelogue[i].time + "</div></div><div class=\"stati\"><div class=\"item stati_view\"><i class=\"material-icons\">&#xe8f4;</i><span class=\"num\">" + data.travelogue[i].stati_view + "</span></div><div class=\"item stati_comment\"><i class=\"material-icons\">&#xe0b9;</i><span class=\"num\">" + data.travelogue[i].stati_comment + "</span></div><div class=\"item stati_zan\"><i class=\"material-icons\">&#xe87d;</i><span class=\"num\">" + data.travelogue[i].stati_zan + "</span></div></div></a>";*/
+            //改链接
+            tmp_html += "<a class=\"item card\" href=\"<?php echo base_url();?>" + "index.php/travels/details/" + data.travelogue[i].id + "\">" +
+                        "<div class=\"cover\" " + tmp_cover + "></div><div class=\"title\">" + data.travelogue[i].title + "</div><div class=\"event\">" + data.travelogue[i].event + "</div><div class=\"clearfix\"><hr></div><div class=\"author\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + data.travelogue[i].author_name + "</div><div class=\"time\">" + data.travelogue[i].time + "</div></div><div class=\"stati\"><div class=\"item stati_view\"><i class=\"material-icons\">&#xe8f4;</i><span class=\"num\">" + data.travelogue[i].stati_view + "</span></div><div class=\"item stati_comment\"><i class=\"material-icons\">&#xe0b9;</i><span class=\"num\">" + data.travelogue[i].stati_comment + "</span></div><div class=\"item stati_zan\"><i class=\"material-icons\">&#xe87d;</i><span class=\"num\">" + data.travelogue[i].stati_zan + "</span></div></div></a>";
+          }
+
+          $(tmp_html).hide().appendTo( "#club_tab_plate_travelogue .list_travelogue" ).fadeIn(function(){
+          
+            //通过缓存记录内容
+            if( window.sessionStorage ) {
+              sessionStorage.setItem("travelogue_list", $("#club_tab_plate_travelogue .list_travelogue").html());
+              sessionStorage.setItem("travelogue_page", tmp_travelogue_page);
+            }
+          
+          });
+          
+          //允许滚动载入新内容
+          scrollload.club_travelogue = 1;
+          
+          //页数累加
+          tmp_travelogue_page++;
+          $tmp_this_card_more.data( "page", tmp_travelogue_page );
+          lazy();
+          $tmp_this_card_more.html( "载入中…" );
+          if(data.end)
+          {
+            $tmp_this_card_more.html( "没有更多内容了" );
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "载入失败，点击重试" );
+          $.fn.winktips("游记载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "载入失败，点击重试" );
+        $.fn.winktips("游记载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+
+  
+  
+  
+  
+  //页签切换，自动滚动到记录位置
+  $("#club_tab_nav").on("click", "a", function(){
+  
+    scrollload = {};
+  
+    window.history.replaceState(null, document.title, location.href.split("#")[0] + $(this).data("for"));
+  
+    if( $(this).data("for") == "#club_tab_plate_travelogue" ) {
+      if( $("#club_tab_plate_travelogue .list_travelogue > .item").length == 0 ) {
+        $("#club_tab_plate_travelogue .main_more").click();
+      }
+    } else if( $(this).data("for") == "#club_tab_plate_album" ) {
+
+      if( $("#club_tab_plate_album .list_album > .item").length == 0 ) {
+        $("#club_tab_plate_album .main_more").click();
+      }
+    } else if( $(this).data("for") == "#club_tab_plate_event" ) {
+      if( $("#club_tab_plate_event .list_event > .item").length == 0 ) {
+        $("#club_tab_plate_event .main_more").click();
+      }
+    }
+
+    var tmp_thisscrolltop = $(this).data("scrolltop")?$(this).data("scrolltop"):0;
+
+    if( tmp_thisscrolltop < $("#club_main_top").offset().top + $("#club_main_top").height() - 87 ) {
+      tmp_thisscrolltop = $("#club_main_top").offset().top + $("#club_main_top").height() - 87;
+    }
+
+    $("html, body").animate( {scrollTop: tmp_thisscrolltop}, "slow" );
+
+    return false;
+  });
+
+
+
+
+
+  //根据hash进入相应标签页
+  $("#club_tab_nav a").each(function(){
+    if( $(this).data("for") == location.hash.split("_cache")[0] ) {
+      
+      //载入俱乐部的活动缓存
+      if( location.hash == "#club_tab_plate_event_cache" && window.sessionStorage ) {
+        if( sessionStorage.getItem("event_list") ) {
+          $("#club_tab_plate_event .list_event").html( sessionStorage.getItem("event_list") );
+          $("#club_tab_plate_event .main_more").data( "page", sessionStorage.getItem("event_page") );
+          $(this).data("scrolltop", sessionStorage.getItem("tmp_scroll"));
+        }
+      }
+      
+      //载入俱乐部的相册缓存
+      if( location.hash == "#club_tab_plate_album_cache" && window.sessionStorage ) {
+        if( sessionStorage.getItem("album_list") ) {
+          $("#club_tab_plate_album .list_album").html( sessionStorage.getItem("album_list") );
+          $("#club_tab_plate_album .main_more").data( "page", sessionStorage.getItem("photo_page") );
+          $(this).data("scrolltop", sessionStorage.getItem("tmp_scroll"));
+        }
+      }
+      
+      //载入俱乐部的游记缓存
+      if( location.hash == "#club_tab_plate_travelogue_cache" && window.sessionStorage ) {
+        if( sessionStorage.getItem("travelogue_list") ) {
+          $("#club_tab_plate_travelogue .list_travelogue").html( sessionStorage.getItem("travelogue_list") );
+          $("#club_tab_plate_travelogue .main_more").data( "page", sessionStorage.getItem("travelogue_page") );
+          $(this).data("scrolltop", sessionStorage.getItem("tmp_scroll"));
+        }
+      }
+
+      $(this).click();
+      
+    }
+  });
+  
+  //页面跳转瞬间，改变历史记录加入hash
+  $("html").on("click", "a[href]", function(e) {
+    //e.preventDefault();
+    
+    window.history.replaceState(null, document.title, location.href.split("#")[0] + $( "#club_tab_nav .active" ).data("for") + "_cache");
+    
+    //记录滚动位置
+    if( window.sessionStorage ) {
+      sessionStorage.setItem("tmp_scroll", $(window).scrollTop());
+    }
+
+  });
+  
+  
+  
+  //如果俱乐部说明内容较少，自动展开
+  if( $("#club_detail .richtext").height() <= $("#club_detail.folded").height() ) {
+    $("#club_detail .card_more").click();
+  }
+  
+  
+  
+  
+});
+
+  
+$(window).scroll(function() {
+  
+  var scrollTop = $(window).scrollTop();
+  //切换标签浮动
+  if( $("#club_tab_nav").length ) {
+    if ( $("#club_main_top").offset().top + $("#club_main_top").height() - $("#club_tab_nav").height() - 50 < scrollTop ) {
+      $("body").addClass("club_tab_nav_fixed");
+    } else {
+      $("body").removeClass("club_tab_nav_fixed");
+    }
+  }
+  
+});
+
+
+  //滚动载入新内容
+  $(window).scroll(function() {
+  
+    if( scrollload.club_event ) {
+      scrollLoad( $("#club_tab_plate_event .main_more") );
+    }
+    if( scrollload.club_album ) {
+      scrollLoad( $("#club_tab_plate_album .main_more") );
+    }
+    if( scrollload.club_travelogue ) {
+      scrollLoad( $("#club_tab_plate_travelogue .main_more") );
+    }
+
+  });
+
+
+
+
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+<!-- 投诉举报 开始 -->
+<div id="feedback" class="subplate">
+  
+  <div class="feedback_form">
+
+    <label class="form_item form_item_plane">
+      <div class="form_label">理由</div>
+      <div class="form_item_con">
+        <div class="form_select">
+          <select id="feedback_type" name="type" class="form_input appearance_none">
+          <option value="0" selected>请选择</option>
+          <option value="1">诈骗</option>
+          <option value="2">涉黄</option>
+          <option value="3">其他</option>
+          </select>
+          <input type="hidden" name="source_type" value="c">
+          <input type="hidden" name="source_id" value="<?php echo $club_details['id']; ?>">
+        </div>
+      </div>
+    </label>
+    
+    <label class="form_item form_item_plane">
+      <div class="form_label">描述</div>
+      <div class="form_item_con">
+        <textarea class="form_input" id="feedback_content" name="content" placeholder="不超过250个(汉字)" maxlength="250"></textarea>
+      </div>
+    </label>
+    
+    <label class="origi_info form_item form_item_plane">
+      <div class="form_label">原始信息</div>
+      <div class="form_item_con">
+       <div class="form_static">
+       </div>
+       <input type="hidden" name="source_title">
+      </div>
+    </label>
+    
+    <label class="origi_info_url form_item form_item_plane">
+      <div class="form_label">URL</div>
+      <div class="form_item_con">
+        <div class="form_static"></div>
+        <input type="hidden" name="source_url">
+      </div>
+    </label>
+
+  </div>
+
+  <!-- 底栏 开始 -->
+  <div class="bottombar">
+    <div class="bottombar_box">
+      <a class="bottombar_btn_cancel bottombar_btn btn btn_color_1" id="">
+        <span>取消</span>
+      </a>
+      <a class="bottombar_btn_submit bottombar_btn btn btn_color_2" id="">
+        <span>提交</span>
+      </a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<script type="text/javascript">
+   $( "body" ).on("click", "#feedback .bottombar_btn_submit", function(){
+   <?php if(!isset($_SESSION['login'])):?>
+    // 如果没有登录，则跳转至登录页面，只有登录才可投诉
+    window.location.replace("<?php echo site_url('login');?>");
+    return false;
+    <?php endif;?>
+    
+   
+    if( $('#feedback_type').val() ==0 )
+    {
+       $.fn.winktips("请选择投诉理由！（/TДT)/");
+       return false;
+    }
+    if($('#feedback_content').val() == '')
+    {
+       $.fn.winktips("请填写描述！（/TДT)/");
+       return false;
+    }
+    $params = $('#feedback *').serialize();
+    console.log('params:'+$params);
+    $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: "<?php echo site_url('index/feedback');?>",
+          data: $('#feedback *').serialize(),
+          success: function(data){
+            console.log(data);
+            if( data.state == 1 ) {
+              $("#feedback").hide();
+              $.fn.hasShadow("hide");
+              $.fn.winktips("投诉已提交！");
+            }
+            if( data.state == 0 ) {
+              $.fn.winktips( data.msg );
+            }
+          }
+    });
+  });
+</script>
+<!-- 投诉举报 结束 -->
+</body>
+</html>

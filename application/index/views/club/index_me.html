@@ -1,0 +1,122 @@
+<?php $this->load->view('public/header.html'); ?>
+
+
+<!-- 以上为页头 -->
+
+<script>
+  $("#header .header_leftarea").html("");
+</script>
+
+<!-- 一级底栏 开始 -->
+<?php $this->load->view('public/index_bottombar.html'); ?>
+<!-- 一级底栏 结束 -->
+
+
+
+
+
+
+<!-- 置顶区 开始 -->
+<div id="me_main_top" class="main_top">
+  <div class="main_top_box">
+    <div class="user_main_top_info">
+    <div class="avatar_wrap">
+      <div class="avatar" <?php if(!empty($_SESSION['user']['avatar'])):?> style="background-image:url(<?php echo $_SESSION['user']['avatar'];?>)" <?php else: ?> style="background-image:url(<?php echo base_url('static/index/club/img/avatar_1.jpg');?>)" <?php endif; ?>></div>
+    </div>
+    <div class="name"><?php echo $_SESSION['user']['name'];?></div>
+    <div class="stati">
+      <div class="item stati_id">
+        <span>ID</span>
+        <span class="num"><?php echo $_SESSION['user']['id'];?></span>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</div>
+<!-- 置顶区 结束 -->
+
+<!-- 页面主体 开始 -->
+<div id="me_main" class="main">
+
+  <div class="card">
+    <div class="list_planemenu">
+      <a class="planemenu_item" href="<?php echo site_url('my/info');?>">
+        <i class="icon material-icons">&#xe85e;</i>
+        <span>编辑个人资料</span>
+        <i class="enter material-icons">&#xe315;</i>
+      </a>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="list_planemenu">
+      <a class="planemenu_item" href="<?php echo site_url('my/management_activity');?>">
+        <i class="icon material-icons">&#xeb3e;</i>
+        <span>我的活动</span>
+        <i class="enter material-icons">&#xe315;</i>
+      </a>
+      <a class="planemenu_item" href="<?php echo site_url('my/management_club');?>">
+        <i class="icon material-icons">&#xe3a0;</i>
+        <span>我的俱乐部</span>
+        <i class="enter material-icons">&#xe315;</i>
+      </a>
+      <a class="planemenu_item" href="<?php echo site_url('my/travels');?>">
+        <i class="icon material-icons">&#xe86e;</i>
+        <span>我的游记</span>
+        <i class="enter material-icons">&#xe315;</i>
+      </a>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="list_planemenu">
+      <a class="planemenu_item" href="<?php echo site_url('Index/user_wallet');?>">
+        <i class="icon material-icons">&#xe850;</i>
+        <span>我的钱包</span>
+        <i class="enter material-icons">&#xe315;</i>
+      </a>
+      <a class="planemenu_item" href="<?php echo site_url('my/integral');?>">
+        <i class="icon material-icons">&#xe3f1;</i>
+        <span>我的积分</span>
+        <i class="enter material-icons">&#xe315;</i>
+      </a>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="list_planemenu">
+      <a class="planemenu_item" href="<?php echo site_url('my/friends'); ?>">
+        <i class="icon material-icons">&#xe7fb;</i>
+        <span>我的好友</span>
+        <i class="enter material-icons">&#xe315;</i>
+      </a>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="list_planemenu">
+      <a class="planemenu_item" href="<?php echo site_url('my/setting'); ?>">
+        <i class="icon material-icons">&#xe8b8;</i>
+        <span>设置</span>
+        <i class="enter material-icons">&#xe315;</i>
+      </a>
+    </div>
+  </div>
+
+</div>
+<!-- 页面主体 结束 -->
+
+
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

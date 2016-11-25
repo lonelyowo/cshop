@@ -1,0 +1,513 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('My'); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('My'); ?>" );
+});
+</script>
+
+<!-- 页面主体 开始 -->
+<div class="main">
+  
+  <div id="user_cash" class="">
+  <form id="user_cash_form">
+
+    
+    <div class="card card_form">
+    
+      <div class="form_item form_item_plane">
+        <div class="form_label">认证用户</div>
+        <div class="form_item_con">
+          <div class="form_static"><b><?php echo !empty($user)?$user['real_name']:''; ?></b><small> [已认证]</small></div>
+        </div>
+      </div>
+    
+    	<div class="form_item form_item_plane" id="user_cash_target_bank_account">
+        <div class="form_label">选择账户</div>
+        <div class="form_item_con">
+        
+          <div class="target_bank_account">
+          <!--
+            <div class="bank_ico" style="background-image: url(./club/img/bank/工商银行.png);"></div>
+            <div class="name">工商银行</div>
+            <div class="text">尾号 7032</div>
+            -->
+            
+            <div class="bank_ico"></div>
+            <div class="name">请选择</div>
+            <div class="text">--</div>
+            
+          </div>
+          <input type="hidden" name="user_cash_target" value="0">
+
+          <i class="enter material-icons">&#xe315;</i>
+          
+        </div>
+      </div>
+      
+      <label id="user_cash_num" class="form_item form_item_plane">
+        <div class="form_label">提现金额</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input has_unit" name="user_cash_num" placeholder="0" value="">
+          <div class="form_unit">元</div>
+        </div>
+      </label>
+      
+      <div id="user_cash_limit" class="form_item form_item_plane">
+        <div class="form_item_con">
+          <div class="form_static">可用余额 <b class="num"><?php echo $cash; ?></b> 元 <a class="btn">全部提现</a></div>
+        </div>
+      </div>
+      
+      <label class="form_item form_item_plane">
+        <div class="form_label">备注</div>
+        <div class="form_item_con">
+          <textarea class="form_input" name="user_profile_intro" placeholder="选填，不超过250个(汉字)" maxlength="250"></textarea>
+        </div>
+      </label>
+
+    </div>
+    
+    <div class="card card_form">
+      <div class="form_item form_item_plane form_item_tips">
+        <div class="form_label">提现规则</div>
+        <div class="form_item_con">
+          <div class="form_static"><?php echo $tip; ?></div>
+        </div>
+      </div>
+    </div>
+
+    <!--底部按钮 开始-->
+    <div id="" class="bottombar">
+      <div class="bottombar_box">
+        <button type="submit" class="bottombar_btn btn btn_color_1">确认提现</button>
+      </div>
+    </div>
+    <!--底部按钮 结束-->
+    
+    
+    </form>
+  </div>
+</div>
+<!-- 页面主体 结束 -->
+
+
+
+
+
+
+<!-- 选择银行账户 开始 -->
+<!-- 
+2016-10-09 10:54
+ -->
+<div class="subplate subplate_selectbankaccount">
+
+  <div class="subplate_title">选择银行账户：</div>
+
+  <div class="selectbankaccount_items">
+  
+    
+    <?php if ($bankcard_list) : ?>
+      <?php foreach ($bankcard_list as $row) : ?>
+        <div class="item" data-id="<?php echo $row['id']; ?>">
+          <div class="item_box">
+            <div class="bank_ico" style="background-image: url(<?php echo base_url('static/index/club/img/bank/'.$row['bank_name'].'.png'); ?>);"></div>
+            <div class="name"><?php echo $row['bank_name']; ?></div>
+            <div class="text">尾号 <?php echo substr($row['bank_card_id'],-4,4); ?></div>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    <?php endif; ?>
+    
+    <!-- <div class="item active" data-id="453">
+      <div class="item_box">
+        <div class="bank_ico" style="background-image: url(./club/img/bank/农业银行.png);"></div>
+        <div class="name">农业银行</div>
+        <div class="text">尾号 7033</div>
+      </div>
+    </div>
+    
+    <div class="item" data-id="454">
+      <div class="item_box">
+        <div class="bank_ico" style="background-image: url(./club/img/bank/交通银行.png);"></div>
+        <div class="name">交通银行</div>
+        <div class="text">尾号 7034</div>
+      </div>
+    </div> -->
+    
+  </div>
+  <a class="btn_selectbankaccount_add"><i class="material-icons">&#xe145;</i><span>添加新账户</span></a>
+
+  <!-- 底栏 开始 -->
+  <div class="bottombar">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn bottombar_btn_manage btn btn_color_2">管理账户</a>
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_4">关闭</a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<!-- 选择银行账户 结束 -->
+
+
+<!-- 创建银行账户 开始 -->
+<!-- 
+2016-10-09 10:54
+ -->
+<div class="subplate subplate_bankaccountadd">
+  <div class="subplate_title">添加银行账户：</div>
+  <form id="bankaccountadd_form">
+    <div class="bankaccountadd_form">
+    
+      <label class="form_item form_item_plane">
+        <div class="form_label">银行</div>
+        <div class="form_item_con">
+          <div class="form_select">
+            <select name="user_bankaccount_bank" class="form_input appearance_none">
+              <option value="">请选择</option>
+              <option value="建设银行">建设银行</option>
+              <option value="工商银行">工商银行</option>
+              <option value="农业银行">农业银行</option>
+              <option value="中国银行">中国银行</option>
+            </select>
+          </div>
+        </div>
+      </label>
+      
+      <label class="form_item form_item_plane form_banknumber">
+        <div class="form_label">银行卡号</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="user_bankaccount_number" placeholder="请输入卡号" value="">
+        </div>
+      </label>
+      
+      <label class="form_item form_item_plane">
+        <div class="form_label">开户姓名</div>
+        <div class="form_item_con">
+          <div class="form_static"><b><?php echo !empty($user)?$user['real_name']:''; ?></b><small> [已认证]</small></div>
+          
+          <!-- 因为只能打到自己银行卡中，有没有这个无所谓了 -->
+          <input type="hidden" name="user_bankaccount_name" placeholder="银行卡开户人" value="已经认证的人名">
+          
+        </div>
+      </label>
+      
+      <div class="form_item form_item_tips form_item_plane">
+        <div class="form_label null">提示</div>
+        <div class="form_item_con">
+          <div class="form_static">以下开户行信息，供打款参考。<hr><small>请尽量填写。</small></div>
+        </div>
+      </div>
+      
+      <div class="form_item form_item_plane ">
+        <div class="form_label">开户行地区</div>
+        <div class="form_item_con select_zone" id="user_bankaccount_place">
+          <div class="form_input dropdown"> <span class="province"></span> <span class="city"></span> <span class="area"></span> </div>
+          <div class="dropdown_menu" id="" style="display: none;">
+            <div class="form_select">
+              <select class="form_input" name="user_bankaccount_province" id="province">
+              </select>
+            </div>
+            <div class="form_select">
+              <select class="form_input" name="user_bankaccount_city" id="city">
+              </select>
+            </div>
+            <div class="form_select">
+              <select class="form_input" name="user_bankaccount_area" id="area">
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <label class="form_item form_item_plane">
+        <div class="form_label">具体网点</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input input_address" name="user_bankaccount_address" placeholder="xx支行/分行" value="">
+        </div>
+      </label>
+      
+
+      
+      
+
+
+    </div>
+    <!-- 底栏 开始 -->
+    <div class="bottombar">
+      <div class="bottombar_box">
+        <a class="bottombar_btn bottombar_btn_cancel btn btn_color_4">取消</a>
+        <button type="submit" class="bottombar_btn btn btn_color_3">确认添加</button>
+      </div>
+    </div>
+    <!-- 底栏 结束 -->
+  </form>
+</div>
+<!-- 创建银行账户 结束 -->
+
+
+
+
+<script src="<?php echo base_url('static/index').'/club/js/geo.js'; ?>"></script>
+<script>
+$(function(){
+
+  //地址三级联动 感谢腾讯
+  setup();
+  //preselect('江西省');//省
+  //cityselect('九江市');//市
+  //townselect('湖口县');//区
+  province_textshow();
+  
+  $( "#province, #city, #area" ).on( "change", function(){
+    province_textshow();
+  });
+
+  function province_textshow() {
+    var tmp_province = ( $("#province").val() != "省份" )?$("#province").val():"--";
+    var tmp_city = ( $("#city").val() != "地级市" )?$("#city").val():"";
+    var tmp_area = ( $("#area").val() != "市、县级市、县" )?$("#area").val():"";
+
+    $( "#user_bankaccount_place .province" ).html( tmp_province );
+    $( "#user_bankaccount_place .city" ).html( tmp_city );
+    $( "#user_bankaccount_place .area" ).html( tmp_area );
+  }
+
+  //自动填写余额最大值
+  $("#user_cash_limit .btn").on("click", function(){
+    $("[name=user_cash_num]").val( $("#user_cash_limit .num").html() );
+  });
+
+  //展开选择账户面板
+  $("#user_cash_target_bank_account").on("click", function(){
+    $.fn.hasShadow();
+    $(".subplate_selectbankaccount").show();
+  });
+  
+  $(".subplate_selectbankaccount").on("click", ".bottombar_btn_cancel", function(){
+    $.fn.hasShadow("hide");
+    $(".subplate_selectbankaccount").hide();
+  });
+
+  //选择账户
+  $(".selectbankaccount_items").on("click", ".item_box", function(){
+    $("[name=user_cash_target]").val( $(this).closest(".item").data("id") );
+    $(".target_bank_account").html( $(this).html() );
+    $(this).closest(".item").addClass("active").siblings(".item").removeClass("active");
+    $.fn.hasShadow("hide");
+    $(".subplate_selectbankaccount").hide();
+  });
+  
+  //管理账户
+  $(".subplate_selectbankaccount .bottombar_btn_manage").on("click", function(){
+    $(".subplate_selectbankaccount").toggleClass("selectbankaccount_state_manage");
+    $(".selectbankaccount_items .item").each(function(){
+      if( !$(this).find(".btn_del").length ) {
+        $(this).append( "<a class=\"btn btn_color_2 btn_del\"><i class=\"material-icons\">&#xe872;</i></a>" );
+      }
+    });
+  });
+  //删除账户
+  $(".selectbankaccount_items").on("click", ".btn_del", function(){
+  
+    var $tmp_del_bankaccount = $(this).closest(".item");
+    var tmp_del_bankaccount_id = $tmp_del_bankaccount.data("id");
+    
+    //alert( tmp_del_bankaccount_id );
+    //此处ajax删除账户
+    $.post("<?php echo site_url('Wallet/del_user_account'); ?>", {'user_account_id':tmp_del_bankaccount_id},
+          function(data){
+            if (data.status) {
+              // alert("提现申请提交成功");
+             $.fn.winktips("账户删除成功");
+                $tmp_del_bankaccount.fadeOut(200, function(){
+                  $(this).remove();
+                });
+            }
+          }, "json");
+
+    
+    if( $("[name=tmp_del_bankaccount_id]").val() == tmp_del_bankaccount_id ) {
+      $("[name=tmp_del_bankaccount_id]").val("");
+      $(".target_bank_account").html( "<div class=\"bank_ico\"></div><div class=\"name\">请选择</div><div class=\"text\">--</div>" );
+    }
+    
+    
+    
+    
+    
+  });
+
+  
+  //展开添加银行账户面板
+  $(".btn_selectbankaccount_add").on("click", function(){
+    $.fn.hasShadow();
+    $(".subplate_bankaccountadd").show();
+  });
+  
+  $(".subplate_bankaccountadd").on("click", ".bottombar_btn_cancel", function(){
+    //$.fn.hasShadow("hide");
+    $(".subplate_bankaccountadd").hide();
+  });
+
+  //添加银行账户
+  $("#bankaccountadd_form").submit( function() {
+
+    //检查银行卡号
+    if( !$("[name=user_bankaccount_number]").val() ) {
+      $.fn.poptips({
+        con: "请填写银行卡号！",
+        btnOKClick: function (){
+          $("[name=user_bankaccount_number]").focus();
+        }
+      });
+      return false;
+    }
+  
+    //检查银行
+    if( Math.round($("[name=user_bankaccount_bank]").val()) == 0 ) {
+      $.fn.poptips("请选择银行！");
+      return false;
+    }
+
+    //提交表单
+    // alert("提交表单");
+
+
+    var postdata = $('#bankaccountadd_form').serialize();
+
+    $.post("<?php echo site_url('Wallet/set_bank_card'); ?>", postdata,
+          function(data){
+            if (data.status) {
+              $(".subplate_bankaccountadd").hide();
+    
+              var tmp_bankaccount_id = data.data.bankaccount_id;
+              var tmp_bankaccount_lastnum = $("[name=user_bankaccount_number]").val().slice(-4);
+              var tmp_bankaccount_bank = $("[name=user_bankaccount_bank] option:selected").text();
+               
+              var tmp_bankaccount_item = "<div class=\"item\" data-id='"+tmp_bankaccount_id+"'><div class=\"item_box\"><div class=\"bank_ico\" style=\"background-image: url(<?php echo base_url('static/index/club/img/bank').'/'; ?>" + tmp_bankaccount_bank + ".png);\"></div><div class=\"name\">" + tmp_bankaccount_bank + "</div><div class=\"text\">尾号 " + tmp_bankaccount_lastnum + "</div></div></div>";
+              
+              $(".selectbankaccount_items").prepend( tmp_bankaccount_item );
+            } else {
+              alert("添加银行账户失败");
+            }
+          }, "json");
+    
+
+    return false;
+  });
+  
+  
+
+  
+  //添加银行账户
+  $("#user_cash_form").submit( function() {
+
+    //检查银行卡号
+    if( !$("[name=user_cash_num]").val() ) {
+      $.fn.poptips({
+        con: "请填写提现金额！",
+        btnOKClick: function (){
+          $("[name=user_cash_num]").focus();
+        }
+      });
+      return false;
+    }
+  
+    //检查银行
+    if( Math.round($("[name=user_cash_target]").val()) == 0 ) {
+      $.fn.poptips({
+        con: "请选择银行账户！",
+        btnOKClick: function (){
+          $("#user_cash_target_bank_account").click();
+        }
+      });
+      return false;
+    }
+
+    //提交表单
+
+    //alert("提交表单");
+
+    var postdata = $('#user_cash_form').serialize();
+
+    $.post("<?php echo site_url('Wallet/apply_cash'); ?>", postdata,
+          function(data){
+            if (data.status) {
+              // alert("提现申请提交成功");
+              $.fn.poptips({
+                con: data.msg,
+                btnOKClick: function (){
+                  window.location.href="<?php echo site_url('Index/user_wallet'); ?>";
+                }
+              });
+              
+            } else {
+              // alert("提现申请提交失败");
+              $.fn.poptips({
+                con: data.msg
+              });
+
+            }
+          }, "json");
+
+    return false;
+  });
+  
+
+
+
+
+});
+
+/*
+$("body").click(function(){
+
+  if( !$("#user_profile_idcard").val() ) {
+    var $this_parents_form_item = $("#user_profile_idcard").parents(".form_item");
+    $("#user_profile_idcard").focus();
+    
+    $this_parents_form_item.addClass( "haserror" );
+    
+    if( !$this_parents_form_item.find(".form_help").length ) {
+      $this_parents_form_item.append("<div class=\"form_help\">请输入6-16位密码，区分大小写，不能使用空格！</div>");
+    } else {
+      $this_parents_form_item.find(".form_help").html("请输入6-16位密码，区分大小写，不能使用空格！");
+    }
+  }
+
+});
+*/
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

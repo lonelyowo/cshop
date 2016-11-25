@@ -1,0 +1,399 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo base_url(); ?>"><i class="material-icons">&#xe88a;</i></a>
+    <a class="btn dropdown"><i class="material-icons">&#xe5d4;</i></a>
+    <div id="subject_enroll_group_select" class="dropdown_menu">
+    <?php if(isset($url)):?>
+      <a class="menu_item" href="<?php echo $url; ?>">查看相关活动</a>
+    <?php endif; ?>
+      <div class="btn_share_show menu_item">分享</div>
+      <?php if(!$manage): ?>
+      <!-- <div class="btn_feedback_show menu_item">投诉举报</div> -->
+    <?php endif; ?>
+    </div>
+  </div>
+</div>
+
+<script>
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo base_url(); ?>" );
+</script>
+
+<!-- 底栏 开始 -->
+<?php if($ismember || $manage): ?>
+<div id="photo_list_bottombar" class="bottombar">
+  <div  class="bottombar_box">
+    
+    <!-- 有管理权限显示该项目 -->
+    <?php if($manage): ?>
+    <a class="btn_manage bottombar_btn btn btn_color_1">
+      <span>整理</span>
+    </a>
+    <?php endif; ?>
+    <a class="bottombar_btn btn btn_color_3" href="<?php echo site_url('photos/add/'.$activity_id); ?>">
+      <span>我要发照片</span>
+    </a>
+  </div>
+</div>
+<?php endif; ?>
+<!-- 底栏 结束 -->
+
+<!-- 整理底栏 开始 -->
+<div id="photo_list_manage_bottombar" class="bottombar">
+  <div  class="bottombar_box">
+    <a class="bottombar_btn btn btn_color_1">
+      <span>结束整理</span>
+    </a>
+  </div>
+</div>
+<!-- 整理底栏 结束 -->
+
+<!-- 置顶区 开始 -->
+<div class="main_top" id="photo_list_main_top">
+  <div class="main_top_box">
+  
+    <div class="stati">共 <?php echo $photo_num;?> 张</div>
+    
+  </div>
+</div>
+<!-- 置顶区 结束 -->
+
+<!-- 页面主体 开始 -->
+<div class="main" id="photo_list_main">
+
+  <div class="card photo_card">
+    <div class="list_photo">
+    
+
+      <!-- <div class="photo_item" data-id="12">
+        <a class="photo_item_box" style="background-image:url(<?php echo base_url('static/index/demo/img/event_01.jpg'); ?>)" href="./demo/img/event_01.jpg">
+          <div class="author">
+            <div class="avatar" style="background-image:url(./demo/img/avatar_demo01.jpg)"></div>
+            <div class="name">靠山屯的京东大萝卜</div>
+          </div>
+          <div class="stati">
+            <div class="item stati_comment">
+              <i class="material-icons">&#xe0b9;</i>
+              <span class="num">56</span>
+            </div>
+            <div class="item stati_zan" data-eventid="26">
+              <i class="material-icons">&#xe87d;</i>
+              <span class="num">256</span>
+            </div>
+          </div>
+        </a>
+        <a class="btn_del btn btn_shadow btn_color_2"><i class="material-icons">&#xe872;</i></a>
+      </div> -->
+
+
+      
+    </div>
+    
+    <a class="card_more"><span>载入中…</span></a>
+  </div>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+<script>
+var scrollload = {};
+
+  //进入整理照片状态
+  $("#photo_list_bottombar .btn_manage, #photo_list_manage_bottombar .btn").on("click", function(){
+    $("body").toggleClass("photo_list_manage_bottombar_show");
+  });
+
+  //删除照片（单张）
+  $("#photo_list_main .list_photo").on("click", ".btn_del", function(){
+    var $tmp_del_photo = $(this).parents(".photo_item");
+    var tmp_del_photo_id = $tmp_del_photo.data("id");
+    
+    //alert( tmp_del_photo_id );
+    console.log(tmp_del_photo_id)
+    //此处删除图片
+    $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: "<?php echo base_url();?>index.php/photos/delete_ajax/"+tmp_del_photo_id,
+          success: function(data){
+            console.log(data);
+            if( data.state == 1 ) {
+              $.fn.winktips("照片删除成功");
+              $tmp_del_photo.fadeOut(200, function(){
+                $(this).remove();
+              });
+            }
+            if( data.state == 0 ) {
+              $.fn.winktips( data.msg );
+            }
+          }
+    });
+ /*   
+    $.fn.winktips("照片删除成功");
+    $tmp_del_photo.fadeOut(200, function(){
+      $(this).remove();
+    });*/
+    
+  });
+  
+  
+  //载入照片列表数据
+  $("#photo_list_main").on("click", ".card_more", function(){
+
+    //暂停滚动载入新内容
+    scrollload.photo_list = 0;
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_photo_page = $(this).data("page")?$(this).data("page"):0;
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "<?php echo base_url('static/index/demo/json/photo.json'); ?>",
+      
+      url: "<?php echo $ajax_url; ?>",
+      data: "page=" + tmp_photo_page,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.photo.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.photo.length; i++) {
+            var tmp_author_avatar = tmp_cover = tmp_url = "";
+          
+            if( data.photo[i].author_avatar ) {
+              tmp_author_avatar = "data-lazybgimg=\"" + data.photo[i].author_avatar + "\"";
+            } else {
+              tmp_author_avatar = "";
+            }
+            if( data.photo[i].thumbnail ) {
+              tmp_cover = "data-lazybgimg=\"" + data.photo[i].thumbnail + "\"";
+            } else if( data.photo[i].image ) {
+              tmp_cover = "data-lazybgimg=\"" + data.photo[i].image + "\"";
+            } else {
+              tmp_cover = "";
+            }
+            
+            //查看照片的链接
+            //tmp_url = data.photo[i].image;
+            // tmp_url = "./photo.html?id=" + data.photo[i].id;
+            tmp_url = "<?php echo base_url();?>" + "index.php/photos/details/" + data.photo[i].id;
+            
+          
+            tmp_html += "<div class=\"photo_item\" data-id=\"" + data.photo[i].id + "\"><a class=\"photo_item_box\" " + tmp_cover + " href=\"" + tmp_url + "\">" +
+            "<div class=\"author\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + data.photo[i].author_name + "</div></div><div class=\"stati\"><div class=\"item stati_comment\"><i class=\"material-icons\">&#xe0b9;</i><span class=\"num\">" + data.photo[i].stati_comment + "</span></div><div class=\"item stati_zan\"><i class=\"material-icons\">&#xe87d;</i><span class=\"num\">" + data.photo[i].stati_zan + "</span></div></div></a><a class=\"btn_del btn btn_shadow btn_color_2\"><i class=\"material-icons\">&#xe872;</i></a></div>";
+          }
+          //$("#photo_list_main .list_photo").append( tmp_html );
+          $(tmp_html).hide().appendTo( "#photo_list_main .list_photo" ).fadeIn(function(){
+          
+            //通过缓存记录内容
+            if( window.sessionStorage ) {
+              sessionStorage.setItem("photo_list", $("#photo_list_main .list_photo").html());
+              sessionStorage.setItem("photo_page", tmp_photo_page);
+            }
+          
+          });
+          
+          //允许滚动载入新内容
+          scrollload.photo_list = 1;
+          
+          //页数累加
+          tmp_photo_page++;
+          $tmp_this_card_more.data( "page", tmp_photo_page );
+          
+          lazy();
+          $tmp_this_card_more.html( "<span>载入中…</span>" );
+          if(data.end)
+          {
+            $tmp_this_card_more.html( "没有更多内容了" );
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+          $.fn.winktips("照片载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+        $.fn.winktips("照片载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  
+  //根据hash判断是否应该通过缓存载入数据
+  if( location.hash.slice(-5) == "cache" ) {
+    if( window.sessionStorage ) {
+      if( sessionStorage.getItem("photo_list") ) {
+        $("#photo_list_main .list_photo").html( sessionStorage.getItem("photo_list") );
+        $("#photo_list_main .card_more").data( "page", sessionStorage.getItem("photo_page") );
+      } else {
+        $("#photo_list_main .card_more").data( "page", 0 ).click();
+      }
+    } else {
+      $("#photo_list_main .card_more").data( "page", 0 ).click();
+    }
+  } else {
+    $("#photo_list_main .card_more").data( "page", 0 ).click();
+  }
+
+  //页面跳转瞬间，改变历史记录加入hash
+  $("html").on("click", "a[href]", function(e) {
+    //e.preventDefault();
+    window.history.replaceState(null, document.title, location.href.split("#")[0] + "#cache");
+  });
+
+  
+  //滚动载入新内容
+  $(window).scroll(function() {
+    if( scrollload.photo_list ) {
+      scrollLoad( $("#photo_list_main .card_more") );
+    }
+  });
+  
+  
+  
+  
+
+
+
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+<!-- 投诉举报 开始 -->
+<div id="feedback" class="subplate">
+  
+  <div class="feedback_form">
+
+    <label class="form_item form_item_plane">
+      <div class="form_label">理由</div>
+      <div class="form_item_con">
+        <div class="form_select">
+          <select id="feedback_type" name="type" class="form_input appearance_none">
+          <option value="0" selected>请选择</option>
+          <option value="1">诈骗</option>
+          <option value="2">涉黄</option>
+          <option value="3">其他</option>
+          </select>
+          <input type="hidden" name="source_type" value="album">
+          <input type="hidden" name="source_id" value="<?php echo $albums_id; ?>">
+        </div>
+      </div>
+    </label>
+    
+    <label class="form_item form_item_plane">
+      <div class="form_label">描述</div>
+      <div class="form_item_con">
+        <textarea class="form_input" id="feedback_content" name="content" placeholder="不超过250个(汉字)" maxlength="250"></textarea>
+      </div>
+    </label>
+    
+    <label class="origi_info form_item form_item_plane">
+      <div class="form_label">原始信息</div>
+      <div class="form_item_con">
+       <div class="form_static">
+       </div>
+       <input type="hidden" name="source_title">
+      </div>
+    </label>
+    
+    <label class="origi_info_url form_item form_item_plane">
+      <div class="form_label">URL</div>
+      <div class="form_item_con">
+        <div class="form_static"></div>
+        <input type="hidden" name="source_url">
+      </div>
+    </label>
+
+  </div>
+
+  <!-- 底栏 开始 -->
+  <div class="bottombar">
+    <div class="bottombar_box">
+      <a class="bottombar_btn_cancel bottombar_btn btn btn_color_1" id="">
+        <span>取消</span>
+      </a>
+      <a class="bottombar_btn_submit bottombar_btn btn btn_color_2" id="">
+        <span>提交</span>
+      </a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<script type="text/javascript">
+   $( "body" ).on("click", "#feedback .bottombar_btn_submit", function(){
+   <?php if(!isset($_SESSION['login'])):?>
+    // 如果没有登录，则跳转至登录页面，只有登录才可投诉
+    window.location.replace("<?php echo site_url('my');?>");
+    return false;
+    <?php endif;?>
+    
+   
+    if( $('#feedback_type').val() ==0 )
+    {
+       $.fn.winktips("请选择投诉理由！（/TДT)/");
+       return false;
+    }
+    if($('#feedback_content').val() == '')
+    {
+       $.fn.winktips("请填写描述！（/TДT)/");
+       return false;
+    }
+    $params = $('#feedback *').serialize();
+    console.log('params:'+$params);
+    $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: "<?php echo site_url('index/feedback');?>",
+          data: $('#feedback *').serialize(),
+          success: function(data){
+            console.log(data);
+            if( data.state == 1 ) {
+              $("#feedback").hide();
+              $.fn.hasShadow("hide");
+              $.fn.winktips("投诉已提交！");
+            }
+            if( data.state == 0 ) {
+              $.fn.winktips( data.msg );
+            }
+          }
+    })
+  });
+</script>
+<!-- 投诉举报 结束 -->
+</body>
+</html>

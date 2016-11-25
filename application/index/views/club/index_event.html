@@ -1,0 +1,250 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <!--<a class="btn btn_sign_tody"><i class="icon iconfont">&#xe60d;</i></a>-->
+    <a class="btn" href="<?php echo site_url('Index/event_list'); ?>"><i class="material-icons">&#xe8b6;</i></a>
+  </div>
+</div>
+
+
+<script>
+  $("#header .header_leftarea").html("");
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+</script>
+
+
+<script>
+/*
+$(function(){
+
+  //签到
+  $(".btn_sign_tody").on("click", function(){
+  
+  <?php if(!isset($_SESSION['login'])):?>
+    // 如果没有登录，则跳转至登录页面，只有登录才可投诉
+    window.location.replace("<?php echo site_url('login');?>");
+    return false;
+  <?php endif;?>
+  $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: "<?php echo site_url('my/signin');?>",
+          success: function(data){
+            // console.log(data);
+            if( data.state == 1 ) {
+              $.fn.winktips(data.msg);
+             
+            }
+            if( data.state == 0 ) {
+              $.fn.winktips( data.msg );
+            }
+          }
+    })
+   
+  
+  });
+
+
+});*/
+</script>
+
+
+<!-- 一级底栏 开始 -->
+<?php $this->load->view('public/index_bottombar.html'); ?>
+<!-- 一级底栏 结束 -->
+
+
+
+
+
+<!-- 页面主体 开始 -->
+<div class="main">
+
+  <div class="main_title">
+    <i class="icon iconfont" style="color: #ff5736;">&#xe611;</i>
+    <span>热门活动</span>
+  </div>
+  
+  <div class="list_event">
+  <!--
+  stat_prepare   未开始（应该没有这个状态）
+  stat_enroll    报名中
+  stat_enrollend 报名结束
+  stat_ing       活动进行中
+  stat_end       活动结束
+  -->
+    
+  </div>
+
+  <a id="index_event_more" class="main_more">载入中…</a>
+  <a id="iwantmoreevent" class="main_more" href="<?php echo site_url('Index/event_list'); ?>" style="display:none;"><i class="material-icons">&#xe8b6;</i> <span>发现更多活动</span></a>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+
+
+<script>
+
+
+  var scrollload_event_list = 0;
+  //载入首页活动数据
+  $("#index_event_more").on("click", function(){
+  
+    //暂停滚动载入新内容
+    scrollload_event_list = 0;
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_event_page = $(this).data("page")?$(this).data("page"):0;
+    
+    var tmp_params = "&page=" + tmp_event_page;
+    
+    //console.log( tmp_params );
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      url: "<?php echo site_url('index/event_ajax_list'); ?>",
+      data: tmp_params,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){//typeof
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        console.log(data.end);
+        // console.log(data.sql);
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          //没有更多内容了
+          if( data.event.length == 0 ) {
+            //$tmp_this_card_more.html( "没有更多内容了" );
+            $tmp_this_card_more.hide();
+            $("#iwantmoreevent").show();
+            return false;
+          }
+          
+          for(var i = 0; i < data.event.length; i++) {
+            var tmp_author_avatar,
+                tmp_author_name,
+                tmp_cover,
+                tmp_event_state;
+          
+            switch( data.event[i].state ) {
+              case 1:
+                tmp_event_state = "stat_enroll";
+                tmp_event_state_text = "报名中";
+                break;
+              case 2:
+                tmp_event_state = "stat_enrollend";
+                tmp_event_state_text = "报名结束";
+                break;
+              case 3:
+                tmp_event_state = "stat_ing";
+                tmp_event_state_text = "活动进行中";
+                break;
+              case 4:
+                tmp_event_state = "stat_end";
+                tmp_event_state_text = "活动结束";
+                break;
+              default:
+                tmp_event_state = "stat_prepare";
+                tmp_event_state_text = "失效";
+            }
+          
+            if( data.event[i].club_id ) {
+              if( data.event[i].club_logo ) {
+                tmp_author_avatar = "data-lazybgimg=\"" + data.event[i].club_logo + "\"";
+              } else {
+                tmp_author_avatar = "";
+              }
+              tmp_author_name = data.event[i].club_name;
+            } else {
+              if( data.event[i].author_avatar ) {
+                tmp_author_avatar = "data-lazybgimg=\"" + data.event[i].author_avatar + "\"";
+              } else {
+                tmp_author_avatar = "";
+              }
+              tmp_author_name = data.event[i].author_name;
+            }
+
+            if( data.event[i].cover ) {
+              tmp_cover = "data-lazybgimg=\"" + data.event[i].cover + "\"";
+            } else {
+              tmp_cover = "";
+            }
+          
+            tmp_html += "<a class=\"item card " + tmp_event_state + "\" " + tmp_cover + " href=\"<?php echo base_url(); ?>index.php/activity/details/" + data.event[i].id + "\">" +
+            "<div class=\"eventinfo\"><div class=\"author\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + tmp_author_name + "</div></div><div class=\"title\">" + data.event[i].title + "</div><div class=\"subinfo\">" + data.event[i].subinfo + "</div></div><div class=\"price\">" + data.event[i].price + "</div>" +
+            "<div class=\"state\">" + tmp_event_state_text + " | <small>已报名" + data.event[i].actornum + "人</small></div><div class=\"stati\"><div class=\"item_stati stati_view\"><i class=\"material-icons\">&#xe8f4;</i><span class=\"num\">" + data.event[i].view_num + "</span></div><div class=\"item_stati stati_zan\"><i class=\"material-icons\">&#xe87d;</i><span class=\"num\">" + data.event[i].zan_num + "</span></div></div></a>";
+            
+          }
+          if( tmp_event_page ) {
+            //$("#event_list_main .list_event").append( tmp_html );
+            $(tmp_html).hide().appendTo( ".list_event" ).fadeIn();
+          } else {
+            $(".list_event").html( tmp_html ).hide().fadeIn();
+          }
+          
+          //允许滚动载入新内容
+          scrollload_event_list = 1;
+          
+          //页数累加
+          tmp_event_page++;
+          $tmp_this_card_more.data( "page", tmp_event_page );
+          lazy();
+          $tmp_this_card_more.html( "载入中…" );
+          if( data.end == 1 ) {
+            //$tmp_this_card_more.html( "没有更多内容了" );
+            $tmp_this_card_more.hide();
+            $("#iwantmoreevent").show();
+            return false;
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "载入失败，点击重试" );
+          $.fn.winktips("活动载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "载入失败，点击重试" );
+        $.fn.winktips("活动载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  $("#index_event_more").data( "page", 0 ).click();
+
+  
+  //滚动载入新内容
+  $(window).scroll(function() {
+    if( scrollload_event_list ) {
+      scrollLoad( $("#index_event_more") );
+    }
+  });
+
+</script>
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<?php $this->load->view('public/header.html'); ?>
+<!-- 以上为页头 -->
+
+<script>
+  $(function(){
+    $.header_back( "<?php echo site_url('Index/index_event'); ?>" );
+  });
+</script>
+
+
+<!-- 页面主体 开始 -->
+<div class="main">
+  
+  <div id="" class="">
+  <form id="event_enroll_form" action="<?php echo site_url('index/doenroll'); ?>" method='POST' >
+
+    
+    <div class="card card_form">
+    	<label class="form_item form_item_plane">
+        <div class="form_label">昵称</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="event_enroll_nickname" placeholder="参加活动的昵称" value="<?php echo $_SESSION['user']['nickname']; ?>" maxlength="20">
+          <input type="hidden" name="activity_id" value="<?php echo $activity_details['id']; ?>">
+          <input type="hidden" name="money" value="<?php echo $activity_details['fee']; ?>">
+          <input type="hidden" name="club_id" value="<?php echo $activity_details['club_id']; ?>">
+        </div>
+      </label>
+      <div class="form_item form_item_plane">
+        <div class="form_label">性别</div>
+        <div class="form_item_con">
+          <label class="form_check"><input type="radio" name="event_enroll_sex" value="男" <?php if($_SESSION['user']['sex'] == 2)  echo "checked='checked'";?>><span>男</span></label>
+          <label class="form_check"><input type="radio" name="event_enroll_sex" value="女" <?php if($_SESSION['user']['sex'] == 1)  echo "checked='checked'";?>><span>女</span></label>
+        </div>
+      </div>
+      <label class="form_item form_item_plane">
+        <div class="form_label">手机号</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="event_enroll_phone" placeholder="请输入有效手机号，11位" value="<?php echo $_SESSION['user']['phone']; ?>" maxlength="11">
+        </div>
+      </label>
+      <?php $items = explode(',', $activity_details['signup_item']);foreach($items as $item):if(!empty($item)):?>
+       <label class="form_item form_item_plane">
+        <div class="form_label"><?php echo $item; ?></div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="<?php echo $item; ?>" placeholder="请填写" value="<?php if($item == '证件号码') echo $_SESSION['user']['cert_num'];if($item == '职业') echo $_SESSION['user']['job']; ?>">
+        </div>
+      </label>
+      <?php endif;endforeach; ?>
+<!--
+      <label class="form_item form_item_plane">
+        <div class="form_label">列表项</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="event_enroll_xx" placeholder="请填写" value="">
+        </div>
+      </label>
+-->
+      
+    </div>
+    
+    <div id="event_enroll_note" class="card">
+      <div class="richtext">
+        <!-- 活动注意事项 图文内容 开始 -->
+        <?php echo $activity_details['notes']; ?>
+
+        <!-- 活动注意事项 图文内容 结束 -->
+      </div>
+    </div>
+    
+
+     <!-- 底栏 开始 -->
+      <div class="bottombar" id="event_hurryup">
+        <div class="bottombar_box">
+          <a class="bottombar_btn btn btn_price">￥<?php echo $activity_details['fee'];?></a> 
+          <button type="submit" class="bottombar_btn btn btn_color_3">提交</button> 
+          
+        </div>
+      </div>
+      <!-- 底栏 结束 -->
+    </form>
+  </div>
+</div>
+<!-- 页面主体 结束 -->
+
+
+<script>
+
+$(function(){
+
+
+  $("#event_enroll_form").submit( function() {
+  
+    var submitgogogo = 1;
+    $(this).find( "[type=text][name]" ).each( function(){
+      var $tmp_this = $(this);
+      if( $tmp_this.val() == "" ) {
+        $.fn.poptips({
+          con: "请仔细检查报名表，有项目尚未填写",
+          btnOKClick: function (){
+            $tmp_this.focus();
+          }
+        });
+        submitgogogo = 0;
+        return false;
+      }
+    });
+
+    /*
+    $(this).find( "[type=radio][name]" ).each( function(){
+      console.log( $(this).attr("name") +":"+ $( $(this).attr("name") + ":checked" ).val() );
+    });
+  */
+    
+  
+  //性别 必填？
+    if ( !$("[name=event_enroll_sex]:checked").val() ) {
+      $.fn.poptips({
+        con: "请输入您的性别「<strong>性别</strong>」",
+        btnOKClick: function (){
+          $("[name=event_enroll_sex]").focus();
+        }
+      });
+      $("[name=event_enroll_sex]").checktips({
+        parent: $("[name=event_enroll_sex]").closest(".form_item"),
+        tips: "请输入您的性别「<strong>性别</strong>」"
+      });
+      
+      return false;
+    } else {
+      $("[name=event_enroll_sex]").checktips({
+        parent: $("[name=event_enroll_sex]").closest(".form_item"),
+        act: "hide"
+      });
+    }
+  
+
+    //手机号码
+    if ( !$("[name=event_enroll_phone]").val().match(/^[0-9]{11}$/) ) {
+      $.fn.poptips({
+        con: "「<strong>手机号</strong>」填写有误！",
+        btnOKClick: function (){
+          $("[name=event_enroll_phone]").focus();
+        }
+      });
+      $("[name=event_enroll_phone]").checktips({
+        parent: $("[name=event_enroll_phone]").closest(".form_item"),
+        tips: "请务必填写真实有效的11位「<strong>手机号</strong>」！"
+      });
+      
+      return false;
+    } else {
+      $("[name=event_enroll_phone]").checktips({
+        parent: $("[name=event_enroll_phone]").closest(".form_item"),
+        act: "hide"
+      });
+    }
+    
+    
+    
+   if ( !submitgogogo ) return false;
+
+  });
+
+});
+
+
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

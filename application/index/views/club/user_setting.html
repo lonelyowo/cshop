@@ -1,0 +1,58 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('My'); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('My'); ?>" );
+});
+</script>
+
+<!-- 页面主体 开始 -->
+<div id="user_setting_main" class="main">
+
+
+  <div class="card">
+    <div class="list_planemenu">
+    
+      <a class="planemenu_item" href="<?php echo site_url('Logout/cache_cls'); ?>">
+        <i class="icon material-icons">&#xe919;</i>
+        <span>清除缓存</span>
+      </a>
+    
+      <a class="planemenu_item" href="<?php echo site_url('club/about'); ?>">
+        <i class="icon material-icons">&#xe88e;</i>
+        <span>关于捷安特俱乐部</span>
+        <i class="enter material-icons">&#xe315;</i>
+      </a>
+      
+    </div>
+  </div>
+  
+  <a class="logout btn_color_2" href="<?php echo site_url('logout'); ?>">退出</a>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

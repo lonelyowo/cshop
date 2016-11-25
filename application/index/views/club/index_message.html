@@ -1,0 +1,157 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<script>
+  $("#header .header_leftarea").html("");
+</script>
+
+<!-- 一级底栏 开始 -->
+<?php $this->load->view('public/index_bottombar.html'); ?>
+<!-- 一级底栏 结束 -->
+
+
+
+
+
+
+
+
+<!-- 页面主体 开始 -->
+<div class="main" id="index_message_main">
+
+  
+  <div class="list_index_message">
+<!--
+    <a class="item card notshow" href="##">
+      <div class="avatar" style="background-image:url(./demo/img/avatar_demo01.jpg)"></div>
+      <div class="name">靠山屯的京东大萝卜</div>
+      <div class="text">新会员请修改名字，在：我~资料~昵称，名字同QQ群内一致，很重要。新会员请修改名字，在：我~资料~昵称，名字同QQ群内一致，很重要。新会员请修改名字，在：我~资料~昵称，名字同QQ群内一致，很重要。新会员请修改名字，在：我~资料~昵称，名字同QQ群内一致，很重要。新会员请修改名字，在：我~资料~昵称，名字同QQ群内一致，很重要。</div>
+      <div class="time">2016-08-16 06:06</div>
+      <div class="new">26</div>
+    </a>
+-->
+  </div>
+  
+  <a class="main_more">点击载入更多消息</a>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+<script>
+var scrollload = {};
+
+  //载入公告数据
+  $("#index_message_main").on("click", ".main_more", function(){
+  
+    //暂停滚动载入新内容
+    scrollload.index_message = 0;
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_index_message_page = $(this).data("page")?$(this).data("page"):0;
+    
+    var tmp_params = "page=" + tmp_index_message_page;
+    
+    //console.log( tmp_params );
+
+    $.ajax({
+
+      type: "POST",
+      dataType: "json",
+      // url: "<?php echo base_url();?>static/index/demo/json/index_message.json",
+      url: "<?php echo site_url('index/index_message_list');?>",
+      data: tmp_params,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        // console.log(data.sql);
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.index_message.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.index_message.length; i++) {
+            var tmp_update_avatar;
+          
+            if( data.index_message[i].avatar ) {
+              tmp_author_avatar = "data-lazybgimg=\"" + data.index_message[i].avatar + "\"";
+            } else {
+              tmp_author_avatar = "";
+            }
+          
+          
+            
+            tmp_html += "<a class=\"item card\" href=\"<?php echo base_url(); ?>index.php/index/message/" + data.index_message[i].id + "\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + data.index_message[i].name + "</div><div class=\"text\">" + data.index_message[i].text + "</div><div class=\"time\">" + data.index_message[i].time + "</div>";
+
+            if( data.index_message[i].hasnew ) {
+              //修改与删除
+              tmp_html += "<div class=\"new\">" + data.index_message[i].hasnew + "</div>";
+            }
+            
+            tmp_html += "</a>";
+
+          }
+
+          $(tmp_html).hide().appendTo( "#index_message_main .list_index_message" ).fadeIn();
+          
+          //允许滚动载入新内容
+          scrollload.index_message = 1;
+          
+          //页数累加
+          tmp_index_message_page++;
+          $tmp_this_card_more.data( "page", tmp_index_message_page );
+          lazy();
+          $tmp_this_card_more.html( "载入中…" );
+          if(data.end)
+          {
+            $tmp_this_card_more.html( "没有更多内容了" );
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "载入失败，点击重试" );
+          $.fn.winktips("消息载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "载入失败，点击重试" );
+        $.fn.winktips("消息载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  $("#index_message_main .main_more").data( "page", 0 ).click();
+  
+  //滚动载入新内容
+  $(window).scroll(function() {
+    if( scrollload.index_message ) {
+      scrollLoad( $("#index_message_main .main_more") );
+    }
+  });
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

@@ -1,0 +1,141 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('My'); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('My'); ?>" );
+});
+</script>
+
+<!-- 页面主体 开始 -->
+<div class="main" id="user_travelogue_main">
+
+  
+  <div class="list_travelogue">
+
+  </div>
+  
+  <a class="main_more">点击载入更多游记</a>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+<script>
+var scrollload = {};
+
+
+  //载入游记数据
+  $("#user_travelogue_main").on("click", ".main_more", function(){
+  
+    //暂停滚动载入新内容
+    scrollload.user_travelogue = 0;
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_travelogue_page = $(this).data("page")?$(this).data("page"):0;
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "./demo/json/travelogue.json",
+      url: "<?php echo site_url('my/travels_list');?>",
+      data: "page=" + tmp_travelogue_page,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.travelogue.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.travelogue.length; i++) {
+            var tmp_author_avatar = tmp_cover = "";
+          
+            if( data.travelogue[i].author_avatar ) {
+              tmp_author_avatar = "data-lazybgimg=\"" + data.travelogue[i].author_avatar + "\"";
+            } else {
+              tmp_author_avatar = "";
+            }
+            if( data.travelogue[i].cover ) {
+              tmp_cover = "data-lazybgimg=\"" + data.travelogue[i].cover + "\"";
+            } else {
+              tmp_cover = "";
+            }
+          
+            tmp_html += "<a class=\"item card\" href=\"<?php echo base_url();?>index.php/travels/details/" + data.travelogue[i].id + "\">" +
+                        "<div class=\"cover\" " + tmp_cover + "></div><div class=\"title\">" + data.travelogue[i].title + "</div><div class=\"event\">" + data.travelogue[i].event + "</div><div class=\"clearfix\"><hr></div><div class=\"author\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + data.travelogue[i].author_name + "</div><div class=\"time\">" + data.travelogue[i].time + "</div></div><div class=\"stati\"><div class=\"item stati_view\"><i class=\"material-icons\">&#xe8f4;</i><span class=\"num\">" + data.travelogue[i].stati_view + "</span></div><div class=\"item stati_comment\"><i class=\"material-icons\">&#xe0b9;</i><span class=\"num\">" + data.travelogue[i].stati_comment + "</span></div><div class=\"item stati_zan\"><i class=\"material-icons\">&#xe87d;</i><span class=\"num\">" + data.travelogue[i].stati_zan + "</span></div></div></a>";
+          }
+
+          $(tmp_html).hide().appendTo( "#user_travelogue_main .list_travelogue" ).fadeIn(function(){
+          
+          });
+          
+          //允许滚动载入新内容
+          scrollload.user_travelogue = 1;
+          
+          //页数累加
+          tmp_travelogue_page++;
+          $tmp_this_card_more.data( "page", tmp_travelogue_page );
+          lazy();
+          $tmp_this_card_more.html( "载入中…" );
+          if(data.end)
+          {
+            $tmp_this_card_more.html( "没有更多内容了" );
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "载入失败，点击重试" );
+          $.fn.winktips("游记载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "载入失败，点击重试" );
+        $.fn.winktips("游记载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  $("#user_travelogue_main .main_more").data( "page", 0 ).click();
+  
+  //滚动载入新内容
+  $(window).scroll(function() {
+    if( scrollload.user_travelogue ) {
+      scrollLoad( $("#user_travelogue_main .main_more") );
+    }
+  });
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+</body>
+</html>

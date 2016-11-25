@@ -1,0 +1,214 @@
+<?php
+require_once FCPATH."wxpay/lib/WxPay.Api.php";
+require_once FCPATH."wxpay/example/WxPay.JsApiPay.php";
+require_once FCPATH.'wxpay/example/log.php';
+//初始化日志
+$logHandler= new CLogFileHandler(FCPATH."wxpay/logs/".date('Y-m-d').'.log');
+$log = Log::Init($logHandler, 15);
+
+//①、获取用户openid
+$tools = new JsApiPay();
+$openId = $_SESSION['openid'];
+
+//②、统一下单
+$input = new WxPayUnifiedOrder();
+$input->SetBody($orderinfo['activity_title']); //商品描述
+$input->SetAttach($orderinfo['order_code']); //附加数据
+$input->SetOut_trade_no($orderinfo['order_code']);
+$input->SetTotal_fee($orderinfo['money']*100); //订单总金额，单位为分
+// $input->SetTime_start(date("YmdHis"));
+// $input->SetTime_expire(date("YmdHis", time() + 600));
+$input->SetNotify_url($_SESSION['WxPayConfig']['NOTIFY_URL']);
+$input->SetTrade_type("JSAPI");
+$input->SetOpenid($openId);
+$order = WxPayApi::unifiedOrder($input);
+
+$jsApiParameters = $tools->GetJsApiParameters($order);
+
+
+//③、在支持成功回调通知中处理成功之后的事宜，见 notify.php
+/**
+ * 注意：
+ * 1、当你的回调地址不可访问的时候，回调通知会失败，可以通过查询订单来确认支付是否成功
+ * 2、jsapi支付时需要填入用户openid，WxPay.JsApiPay.php中有获取openid流程 （文档可以参考微信公众平台“网页授权接口”，
+ * 参考http://mp.weixin.qq.com/wiki/17/c0f37d5704f0b64713d5d2c37b468d75.html）
+ */
+?>
+
+<!DOCTYPE html>
+<!--[if lt IE 9 ]><html class="ie ie8" lang="zh-CN"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="zh-CN"><!--<![endif]-->
+<head>
+<meta content="telephone=no" name="format-detection">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="x-ua-compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+<link rel="icon" href="<?php echo base_url('static/index/club/favicon.ico'); ?>" />
+<link rel="shortcut icon" href="<?php echo base_url('static/index/club/favicon.ico'); ?>" />
+<link rel="stylesheet" href="<?php echo base_url('static/index/club/css/material-icons.css'); ?>">
+<link rel="stylesheet" href="<?php echo base_url('static/index/club/fonts/iconfont/iconfont.css'); ?>">
+<link rel="stylesheet" href="<?php echo base_url('static/index/club/css/style.css?v=1'); ?>">
+<style>
+<!-- 自定义样式段 开始 -->
+
+<!-- 自定义样式段 结束 -->
+</style>
+<!--[if lt IE 9 ]>
+<script src="<?php echo base_url('static/index/club/js/jquery_1.min.js'); ?>"></script>
+<script src="<?php echo base_url('static/index/club/js/html5shiv.min.js'); ?>"></script>
+<script src="<?php echo base_url('static/index/club/js/respond.min.js'); ?>"></script>
+<![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="<?php echo base_url('static/index/club/js/jquery.min.js'); ?>"></script>
+<!--<![endif]-->
+
+<script src="<?php echo base_url('static/index/club/js/jquery.cookie.js'); ?>"></script>
+<!--<script src="<?php echo base_url('static/index/club/js/jquery.qrcode.min.js'); ?>"></script>-->
+
+<script src="<?php echo base_url('static/index/club/js/site.js'); ?>"></script>
+
+<title>确认交易</title>
+</head>
+
+<body>
+
+<style>
+body {
+  background-color: #fff;
+}
+
+#weixin_pay_box {
+  padding-top: 20px;
+}
+#weixin_pay_box .weixin_pay_header {
+  text-align: center;
+  font-size: 18px;
+  padding-bottom: 10px;
+}
+#weixin_pay_box .weixin_pay_price {
+  text-align: center;
+  font-size: 40px;
+  font-weight: bold;
+}
+#weixin_pay_box dl {
+  margin: 0;
+  padding: 0 20px;
+  font-size: 14px;
+}
+#weixin_pay_box dt {
+  margin: 0;
+  padding: 0;
+  float: left;
+  color: #aaa;
+}
+#weixin_pay_box dd {
+  margin: 0;
+  padding: 0;
+  text-align: right;
+}
+#weixin_pay_box .weixin_pay_btnpart {
+  padding: 0 20px;
+}
+#weixin_pay_box .weixin_pay_btnpart .btn {
+  width: 100%;
+  line-height: 45px;
+  font-size: 14px;
+}
+#weixin_pay_box .weixin_pay_footer {
+  position: fixed;
+  bottom: 15px;
+  width: 100%;
+  color: #aaa;
+  text-align: center;
+}
+
+
+#weixin_pay_ok {
+  text-align: center;
+  padding-top: 30px;
+}
+#weixin_pay_ok .weixin_pay_ok_icon {
+  font-size: 80px;
+  color: #00c800;
+}
+
+</style>
+
+
+<div id="weixin_pay_box">
+
+  <div id="weixin_pay_show">
+    <div class="weixin_pay_header"><?php echo $orderinfo['activity_title']; ?>报名</div>
+    <div class="weixin_pay_price">￥<?php echo $orderinfo['money']; ?></div>
+    <hr>
+    <dl>
+      <dt>收款方</dt>
+      <dd><?php echo $_SESSION['WxPayConfig']['title']; ?></dd>
+    </dl>
+    <hr>
+    <div class="weixin_pay_btnpart">
+      <a href="javascript:;" class="btn btn_color_3" onclick="callpay()">立即支付</a>
+    </div>
+  </div>
+
+
+  <!-- <div id="weixin_pay_ok">
+    <i class="weixin_pay_ok_icon material-icons">&#xe86c;</i>
+    <div class="weixin_pay_ok_text">支付完成</div>
+    <hr>
+    <div class="weixin_pay_btnpart">
+      <a class="btn btn_color_3">前往订单凭证页面</a>
+    </div>
+    <div class="weixin_pay_footer">捷安特</div>
+  </div> -->
+  
+  <div class="weixin_pay_footer">捷安特</div>
+</div>
+
+
+
+
+<script type="text/javascript">
+  //调用微信JS api 支付
+  function jsApiCall()
+  {
+    WeixinJSBridge.invoke(
+      'getBrandWCPayRequest',
+      <?php echo $jsApiParameters; ?>,
+      function(res){
+        // WeixinJSBridge.log(res.err_msg);
+        // alert(res.err_code+res.err_desc+res.err_msg);
+        if(res.err_msg == 'get_brand_wcpay_request:ok' ) {
+          // alert('支付成功');
+          window.location.href="<?php echo site_url('Index/order/'.$orderinfo['order_code']); ?>";
+        }
+        if (res.err_msg == 'get_brand_wcpay_request:cancel') {
+          // alert('支付过程中用户取消');
+        }
+        if (res.err_msg == 'get_brand_wcpay_request:fail') {
+          alert('支付失败 '+res.err_code+res.err_desc+res.err_msg);
+          window.location.href="<?php echo site_url('Index/order/'.$orderinfo['order_code']); ?>";
+        }
+      }
+    );
+  }
+
+  function callpay()
+  {
+    if (typeof WeixinJSBridge == "undefined"){
+        if( document.addEventListener ){
+            document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+        }else if (document.attachEvent){
+            document.attachEvent('WeixinJSBridgeReady', jsApiCall); 
+            document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+        }
+    }else{
+        jsApiCall();
+    }
+  }
+</script>
+
+
+</body>
+</html>

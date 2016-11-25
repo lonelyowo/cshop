@@ -1,0 +1,301 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('Index/index_event'); ?>"><i class="material-icons">&#xe88a;</i></a>
+  </div>
+</div>
+<script>
+$(function(){
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('Index/index_event'); ?>" );
+});
+</script>
+
+
+<!-- 置顶区 开始 -->
+<div class="main_top needfixed" id="event_member_main_top">
+  <div class="main_top_box">
+  
+    <div id="event_member_search_box" class="search_box">
+      <form method="get" class="form_search" autocomplete="on">
+        <!-- 用户输入的搜索框 -->
+        <input type="search" name="s" class="input_search" placeholder="输入昵称、ID">
+        <i class="icon material-icons"></i>
+        <button type="submit" class="btn_search btn btn_shadow btn_color_1">搜索</button>
+      </form>
+      <!-- 当前的搜索关键词 -->
+      <input type="hidden" name="keyword">
+    </div>
+
+  </div>
+</div>
+<!-- 置顶区 结束 -->
+
+<!-- 页面主体 开始 -->
+<div class="main" id="event_member_main">
+
+  
+  <div class="card card_member_list">
+    <div class="list">
+
+<!--
+      <div class="item qual_2">
+        <div class="qual">
+          <i class="material-icons">&#xe7fd;</i>
+        </div>
+        <a class="avatar_wrap" href="./u.html?id=23">
+          <div class="avatar" style="background-image:url(./demo/img/club_01.jpg)"></div>
+          <div class="name">用户名</div>
+        </a>
+        <div class="tool">
+          <a class="btn btn_kick">踢出</a>
+          <a class="btn btn_color_2 btn_fired">解除</a>
+          <a class="btn btn_color_1 btn_promote">提升</a>
+          
+        </div>
+      </div>
+-->
+      
+      
+
+    </div>
+    <div class="card_more"><span>点击载入更多成员</span></div>
+  </div>
+
+
+</div>
+<!-- 页面主体 结束 -->
+
+<script>
+
+  //获取当前的搜索关键词
+  // $("#event_member_search_box [name=s]").val( getQueryString("s") );
+   //获取当前的搜索关键词
+  $("#event_member_search_box [name=keyword], #club_list_search_box [name=s]").val( getQueryString("s") );
+  //搜索框显示搜索按钮
+  $("#event_member_search_box [name=s]").on("focus", function(){
+    $("#event_member_search_box [type=submit]").show();
+  });
+  
+  //搜索框提交
+  $("#event_member_search_box .form_search").submit( function() {
+    if( $(this).find("[name=s]").val() == "" ) {
+      $.fn.winktips("什么也没写，你让我找啥？！(⊙ˍ⊙)");
+      return false;
+    }
+  });
+  
+  
+
+  //载入俱乐部列表数据
+  $("#event_member_main").on("click", ".card_more", function(){
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_event_member_page = $(this).data("page")?$(this).data("page"):0;
+    
+    // var tmp_params = "page=" + tmp_event_member_page;
+    var tmp_params = $("#event_member_search_box [name=keyword]").serialize() + "&page=" + tmp_event_member_page;
+    
+    console.log( tmp_params );
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "<?php echo base_url('static/index/demo/json/event_member.json'); ?>",
+      url: "<?php echo site_url('activity/members_lists/'.$activity_id); ?>",
+      data: tmp_params,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.event_member.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.event_member.length; i++) {
+            var tmp_avatar;
+          
+            if( data.event_member[i].avatar ) {
+              tmp_avatar = "data-lazybgimg=\"" + data.event_member[i].avatar + "\"";
+            } else {
+              tmp_avatar = "";
+            }
+            
+            
+            // tmp_html += "<div class=\"item state_" + data.event_member[i].state + "\">";
+
+            // tmp_html += "<a class=\"avatar_wrap\" href=\"<?php echo base_url();?>index.php/user/details/" + data.event_member[i].userid + "\"><div class=\"avatar\" " + tmp_avatar + "></div><div class=\"name\">" + data.event_member[i].name + "</div></a>";
+             tmp_html += "<div class=\"item state_" + data.event_member[i].state + "\" data-id=\"" + data.event_member[i].id + "\" data-order_code=\"" + data.event_member[i].order_code + "\" data-remark=\"" + data.event_member[i].remark + "\" data-apply_refund_time=\"" + data.event_member[i].apply_refund_time + "\" data-refunded=\"" + data.event_member[i].refunded + "\">";
+
+            tmp_html += "<div class=\"avatar_wrap\"><a class=\"avatar\" " + tmp_avatar + " href=\"<?php echo base_url(); ?>index.php/user/details/" + data.event_member[i].userid + "\"></a><div class=\"name\">" + data.event_member[i].name + "</div><div class=\"time\">" + data.event_member[i].time + "</div></div>";
+
+            //用户报名的填写项
+            //非管理员，看不到他人的这些项目
+            //但是，是否可以显示出来自己的？
+            if( data.event_member[i].extra )
+            {
+              tmp_html += "<div class=\"extra\">" + data.event_member[i].extra + "</div>";
+            }
+            if( data.event_member[i].manage )
+            {
+              //费用
+              tmp_html += "<div class=\"money\">" + data.event_member[i].money + "</div>";
+
+              tmp_html += "<div class=\"tool\"><a class=\"btn disabled btn_nopay\">未付款</a><a class=\"btn disabled btn_refunded\">已退款</a><a class=\"btn btn_color_1 btn_refund\">退款</a><a class=\"btn btn_color_2 btn_apply_refund_sorry\">已申请退款</a></div>";
+            }
+
+
+            tmp_html += "</div>";
+            
+          }
+          if( tmp_event_member_page ) {
+            $(tmp_html).hide().appendTo( "#event_member_main .card_member_list .list" ).fadeIn();
+          } else {
+            $("#event_member_main .card_member_list .list").html( tmp_html ).hide().fadeIn();
+          }
+          
+          
+          //页数累加
+          tmp_event_member_page++;
+          $tmp_this_card_more.data( "page", tmp_event_member_page );
+          lazy();
+          $tmp_this_card_more.html( "<span>载入中…</span>" );
+          if(data.end)
+          {
+            $tmp_this_card_more.html( "没有更多内容了" );
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+          $.fn.winktips("成员载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+        $.fn.winktips("成员载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  $("#event_member_main .card_more").data( "page", 0 ).click();
+  //已退款
+  $("body").on( "click", ".btn_refunded", function(){
+  
+    //$.fn.winktips("已经退款给TA了。");
+    var $tmp_this = $(this);
+    var $tmp_this_item = $(this).closest(".item");
+    
+    var tmp_order_id = $tmp_this_item.data("id");
+    var tmp_order_code = $tmp_this_item.data("order_code");
+    console.log(tmp_order_code);
+  
+    var tmp_user_name = $tmp_this_item.find(".name").html();
+    var tmp_money = $tmp_this_item.find(".money").html();
+    
+    var tmp_user_remark = $tmp_this_item.data("remark");
+    var tmp_time = $tmp_this_item.find(".time").html();
+    var tmp_apply_refund_time = $tmp_this_item.data("apply_refund_time") || "--";
+    
+    var tmp_refunded = $tmp_this_item.data("refunded") || "--";
+    
+  
+    $.fn.poptips({
+      con: "<b>" + tmp_user_name + "</b><hr><small>报名时间：</small>" + tmp_time + "<br><small>申请退款：</small>" + tmp_apply_refund_time + "<br><small>退款时间：</small>" + tmp_refunded + "<br><small>报名费用：</small>￥" + tmp_money + "<hr>" + tmp_user_remark,
+      conCenter: false, //文本内容内容是否居中，默认居中
+      btnOK: false, //是否显示确认按钮 默认显示
+      btnCancel: true, //是否显示取消按钮 默认不显示
+      btnCancelText: "关闭"
+    });
+    
+  });
+
+  //退款
+  $("body").on( "click", ".btn_refund, .btn_apply_refund_sorry", function(){
+  
+    var $tmp_this = $(this);
+    var $tmp_this_item = $(this).closest(".item");
+    
+    var tmp_order_id = $tmp_this_item.data("id");
+    var tmp_order_code = $tmp_this_item.data("order_code");
+    var tmp_user_name = $tmp_this_item.find(".name").html();
+    var tmp_money = $tmp_this_item.find(".money").html();
+    
+    var tmp_user_remark = $tmp_this_item.data("remark");
+    var tmp_time = $tmp_this_item.find(".time").html();
+    var tmp_apply_refund_time = $tmp_this_item.data("apply_refund_time") || "--";
+  
+    if( $tmp_this_item.hasClass("state_2") ) {
+      var tmp_apply_refund_text = "<br><small>申请退款：</small>" + tmp_apply_refund_time;
+    } else {
+      var tmp_apply_refund_text = "";
+    }
+
+  
+    $.fn.poptips({
+      con: "<b>" + tmp_user_name + "</b><hr><small>报名时间：</small>" + tmp_time + tmp_apply_refund_text + "<br><small>报名费用：</small>￥" + tmp_money + "<hr>" + tmp_user_remark,
+      conCenter: false, //文本内容内容是否居中，默认居中
+      btnOK: true, //是否显示确认按钮 默认显示
+      btnCancel: true, //是否显示取消按钮 默认不显示
+      btnOKText: "确认退款", //确认按钮的文案
+      btnCancelText: "暂不处理", //取消按钮的文案
+      btnOKClick: function (){  //确认按钮点击事件（没有按钮时遵从此事件）
+        
+        console.log("你点了确认 订单号 " + tmp_order_code);
+        
+       
+        $.ajax({
+              type: "POST",
+              dataType: "json",
+              url: "<?php echo site_url('Pay/refund');?>",
+              data: {order_code:tmp_order_code},
+              success: function(data){
+                console.log(data);
+                if( data.status == 1 ) {
+                  $.fn.winktips( data.msg );
+                  $tmp_this_item.removeClass("state_0 state_1 state_3").addClass("state_2").data("refunded", new Date().toLocaleString());  
+                }
+                if( data.status == 0 ) {
+                  $.fn.winktips( data.msg );
+                }
+              }
+        });
+      },
+      btnCancelClick: function (){  //取消按钮点击事件
+        $.fn.winktips("取消了");
+      }
+    });
+  
+  });
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

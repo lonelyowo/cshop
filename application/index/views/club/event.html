@@ -1,0 +1,927 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<div id="header_current">
+  <div id="header_leftarea_current">
+  </div>
+  <div class="header_rightarea">
+    <a class="btn" href="<?php echo site_url('Index/index_event'); ?>"><i class="material-icons">&#xe88a;</i></a>
+    <a class="btn dropdown"><i class="material-icons">&#xe5d4;</i></a>
+    <div id="subject_enroll_group_select" class="dropdown_menu">
+      <div class="btn_share_show menu_item">分享</div>
+      <?php if($manage):?>
+      <a class="menu_item" href="<?php echo site_url('activity/edit/'.$activity_details['id']);?>">修改活动资料</a>
+      <!-- <a class="menu_item" href="<?php echo site_url('activity/delete/'.$activity_details['id']);?>">删除活动</a> -->
+      <?php if($activity_details['status'] == 1): ?>
+      <a class="menu_item" href="<?php echo site_url('activity/close/'.$activity_details['id']);?>">关闭活动</a>
+      <?php endif; ?>
+      <?php if($activity_details['status'] == 0): ?>
+      <a class="menu_item" href="<?php echo site_url('activity/open/'.$activity_details['id']);?>">开启活动</a>
+      <?php endif; ?>
+      <?php endif; ?>
+      <a class="menu_item" href="<?php echo site_url('activity/members/'.$activity_details['id']); ?>">报名名单</a>
+      <?php if(!$manage): ?>
+      <div class="btn_feedback_show menu_item">投诉举报</div>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+<script>
+  $("#header .header_rightarea").replaceWith( $("#header_current .header_rightarea") );
+  $.header_back( "<?php echo site_url('Index/index_event'); ?>" );
+</script>
+
+<!-- 置顶区 开始 -->
+<div class="main_top" id="event_main_top">
+
+  <div class="pullsurprise">
+    <style>
+    #event_main_top .pullsurprise {
+      text-align: center;
+      padding: 20px 0;
+      position: absolute;
+      left: 0;
+      top: -150px;
+      width: 100%;
+    }
+    #event_main_top .pullsurprise dl {
+      padding: 0;
+      margin: 0;
+    }
+    #event_main_top .pullsurprise dd {
+      padding: 0;
+      margin: 0;
+      line-height: 20px;
+    }
+    </style>
+    <div class="imcomming" style="display: none;">不说了，我要刷新啦！<br><br><i class="material-icons loop">&#xe028;</i></div>
+    <dl style="display: none;">
+    <dd>我会为你刷页面</dd>
+    <dd>……</dd>
+    <dd>……</dd>
+    <dd>继续下拉</dd>
+    <dd>……</dd>
+    <dd>……</dd>
+    </dl>
+  </div>
+
+  <div class="main_top_box">
+    <div class="cover" <?php if(!empty($activity_details['img'])):?> style="background-image:url(<?php echo $activity_details['img']; ?>)"<?php endif; ?>></div>
+    <div class="title"><?php echo $activity_details['title']; ?></div>
+    <a class="author" href="<?php echo site_url('user/details/'.$activity_details['userid']);?>">
+      <div class="avatar" <?php if(!empty($activity_details['avatar'])):?> style="background-image:url(<?php echo $activity_details['avatar']; ?>)"<?php endif; ?>></div>
+      <div class="name"><?php echo $activity_details['nickname']; ?></div>
+      <div class="time"><?php echo date('Y-m-d',$activity_details['cdate']);?>发起</div>
+    </a>
+    <div class="stati">
+      <a class="item stati_view">
+        <i class="material-icons">&#xe8f4;</i>
+        <span class="num"><?php echo $activity_details['view_num']+1; ?></span>
+      </a>
+      <a class="item stati_comment" <?php if(!isset($_SESSION['login'])):?> href="<?php echo site_url('login'); ?>" <?php endif; ?>>
+        <i class="material-icons">&#xe0b9;</i>
+        <span class="num"><?php echo $activity_details['comment_num']; ?></span>
+      </a>
+      <!-- data-eventid 中写入活动id 如已点赞 加class active-->
+      <a class="item stati_zan <?php if($zan_active == 1) echo "active";?>" data-eventid="<?php echo $activity_details['id']; ?>">
+        <i class="material-icons">&#xe87d;</i>
+        <span class="num"><?php echo $activity_details['zan_num']; ?></span>
+      </a>
+    </div>
+    <div class="param">
+      <dl>
+        <dt>活动时间</dt>
+        <dd><?php echo date('m月d日 H:i',$activity_details['start_date']);?> - <?php echo date('m月d日 H:i',$activity_details['end_date']);?></dd>
+      </dl>
+      <?php if(!empty($activity_details['latitude']) && !empty($activity_details['longitude'])):?>
+      <dl class="address">
+        <dt>活动地点</dt>
+        <dd>
+          <!-- <a href="http://api.map.baidu.com/geocoder?output=html&amp;address=<?php if($activity_details['province'] != $activity_details['city']) echo $activity_details['province'].$activity_details['city'].$activity_details['district'].$activity_details['address'];else echo $activity_details['city'].$activity_details['district'].$activity_details['address'];?>" target="_blank" title="点击打开百度地图"> -->
+          <a href="http://api.map.baidu.com/marker?location=<?php echo $activity_details['latitude']; ?>,<?php echo $activity_details['longitude']; ?>&title=<?php echo $activity_details['title']; ?>活动地点&content=<?php echo $activity_details['address']; ?>&output=html" target="_blank" title="点击打开百度地图"> 
+            <!-- longitude  latitude -->
+            <span><?php if($activity_details['province'] != $activity_details['city']) echo $activity_details['province'].$activity_details['city'].$activity_details['district'].$activity_details['address'];else echo $activity_details['city'].$activity_details['district'].$activity_details['address'];?></span>
+            <i class="material-icons"></i>
+          </a>
+        </dd>
+      </dl>
+      <?php endif; ?>
+      <?php if($activity_details['isclub'] == 1):?>
+      <dl>
+        <dt>主办方</dt>
+        <dd><a href="<?php echo site_url('club/details/'.$activity_details['club_id']);?>"><?php echo $activity_details['club_name'];?></a></dd>
+      </dl>
+      <?php endif;?>
+    </div>
+    
+    <div id="event_tab_nav" class="tab_nav tab_nav_switch">
+      <a class="active event_tab_nav_detail" data-for="#event_tab_plate_detail">详情</a>
+      <a data-for="#event_tab_plate_album">相册</a>
+      <a data-for="#event_tab_plate_travelogue">游记</a>
+      <a class="event_tab_nav_note" data-for="#event_tab_plate_note">注意事项</a>
+      <!-- <a data-for="#event_tab_plate_record">数据</a> -->
+    </div>
+    
+  </div>
+</div>
+<!-- 置顶区 结束 -->
+
+
+
+<!-- 底栏_未报名 开始 -->
+<!-- 仅未报名状况下会显示 style="display:none"-->
+<?php if($is_member == 0 && !$manage &&$activity_details['status'] == 1):?>
+<div id="event_hurryup" class="bottombar" >
+  <div  class="bottombar_box">
+  
+    <!-- 非免费项目要显示价格 -->
+    <?php if($activity_details['fee'] != 0):?>
+    <a class="bottombar_btn btn btn_price">
+      <span>￥<?php echo $activity_details['fee'];?></span>
+    </a>
+    <?php endif;?>
+    
+    <!-- 报名结束添加 disabled 同时改文字为 报名结束 -->
+    <?php if(time() < $activity_details['signup_date']):?>
+    <a class="bottombar_btn btn btn_color_3" id="btn_iwantenroll" href="<?php echo site_url('index/event_enroll/'.$activity_details['id']); ?>">
+      <span>我要报名</span>
+    </a>
+    <?php else: ?>
+      <a class="bottombar_btn btn btn_color_3 disabled" id="btn_iwantenroll" disabled>
+      <span>报名结束</span>
+    </a>
+    <?php endif; ?>
+  </div>
+</div>
+<?php endif;?>
+<!-- 底栏_未报名 结束 -->
+
+
+
+
+<!-- 页面主体 开始 -->
+<div class="main">
+
+  <!-- 活动详情页 开始 -->
+  <!-- 活动开始才可以发照片&游记  && time()>=$activity_details['start_date'] -->
+  <div id="event_tab_plate_detail" class="tab_plate active">
+<?php if(($is_member == 1 || $manage ) && $activity_details['status'] == 1 ): ?>
+    <!-- 底栏 开始 -->
+    <div id="" class="bottombar">
+      <div  class="bottombar_box">
+        <a class="bottombar_btn btn btn_color_1" id="" href="<?php echo site_url('photos/add/'.$activity_details['id']);?>">
+          <span>发照片</span>
+        </a>
+        <a class="bottombar_btn btn btn_color_3" id="" href="<?php echo site_url('travels/add/'.$activity_details['id']);?>">
+          <span>发游记</span>
+        </a>
+      </div>
+    </div>
+    <!-- 底栏 结束 -->
+<?php endif; ?>  
+  
+    <div id="event_detail" class="card_text_detail card folded">
+      <div class="richtext">
+        <!-- 活动详说明 图文内容 开始 -->
+        <?php echo $activity_details['content'] ;?>
+
+        <!-- 活动详说明 图文内容 结束 -->
+      </div>
+      <div class="card_more card_more_bg"><span>展开全部</span></div>
+    </div>
+    
+  <!--
+    <div id="" class="card card_zan">
+      <div class="card_title">他们觉得很赞：</div>
+      <a class="">
+        <i class="material-icons">&#xe87d;</i>
+        <span class="num">256</span>
+      </a>
+      <a class="list" href="">
+        <div class="avatar" style="background-image:url(./demo/img/avatar_demo01.jpg)"></div>
+      </a>
+    </div>
+  -->
+
+    <div id="" class="card card_enrolled">
+      <div class="card_title">已报名（<?php echo $activity_orders_num;if($activity_details['limit_people'] != 0) echo '/'.$activity_details['limit_people'];?>）：</div>
+      <?php if($is_member == 1):?>
+      <div class="card_enrolled_me">
+        <div class="avatar" <?php if(!empty($_SESSION['user']['avatar'])): ?> style="background-image:url(<?php echo $_SESSION['user']['avatar']; ?>)"<?php endif; ?>></div>
+        <div class="name"><?php echo $_SESSION['user']['nickname']; ?></div>
+        <div class="time"><?php echo date('Y-m-d H:i',$order_time);?></div>
+        <a class="btn_apply_refund btn btn_shadow btn_color_1" href="<?php echo site_url('Index/order/'.$order_code); ?>">查看订单</a>
+      </div>
+      <?php endif;?>
+      <div class="list_enrolled">
+        <div class="list">
+        <?php foreach($activity_orders as $order):?>
+          <a href="<?php echo site_url('user/details/'.$order['userid']);?>" class="item avatar" <?php if(!empty($order['avatar'])): ?> style="background-image:url(<?php echo $order['avatar']; ?>)"<?php endif; ?>></a>
+        <?php endforeach;?>
+        </div>
+        <a class="list_right_more" href="<?php echo site_url('activity/members/'.$activity_details['id']); ?>"><span>查看所有</span><i class="icon iconfont">&#xe60a;</i></a>
+      </div>
+      <div class="card_enrolled_endtime">报名截止：<?php echo date('Y年m月d日 H:i',$activity_details['signup_date']) ?></div>
+    </div>
+    
+    <div id="event_comment" class="card card_comment">
+      <div class="card_title">评论（<span class="num"><?php echo $activity_details['comment_num'];?></span>）：</div>
+      <?php if(isset($_SESSION['login'])):?>
+      <div class="comment_form clearfix folded">
+      
+        <div class="avatar" <?php if(!empty($_SESSION['user']['avatar'])):?> style="background-image:url(<?php echo $_SESSION['user']['avatar']; ?>);"<?php endif; ?>></div>
+        <input name="comment_form_id" id="comment_form_id" type="hidden" value="<?php echo $activity_details['id']; ?>">
+        <textarea class="comment_form_text" id="comment_form_text" name="comment_form_text" placeholder="我也说一句…" autocomplete="off"></textarea>
+        <!-- <a href="#" onclick="return false;" class="btn_comment_form_post btn btn_shadow btn_color_1">发表评论</a> -->
+        <button type="button" id="add_comment" class="btn_comment_form_post btn btn_shadow btn_color_1">发表评论</button>
+
+      </div>
+      <?php endif;?>
+      <div class="list">
+        
+      </div>
+      
+      
+      
+      
+      
+      <div class="card_more"><span>点击载入更多评论</span></div>
+      
+      
+    </div>
+
+  </div>
+  <!-- 活动详情页 结束 -->
+  
+  <!-- 活动相册页 开始 -->
+  <div id="event_tab_plate_album" class="tab_plate">
+  
+    <!-- 底栏 开始 -->
+    <div id="" class="bottombar">
+      <div  class="bottombar_box">
+        <a class="bottombar_btn btn btn_color_1" id="" href="<?php echo site_url('photos/add/'.$activity_details['id']);?>">
+          <span>我要发照片</span>
+        </a>
+      </div>
+    </div>
+    <!-- 底栏 结束 -->
+  
+    <div id="" class="card card_albumsketch">
+      <div class="card_title">共 <?php echo $photo_num;?> 张：</div>
+
+      <a class="list_photo" href="<?php echo site_url('activity/albums/'.$activity_details['id']); ?>">
+        <div class="list">
+        <?php foreach($activity_photos as $photo):?>
+          <div class="item" <?php if(!empty($photo['img'])):?> style="background-image:url(<?php echo $photo['img']; ?>)"<?php endif; ?>></div>
+        <?php endforeach;?>
+        </div>
+      </a>
+      <a class="card_more" href="<?php echo site_url('activity/albums/'.$activity_details['id']); ?>"><span>进入相册 查看更多</span></a>
+    </div>
+  </div>
+  <!-- 活动详情页 结束 -->
+  
+  <!-- 活动游记页 开始 -->
+  <div id="event_tab_plate_travelogue" class="tab_plate">
+    <!-- 底栏 开始 -->
+    <div id="" class="bottombar">
+      <div  class="bottombar_box">
+        <a class="bottombar_btn btn btn_color_1" id="" href="<?php echo site_url('travels/add/'.$activity_details['id']);?>">
+          <span>我要发游记</span>
+        </a>
+      </div>
+    </div>
+    <!-- 底栏 结束 -->
+  
+    <div class="main_title">
+      <span>共 <?php echo $activity_details['travel_num'];?> 篇</span>
+    </div>
+  
+    <div class="list_travelogue">
+    </div>
+    
+    <a class="main_more">点击载入更多游记</a>
+    
+  </div>
+  <!-- 活动游记页 结束 -->
+  
+  
+  
+  
+  <!-- 活动注意事项页 开始 -->
+  <div id="event_tab_plate_note" class="tab_plate">
+    <div id="card_event_note" class="card">
+    <?php $temp_notes = trim($activity_details['notes']); if(empty($temp_notes)): ?>
+      <div class="nothing">没有内容</div>
+    <?php else: ?>
+      <div class="richtext">
+        <!-- 活动注意事项 图文内容 开始 -->
+       <?php echo $activity_details['notes'];?>
+        <!-- 活动注意事项 图文内容 结束 -->
+      </div>
+    <?php endif; ?>
+    </div>
+  </div>
+  <!-- 活动注意事项页 结束 -->
+  
+  
+  
+  <!-- 活动数据页 开始 -->
+  <div id="event_tab_plate_record" class="tab_plate">
+    <div class="card">
+      <div class="nothing">功能暂未开放……</div>
+    </div>
+  </div>
+  <!-- 活动数据页 结束 -->
+
+</div>
+<!-- 页面主体 结束 -->
+
+<script>
+var scrollload = {};
+$(function(){
+  //发表评论
+  $('#add_comment').on('click',function(){
+    var activity_id = $("#comment_form_id").val();
+    var comment_content = $("#comment_form_text").val();
+    console.log("activity_id:"+activity_id);
+    console.log("comment_content:"+comment_content);
+    if(comment_content == '')
+    {
+       $.fn.winktips("评论内容不能为空！（/TДT)/");
+       return false;
+    }
+    $.ajax({
+        type : "POST",
+        url : "<?php echo site_url('activity/add_comment');?>",
+        data : {id:activity_id,content:comment_content},
+        dataType : "json",
+        success : function(e){
+          console.log(e);
+          if(e.state == 1)
+          {
+            $("#event_comment .list").prepend( "<div class=\"comment_item\"><a>" +
+                        "<div class=\"avatar\" style=\"" + $("#event_comment .comment_form .avatar").attr("style") + "\"></div><div class=\"name\"><?php if(isset($_SESSION['login'])) echo $_SESSION['user']['nickname'];?></div></a><div class=\"comment_text\">" + $("[name=comment_form_text]").val() + "</div><div class=\"time\">刚刚</div></div>" );
+
+            $('.comment_form').addClass('folded');
+            $('#comment_form_text').val('');
+            $.fn.winktips("发表成功！(•ᴗ•)و");
+          }
+          if(e.state == 0)
+          {
+            $.fn.winktips(e.msg);
+             return false;
+          }
+          if(e.state == 2)
+          {
+            console.log(e.msg);
+            return false;
+          }
+        },
+      });
+  });
+  //删除评论
+  $("#event_comment").on("click", ".btn_del", function(){
+    var comment_id = $(this).parent().parent().attr("data-id");
+    var tmp_this_parent = $(this).parent().parent();
+    console.log("comment_id:"+comment_id);
+    $.ajax({
+        type : "POST",
+        url : "<?php echo site_url('activity/delete_comment');?>",
+        data : {activity_id:<?php echo $activity_details['id'];?>,comment_id:comment_id},
+        dataType : "json",
+        success : function(e){
+          console.log(e);
+          if(e.state == 1)
+          {
+            $.fn.winktips("删除成功！");
+            tmp_this_parent.remove();
+          }
+          else
+          {
+            console.log('error');
+          }
+        },
+      });
+  })
+
+  //点击活动价格，展示费用说明等内容
+  $( "#event_hurryup" ).on("click", ".btn_price", function(){
+    $("#event_tab_nav .event_tab_nav_note").click();
+  });
+
+
+  //为活动点赞相关
+  $("#event_main_top").on("click", ".stati_zan", function(){
+    var tmp_zannum = Math.floor($(this).find(".num").text());
+    var tmp_this = $(this);
+    if( tmp_this.hasClass("active") ) {
+      console.log('id-->'+$(this).data("eventid"));
+      // $(this).removeClass("active");
+      // tmp_zannum--;
+      // $.fn.winktips("点好的赞，为什么要取消？！（/TДT)/");
+      //alert( $(this).data("eventid") );//取消赞
+      $.ajax({
+        type : "POST",
+        url : "<?php echo site_url('activity/minus_zan');?>",
+        data : {id:$(this).data("eventid")},
+        dataType : "json",
+        success : function(e){
+          console.log(e);
+          if(e.state == 'ok')
+          {
+            tmp_this.removeClass("active");
+            tmp_zannum--;
+            tmp_this.find(".num").text( ( tmp_zannum >= 0 )?tmp_zannum:0 );
+            $.fn.winktips("点好的赞，为什么要取消？！（/TДT)/");
+          }
+          else
+          {
+            console.log('error');
+          }
+        },
+      });
+    
+    } else {
+      <?php if(!isset($_SESSION['login'])):?>
+      // 如果没有登录，则跳转至登录页面，只有登录才可点赞
+      window.location.replace("<?php echo site_url('login');?>");
+      return false;
+      <?php endif;?>
+      // console.log('id-->'+$(this).data("eventid"));
+       $.ajax({
+        type : "POST",
+        url : "<?php echo site_url('activity/add_zan');?>",
+        data : {id:$(this).data("eventid")},
+        dataType : "json",
+        success : function(e){
+          console.log(e);
+          if(e.state == 'ok')
+          {
+            tmp_this.addClass("active");
+            tmp_zannum++;
+            tmp_this.find(".num").text( ( tmp_zannum >= 0 )?tmp_zannum:0 );
+            $.fn.winktips("多谢点赞！(•ᴗ•)و");
+          }
+          else
+          {
+            console.log('error');
+          }
+          
+        },
+      });
+      
+      // $(this).addClass("active");
+      // tmp_zannum++;
+      // $.fn.winktips("多谢点赞！(•ᴗ•)و");
+      //alert( $(this).data("eventid") );//点赞
+    }
+    // tmp_this.find(".num").text( ( tmp_zannum >= 0 )?tmp_zannum:0 );
+  });
+  //引导至评论
+  $("#event_main_top").on("click", ".stati_comment", function(){
+    if( $("#event_comment").length ) {
+      $("#event_tab_nav .event_tab_nav_detail").click();
+      $("html, body").animate( {scrollTop: $("#event_comment").offset().top - 100}, "slow" );
+    }
+  });
+  //提示活动查看人数
+  $("#event_main_top").on("click", ".stati_view", function(){
+    $.fn.winktips("本活动已被查看"+ $(this).find(".num").text() +"次");
+  });
+
+
+
+
+  //载入评论数据
+  $("#event_comment").on("click", ".card_more", function(){
+  
+    //暂停滚动载入新内容
+    scrollload.event_comment = 0;
+    scrollload.event_travelogue = 0;
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_comment_page = $(this).data("page")?$(this).data("page"):0;
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "<?php echo base_url('static/index/demo/json/comment.json'); ?>",
+      url: "<?php echo site_url('activity/comments/'.$activity_details['id']); ?>",
+      data: "page=" + tmp_comment_page,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.comment.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.comment.length; i++) {
+            var tmp_author_avatar = tmp_manage = tmp_reply = "";
+          
+            if( data.comment[i].author_avatar ) {
+              tmp_author_avatar = "background-image:url(" + data.comment[i].author_avatar + ")";
+            } else {
+              tmp_author_avatar = "";
+            }
+
+            //当没有登录或本人评论时，不显示回复
+            if( data.comment[i].reply ) {
+              tmp_reply = "<a class=\"btn btn_reply\">回复</a>";
+            }
+
+            //当该条评论为本人发布(及其他有权限的管理员)，显示以下删除按钮
+            if( data.comment[i].manage ) {
+              tmp_manage = "<a class=\"btn btn_del\">删除</a>";
+            }
+          
+            tmp_html += "<div class=\"comment_item\" data-id=\"" + data.comment[i].id + "\">" +
+                        "<a href=\"<?php echo base_url(); ?>index.php/user/details/" + data.comment[i].author_id + "\">" +
+                        "<div class=\"avatar\" style=\"" + tmp_author_avatar + "\"></div><div class=\"name\">" + data.comment[i].author_name + "</div></a><div class=\"comment_text\">" + data.comment[i].text + "</div><div class=\"time\">"+data.comment[i].time+"</div><div class=\"tool\">" + tmp_reply + tmp_manage + "</div></div>";
+          }
+          //$("#event_comment .list").append( tmp_html );
+          $(tmp_html).hide().appendTo( "#event_comment .list" ).fadeIn();
+          
+          //允许滚动载入新内容评论
+          scrollload.event_comment = 1;
+          
+          //页数累加
+          tmp_comment_page++;
+          $tmp_this_card_more.data( "page", tmp_comment_page );
+          lazy();
+          $tmp_this_card_more.html( "<span>点击载入更多评论</span>" );
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+          $.fn.winktips("评论载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+        $.fn.winktips("评论载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  
+  //进入页面载入第一页评论
+  if( $("#event_comment .card_title .num").text() != 0 ) {
+    $("#event_comment .card_more").click();
+  } else {
+    $("#event_comment .card_more").html( "暂无评论" );
+  }
+  
+
+  //载入游记数据
+  $("#event_tab_plate_travelogue").on("click", ".main_more", function(){
+
+    //暂停滚动载入新内容
+    scrollload.event_comment = 0;
+    scrollload.event_travelogue = 0;
+  
+    var $tmp_this_card_more = $(this);
+
+    var tmp_travelogue_page = $(this).data("page")?$(this).data("page"):0;
+
+    $.ajax({
+
+      type: "POST",
+      datatype: "json",
+      // url: "<?php echo base_url('static/index/demo/json/travelogue.json'); ?>",
+      url: "<?php echo site_url('activity/travels/'.$activity_details['id']); ?>",
+      data: "page=" + tmp_travelogue_page,
+      beforeSend: function(){
+        $tmp_this_card_more.html( "正在载入…" );
+      },
+      success: function(data){
+        if( typeof data != "object" ) {
+          data = $.parseJSON(data);
+        }
+        if( data.state == 1 ) {
+          var tmp_html = "";
+          
+          //没有更多内容了
+          if( data.travelogue.length == 0 ) {
+            $tmp_this_card_more.html( "没有更多内容了" );
+            return false;
+          }
+          
+          for(var i = 0; i < data.travelogue.length; i++) {
+            var tmp_author_avatar = tmp_cover = "";
+          
+            if( data.travelogue[i].author_avatar ) {
+              tmp_author_avatar = "data-lazybgimg=\"" + data.travelogue[i].author_avatar + "\"";
+            } else {
+              tmp_author_avatar = "";
+            }
+            if( data.travelogue[i].cover ) {
+              tmp_cover = "data-lazybgimg=\"" + data.travelogue[i].cover + "\"";
+            } else {
+              tmp_cover = "";
+              console.log(data.travelogue[i].cover);
+            }
+          
+            /*tmp_html += "<a class=\"item card\" href=\"./travelogue.html?id=" + data.travelogue[i].id + "\">" +
+                        "<div class=\"cover\" " + tmp_cover + "></div><div class=\"title\">" + data.travelogue[i].title + "</div><div class=\"event\">" + data.travelogue[i].event + "</div><div class=\"clearfix\"><hr></div><div class=\"author\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + data.travelogue[i].author_name + "</div><div class=\"time\">" + data.travelogue[i].time + "</div></div><div class=\"stati\"><div class=\"item stati_view\"><i class=\"material-icons\">&#xe8f4;</i><span class=\"num\">" + data.travelogue[i].stati_view + "</span></div><div class=\"item stati_comment\"><i class=\"material-icons\">&#xe0b9;</i><span class=\"num\">" + data.travelogue[i].stati_comment + "</span></div><div class=\"item stati_zan\"><i class=\"material-icons\">&#xe87d;</i><span class=\"num\">" + data.travelogue[i].stati_zan + "</span></div></div></a>";*/
+            //改链接
+            tmp_html += "<a class=\"item card\" href=\"<?php echo base_url();?>" + "index.php/travels/details/" + data.travelogue[i].id + "\">" +
+                        "<div class=\"cover\" " + tmp_cover + "></div><div class=\"title\">" + data.travelogue[i].title + "</div><div class=\"event\">" + data.travelogue[i].event + "</div><div class=\"clearfix\"><hr></div><div class=\"author\"><div class=\"avatar\" " + tmp_author_avatar + "></div><div class=\"name\">" + data.travelogue[i].author_name + "</div><div class=\"time\">" + data.travelogue[i].time + "</div></div><div class=\"stati\"><div class=\"item stati_view\"><i class=\"material-icons\">&#xe8f4;</i><span class=\"num\">" + data.travelogue[i].stati_view + "</span></div><div class=\"item stati_comment\"><i class=\"material-icons\">&#xe0b9;</i><span class=\"num\">" + data.travelogue[i].stati_comment + "</span></div><div class=\"item stati_zan\"><i class=\"material-icons\">&#xe87d;</i><span class=\"num\">" + data.travelogue[i].stati_zan + "</span></div></div></a>";
+          }
+          //$("#event_tab_plate_travelogue .list_travelogue").append( tmp_html );
+          $(tmp_html).hide().appendTo( "#event_tab_plate_travelogue .list_travelogue" ).fadeIn(function(){
+          
+            //通过缓存记录内容
+            if( window.sessionStorage ) {
+              sessionStorage.setItem("travelogue_list", $("#event_tab_plate_travelogue .list_travelogue").html());
+              sessionStorage.setItem("travelogue_page", tmp_travelogue_page);
+            }
+          
+          });
+          
+          //允许滚动载入新内容
+          scrollload.event_travelogue = 1;
+          
+          //页数累加
+          tmp_travelogue_page++;
+          $tmp_this_card_more.data( "page", tmp_travelogue_page );
+          lazy();
+          $tmp_this_card_more.html( "载入中…" );
+          if(data.end)
+          {
+            $tmp_this_card_more.html( "没有更多内容了" );
+          }
+        }
+        //载入失败
+        if( data.state == 0 ) {
+          $tmp_this_card_more.html( "载入失败，点击重试" );
+          $.fn.winktips("游记载入失败 ( >﹏<。)");
+        }
+        return false;
+        
+        
+      },
+      error: function(){
+        $tmp_this_card_more.html( "载入失败，点击重试" );
+        $.fn.winktips("游记载入失败 （/TДT)/");
+      }
+
+    });
+    
+  });
+  
+  
+  
+  
+  //页签切换，自动滚动到记录位置
+  $("#event_tab_nav").on("click", "a", function(){
+  
+    //暂停滚动载入新内容
+    scrollload.event_comment = 0;
+    scrollload.event_travelogue = 0;
+  
+    window.history.replaceState(null, document.title, location.href.split("#")[0] + $(this).data("for"));
+  
+    if( $(this).data("for") == "#event_tab_plate_travelogue" ) {
+      if( $("#event_tab_plate_travelogue .list_travelogue > .item").length == 0 ) {
+        $("#event_tab_plate_travelogue .main_more").click();
+      }
+    }
+
+    var tmp_thisscrolltop = $(this).data("scrolltop")?$(this).data("scrolltop"):0;
+
+    if( tmp_thisscrolltop < $("#event_main_top").offset().top + $("#event_main_top").height() - 87 ) {
+      tmp_thisscrolltop = $("#event_main_top").offset().top + $("#event_main_top").height() - 87;
+    }
+
+    $("html, body").animate( {scrollTop: tmp_thisscrolltop}, "slow" );
+
+    return false;
+  });
+  
+  //根据hash进入相应标签页
+  $("#event_tab_nav a").each(function(){
+    if( $(this).data("for") == location.hash.split("_cache")[0] ) {
+      
+      //载入活动的游记缓存
+      if( location.hash == "#event_tab_plate_travelogue_cache" && window.sessionStorage ) {
+        if( sessionStorage.getItem("travelogue_list") ) {
+          $("#event_tab_plate_travelogue .list_travelogue").html( sessionStorage.getItem("travelogue_list") );
+          $("#event_tab_plate_travelogue .main_more").data( "page", sessionStorage.getItem("travelogue_page") );
+          $(this).data("scrolltop", sessionStorage.getItem("tmp_scroll"));
+        }
+      }
+
+      $(this).click();
+      
+    }
+  });
+  
+  //页面跳转瞬间，改变历史记录加入hash
+  $("html").on("click", "a[href]", function(e) {
+    //e.preventDefault();
+    
+    window.history.replaceState(null, document.title, location.href.split("#")[0] + $( "#event_tab_nav .active" ).data("for") + "_cache");
+    
+    //记录滚动位置
+    if( window.sessionStorage ) {
+      sessionStorage.setItem("tmp_scroll", $(window).scrollTop());
+    }
+
+  });
+  
+  
+  //如果活动说明内容较少，自动展开
+  if( $("#event_detail .richtext").height() <= $("#event_detail.folded").height() ) {
+    $("#event_detail .card_more").click();
+  }
+
+  
+});
+
+  
+$(window).scroll(function() {
+  
+  var scrollTop = $(window).scrollTop();
+  //切换标签浮动
+  if( $("#event_tab_nav").length ) {
+    if ( $("#event_main_top").offset().top + $("#event_main_top").height() - $("#event_tab_nav").height() - 50 < scrollTop ) {
+      $("body").addClass("event_tab_nav_fixed");
+    } else {
+      $("body").removeClass("event_tab_nav_fixed");
+    }
+  }
+
+});
+
+
+  //滚动载入新内容
+  $(window).scroll(function() {
+  
+    if( scrollload.event_comment ) {
+      scrollLoad( $("#event_comment .card_more") );
+    }
+    if( scrollload.event_travelogue ) {
+      scrollLoad( $("#event_tab_plate_travelogue .main_more") );
+    }
+    $("#event_main_top .cover").addClass("small");
+  });
+
+  //下拉头部
+  var tmp_reload = 0;
+  $("#event_main_top").pullsurprise({
+    limit: 150,
+    ing: function(tmp_t_y){
+      $(".main").css({ "transform": "translate3d(0,"+ ((tmp_t_y>0)?tmp_t_y:0) +"px,0)", "top": "-50px", "transition": "all 0s" });
+      $("#event_main_top .cover").removeClass("small");
+      if( tmp_t_y > 150 ) {
+        $(".pullsurprise .imcomming").show();
+        $(".pullsurprise dl").hide();
+        $(".pullsurprise .loop").css( "transform", "rotateZ("+(tmp_t_y*10)+"deg)" );
+        tmp_reload = 1;
+      } else {
+        $(".pullsurprise .imcomming").hide();
+        $(".pullsurprise dl").show();
+        tmp_reload = 0;
+      }
+    }, //拖动中
+    end: function(){
+      $(".main").css({ "transform": "", "top": "", "transition": "all .3s" });
+      if( tmp_reload == 1 ) {
+        location.reload(true);
+      }
+    } //拖动结束
+  });
+
+
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+<!-- 投诉举报 开始 -->
+<div id="feedback" class="subplate">
+  
+  <div class="feedback_form">
+
+    <label class="form_item form_item_plane">
+      <div class="form_label">理由</div>
+      <div class="form_item_con">
+        <div class="form_select">
+          <select id="feedback_type" name="type" class="form_input appearance_none">
+          <option value="0" selected>请选择</option>
+          <option value="1">诈骗</option>
+          <option value="2">涉黄</option>
+          <option value="3">其他</option>
+          </select>
+          <input type="hidden" name="source_type" value="a">
+          <input type="hidden" name="source_id" value="<?php echo $activity_details['id']; ?>">
+        </div>
+      </div>
+    </label>
+    
+    <label class="form_item form_item_plane">
+      <div class="form_label">描述</div>
+      <div class="form_item_con">
+        <textarea class="form_input" id="feedback_content" name="content" placeholder="不超过250个(汉字)" maxlength="250"></textarea>
+      </div>
+    </label>
+    
+    <label class="origi_info form_item form_item_plane">
+      <div class="form_label">原始信息</div>
+      <div class="form_item_con">
+       <div class="form_static">
+       </div>
+       <input type="hidden" name="source_title">
+      </div>
+    </label>
+    
+    <label class="origi_info_url form_item form_item_plane">
+      <div class="form_label">URL</div>
+      <div class="form_item_con">
+        <div class="form_static"></div>
+        <input type="hidden" name="source_url">
+      </div>
+    </label>
+
+  </div>
+
+  <!-- 底栏 开始 -->
+  <div class="bottombar">
+    <div class="bottombar_box">
+      <a class="bottombar_btn_cancel bottombar_btn btn btn_color_1" id="">
+        <span>取消</span>
+      </a>
+      <a class="bottombar_btn_submit bottombar_btn btn btn_color_2" id="">
+        <span>提交</span>
+      </a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<script type="text/javascript">
+   $( "body" ).on("click", "#feedback .bottombar_btn_submit", function(){
+   <?php if(!isset($_SESSION['login'])):?>
+    // 如果没有登录，则跳转至登录页面，只有登录才可投诉
+    window.location.replace("<?php echo site_url('my');?>");
+    return false;
+    <?php endif;?>
+    
+   
+    if( $('#feedback_type').val() ==0 )
+    {
+       $.fn.winktips("请选择投诉理由！（/TДT)/");
+       return false;
+    }
+    if($('#feedback_content').val() == '')
+    {
+       $.fn.winktips("请填写描述！（/TДT)/");
+       return false;
+    }
+    $params = $('#feedback *').serialize();
+    console.log('params:'+$params);
+    $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: "<?php echo site_url('index/feedback');?>",
+          data: $('#feedback *').serialize(),
+          success: function(data){
+            console.log(data);
+            if( data.state == 1 ) {
+              $("#feedback").hide();
+              $.fn.hasShadow("hide");
+              $.fn.winktips("投诉已提交！");
+            }
+            if( data.state == 0 ) {
+              $.fn.winktips( data.msg );
+            }
+          }
+    })
+  });
+</script>
+<!-- 投诉举报 结束 -->
+</body>
+</html>

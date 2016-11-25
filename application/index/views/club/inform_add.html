@@ -1,0 +1,97 @@
+<?php $this->load->view('public/header.html'); ?>
+
+<!-- 以上为页头 -->
+
+<script>
+  $(function(){
+    $.header_back( "<?php echo site_url('Index/index_club'); ?>" );
+  });
+</script>
+
+
+
+<!-- 页面主体 开始 -->
+<div class="main">
+  
+  <div id="" class="">
+  <form id="inform_form" action="<?php echo site_url('club/do_add_inform'); ?>" method='post'>
+    <div class="card card_form">
+    
+      <label class="form_item form_item_plane">
+        <div class="form_label">公告标题</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="inform_title" placeholder="选填" value="公告" maxlength="20">
+          <input type="hidden" name="club_id" value="<?php echo $club_id; ?>">
+        </div>
+      </label>
+      
+      <label class="form_item form_item_plane form_textarea">
+        <div class="form_label">公告内容</div>
+        <div class="form_item_con">
+          <textarea class="form_input" name="inform_text" placeholder="请填写，尽量简明扼要。" maxlength=""></textarea>
+        </div>
+      </label>
+      
+      <div class="form_item form_item_plane">
+        <div class="form_label">状态</div>
+        <div class="form_item_con">
+          <label class="form_check"><input type="radio" name="inform_state" value="1" checked><span>显示</span></label>
+          <label class="form_check"><input type="radio" name="inform_state" value="0"><span>隐藏</span></label>
+        </div>
+      </div>
+      
+    </div>
+    
+		<!--底部按钮 开始-->
+    <div class="bottombar">
+      <div class="bottombar_box">
+        <button type="submit" class="bottombar_btn btn btn_color_1">保存</button>  
+      </div>
+    </div>
+    <!--底部按钮 结束-->
+
+    </form>
+  </div>
+</div>
+<!-- 页面主体 结束 -->
+
+
+<script>
+
+
+$(function(){
+
+
+  $("#inform_form").submit( function() {
+
+    if( !$("[name=inform_text]").val() ) {
+
+      $.fn.poptips({
+        con: "请填写「<strong>公告内容</strong>」？！",
+        btnOKClick: function (){
+          $("[name=inform_text]").focus();
+        }
+      });
+      
+      return false;
+    }
+    
+
+  });
+
+});
+
+
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+
+</body>
+</html>

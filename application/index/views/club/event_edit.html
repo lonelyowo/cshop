@@ -1,0 +1,1017 @@
+<?php $this->load->view('public/header.html'); ?>
+<!-- 以上为页头 -->
+
+<script>
+  $(function(){
+    $.header_back( "<?php echo site_url('Index/index_event'); ?>" );
+  });
+</script>
+
+
+<!-- 页面主体 开始 -->
+<div class="main">
+  
+  <div id="" class="">
+  <form id="event_form" action="<?php echo site_url('activity/dosave');?>" method="post">
+
+    <div class="card card_form">
+    
+      <label class="form_item form_item_plane">
+        <div class="form_label">活动标题</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="event_title" placeholder="填写活动标题" value="<?php echo $activity_detail['title']; ?>" maxlength="80">
+          <input type="hidden" name="id" value="<?php echo $activity_detail['id']; ?>">
+          <input type="hidden" name="old_isclub" value="<?php echo $activity_detail['isclub']; ?>">
+          <input type="hidden" name="old_club_id" value="<?php echo $activity_detail['club_id']; ?>">
+        </div>
+      </label>
+      
+      <div class="form_item form_item_plane">
+        <div class="form_label">封面</div>
+        <div class="form_item_con">
+          <div id="btn_event_cover_imgupload" class="cover form_imgupload" <?php if(!empty($activity_detail['img'])): ?> style="background-image:url(<?php echo $activity_detail['img'];?>);"<?php endif; ?>></div>
+          <input type="hidden" name="event_cover" value="">
+          <input type="hidden" name="old_event_cover" value="<?php echo $activity_detail['img'];?>">
+        </div>
+      </div>
+      
+      <label class="form_item form_item_plane form_textarea">
+        <div class="form_label">活动说明</div>
+        <div class="form_item_con">
+          <textarea class="form_input" id="input_event_intro" name="event_intro" placeholder="">
+            <?php echo $activity_detail['content']; ?>
+          </textarea>
+        </div>
+      </label>
+      
+      <div class="form_item form_item_plane">
+        <div class="form_label">项目</div>
+        <div class="form_item_con">
+          <input type="hidden" name="event_sports_items" class="form_input" value="<?php echo $activity_detail['projects']; ?>" />
+          <div id="sports_items_box" class="selecttag_box">
+            <div class="curr_sports_items selecttag_curr"><div class="curr_list"></div><a class="btn btn_selecttag_add"><i class="material-icons">&#xe146;</i></a></div>
+            
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <div class="card card_form">
+    
+      <label class="form_item form_item_plane haserror">
+        <div class="form_label">开始时间</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="event_starttime" data-field="datetime" data-format="yyyy-MM-dd hh:mm" readonly  placeholder="请选择" value="<?php echo date('Y-m-d H:i',$activity_detail['start_date']); ?>">
+        </div>
+      </label>
+      
+      <label class="form_item form_item_plane haserror">
+        <div class="form_label">结束时间</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="event_endtime" data-field="datetime" data-format="yyyy-MM-dd hh:mm" data-startend="end" data-startendelem="[name=event_starttime]" readonly  placeholder="请选择" value="<?php echo date('Y-m-d H:i',$activity_detail['end_date']); ?>">
+        </div>
+      </label>
+      
+      <label class="form_item form_item_plane">
+        <div class="form_label">活动地址</div>
+        <div class="form_item_con">
+           <input type="text" class="form_input" id="event_address" name="event_address" placeholder="位置获取" value="<?php if($activity_detail['province'] == $activity_detail['city']) echo $activity_detail['province'].$activity_detail['district'].$activity_detail['address'];else echo $activity_detail['province'].$activity_detail['city'].$activity_detail['district'].$activity_detail['address'];?>" readonly>
+        </div>
+        <input type="hidden" name="event_p_province" value="<?php echo $activity_detail['province']; ?>">
+        <input type="hidden" name="event_p_city" value="<?php echo $activity_detail['city']; ?>">
+        <input type="hidden" name="event_p_district" value="<?php echo $activity_detail['district']; ?>">
+        <input type="hidden" name="event_p_longitude" value="<?php echo $activity_detail['longitude']; ?>">
+        <input type="hidden" name="event_p_latitude" value="<?php echo $activity_detail['latitude']; ?>">
+        <input type="hidden" name="event_p_address" value="<?php echo $activity_detail['address']; ?>">
+      </label>
+    
+    </div>
+    
+    <div class="card card_form">
+      <label class="form_item form_item_plane form_item_club_event_type">
+        <div class="form_label">活动类型</div>
+        <div class="form_item_con">
+          <div class="form_select">
+            <select name="event_type" class="form_input appearance_none">
+              <option value="0" <?php if($activity_detail['isclub'] == 0) echo "selected='selected'"; ?> >个人发起</option>
+              <?php if(!empty($club_list)):?>
+              <option value="1" <?php if($activity_detail['isclub'] == 1 && $activity_detail['ispublic'] == 1) echo "selected='selected'"; ?>>俱乐部公开</option>
+              <option value="2" <?php if($activity_detail['isclub'] == 1 && $activity_detail['ispublic'] == 0) echo "selected='selected'"; ?>>俱乐部内部</option>
+              <?php endif;?>
+            </select>
+          </div>
+        </div>
+      </label>
+      
+      
+      <div id="event_select_club_show" class="form_item form_item_plane">
+        <div class="form_label">俱乐部</div>
+        <div class="form_item_con">
+          <div class="form_static">请选择俱乐部</div>
+          <input type="hidden" name="event_clubid" value="<?php echo $activity_detail['club_id']; ?>">
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="main_title">
+      <span>费用</span>
+    </div>
+    
+    <div class="card card_form">
+    
+      <label class="form_item form_item_plane form_item_club_charge">
+        <div class="form_label">活动收费</div>
+        <div class="form_item_con">
+          <label class="form_check"><input type="checkbox" name="club_charge" value="1"  <?php if($activity_detail['fee'] != 0) echo "checked='checked'";?> ></label>
+        </div>
+      </label>
+    
+      <div id="charge_box" style="display:none;">
+        <label class="form_item form_item_plane">
+          <div class="form_label">金额</div>
+          <div class="form_item_con">
+            <input type="text" class="form_input has_unit" name="club_charge_price" placeholder="(人民币)" value="<?php echo $activity_detail['fee']; ?>">
+            <div class="form_unit">元</div>
+          </div>
+        </label>
+
+        <label class="form_item form_item_plane form_item_tips form_item_club_charge_tips">
+          <div class="form_label null">提示</div>
+          <div class="form_item_con">
+            <div class="form_static">目前仅支持微信线上付款。<hr><small>一旦有人报名付费，活动将不可删除。</small></div>
+          </div>
+        </label>
+      </div>
+    </div>
+    <div class="main_title">
+      <span>报名</span>
+    </div>
+    <div class="card card_form">
+			
+      <label class="form_item form_item_plane">
+        <div class="form_label">报名截止</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="event_closingdate" data-field="datetime" data-format="yyyy-MM-dd hh:mm" data-startend="start" data-startendelem="[name=event_starttime]" readonly  placeholder="请选择" value="<?php echo date('Y-m-d H:i',$activity_detail['signup_date']);?>">
+        </div>
+      </label>
+      
+      <div id="btn_event_moreset" class="card_more"><span>点击展开 更多设置</span></div>
+      
+      <div class="form_item" id="event_moreset_box">
+      
+        <label class="form_item form_item_plane">
+          <div class="form_label">人数</div>
+          <div class="form_item_con">
+            <input type="text" class="form_input" name="event_people" placeholder="留空为不限人数" value="">
+          </div>
+        </label>
+        
+        <div class="form_item form_item_plane form_selecttag">
+          <div class="form_label">报名填写项</div>
+          <div class="form_item_con">
+            <input type="hidden" name="event_enroll_items" class="form_input" value="<?php echo $activity_detail['signup_item']; ?>" />
+            <div id="enroll_items_box" class="selecttag_box">
+              <div class="curr_enroll_items selecttag_curr">
+                <div class="require_list"><a class="item_one">昵称</a><a class="item_one">性别</a><a class="item_one">手机</a></div>
+                <div class="curr_list"></div>
+                <a class="btn btn_selecttag_add"><i class="material-icons">&#xe146;</i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <label class="form_item form_item_plane form_textarea">
+          <div class="form_label">注意事项</div>
+          <div class="form_item_con">
+            <textarea class="form_input" name="club_note" placeholder="参加活动要注意什么呢？">
+              <?php echo $activity_detail['notes']; ?>
+            </textarea>
+          </div>
+        </label>
+        
+      </div>
+      
+ 
+    </div>
+    <!--
+    <div class="card card_form">
+      <label class="form_item form_item_plane form_item_club_charge">
+        <div class="form_label"></div>
+        <div class="form_item_con">
+          <label class="form_check"><input type="checkbox" name="" value="1">接受《协议》</label>
+        </div>
+      </label>
+    </div>
+    -->
+      
+    <!--底部按钮 开始-->
+    <div class="bottombar">
+      <div class="bottombar_box">
+        <a id="btn_submit_event_del" class="bottombar_btn btn btn_color_2">删除</a> 
+        <button type="submit" id="btn_submit_event_add" class="bottombar_btn btn btn_color_1">保存</button>     
+      </div>
+    </div>
+    <!--底部按钮 结束-->  
+      
+    
+
+    </form>
+  </div>
+</div>
+<!-- 页面主体 结束 -->
+
+
+
+<div id="datetimepicker"></div>
+
+
+
+
+
+
+
+
+
+<!-- 选择俱乐部 开始 -->
+<div id="event_select_club" class="subplate subplate_select_club">
+
+  <div class="subplate_title">请选择发表游记的俱乐部：</div>
+  
+  <div class="list_club">
+  <?php foreach($club_list as $club):?>
+    <a class="item" data-clubid="<?php echo $club['id'];?>">
+      <div class="clublogowrap">
+        <div class="clublogo" <?php if(!empty($club['logos'])):?> style="background-image:url(<?php echo $club['logos'];?>)"<?php endif; ?>></div>
+        <?php if($club['shopno'] != ''): ?>
+        <div class="clubqual">G</div>
+        <?php endif; ?>
+      </div>
+      <div class="clubname"><?php echo $club['name']; ?></div>
+    </a>
+  <?php endforeach;?>
+
+  </div>
+
+  <!-- 底栏 开始 -->
+  <div class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_4">取消</a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<!-- 选择俱乐部 结束 -->
+
+
+
+
+<!-- 选择报名填写项 开始 -->
+<!-- 
+2016-09-29 10:54
+ -->
+<div id="subplate_selecttag_enroll_items" class="subplate subplate_selecttag">
+
+  <div class="subplate_title">选择报名填写项：</div>
+
+  <div class="selecttag_origi origi_enroll_items"></div>
+
+  <!-- 底栏 开始 -->
+  <div class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_1">完成</a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<!-- 选择报名填写项 结束 -->
+
+
+
+<!-- 选择运动标签 开始 -->
+<!-- 
+2016-09-29 10:54
+ -->
+<div id="subplate_selecttag_sports_items" class="subplate subplate_selecttag">
+
+  <div class="subplate_title">选择运动标签：</div>
+
+  <div class="selecttag_origi origi_sports_items"></div>
+
+  <!-- 底栏 开始 -->
+  <div class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_1">完成</a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<!-- 选择运动标签 结束 -->
+
+
+
+<!-- 上传图片 开始 -->
+<!-- 
+2016-09-28 10:54
+ -->
+<div id="part_imgupload" class="subplate part_imgupload">
+  <a class="btn_cancel btn btn_color_4"><i class="material-icons">&#xe5cd;</i></a>
+  <div class="imgupload_preview_box">
+    <img data-blank="<?php echo $activity_detail['img'];?>" src="<?php echo $activity_detail['img'];?>" id="imgupload_preview" class="imgupload_preview">
+    <label class="imgupload_preview_label" for="imgupload_file"></label>
+  </div>
+  <input type="file" name="imgupload_file" id="imgupload_file" style="position:absolute;clip:rect(0 0 0 0);">
+
+  <input type="hidden" id="imgupload_file_data" name="imgupload_file_data">
+
+  <!-- 底栏 开始 -->
+  <div id="imgupload_bottombar" class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+      
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_4">取消</a>
+      
+      <label class="bottombar_btn btn btn_color_1" for="imgupload_file">选择文件</label>
+      
+      <a class="bottombar_btn btn btn_color_2" id="submit_imgupload">
+        <span>提交图片</span>
+      </a>
+      
+    </div>
+  </div>
+  <div id="crop_bottombar" class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn btn btn_color_4" id="btn_crop_cancel">取消裁切</a>
+      
+      <a class="bottombar_btn btn btn_color_1" id="btn_crop_ok">
+        <span>确认裁切</span>
+      </a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<!-- 上传图片 结束 -->
+
+
+
+<!-- 选择位置 开始 -->
+<!-- 
+2016-09-30 10:10
+ -->
+<div id="subplate_positioning_event" class="subplate subplate_positioning" >
+
+  <!--<div class="subplate_title">选择位置：</div>-->
+
+  <div class="search_box"><form id="form_search_box_positioning">
+    <input type="search" class="input_search" name="positioning_keyword" placeholder="搜索">
+    <i class="icon material-icons"></i>
+    <button type="submit" class="btn_search btn btn_shadow btn_color_1" style="display: inline-block;">搜索</button>
+  </form></div>
+  <hr>
+  
+  <div id="baidumap_box" class="map_positioning_box" ></div>
+  
+  <input type="hidden" class="map_positioning_province">
+  <input type="hidden" class="map_positioning_city">
+  <input type="hidden" class="map_positioning_district">
+  <input type="hidden" class="map_positioning_longitude">
+  <input type="hidden" class="map_positioning_latitude">
+  <input type="hidden" class="map_positioning_address">
+  
+  <div id="map_positioning_click_result" class="map_positioning_click_result"></div>
+  <div id="map_positioning_search_result" class="map_positioning_search_result"></div>
+
+  <!-- 底栏 开始 -->
+  <div class="bottombar bottombar_imgupload">
+    <div class="bottombar_box">
+    
+      <a class="bottombar_btn bottombar_btn_cancel btn btn_color_4">取消</a>
+      <a class="bottombar_btn bottombar_btn_ok btn btn_color_1">确定</a>
+      
+    </div>
+  </div>
+  <!-- 底栏 结束 -->
+
+</div>
+<!-- 选择位置 结束 -->
+
+<script src="http://api.map.baidu.com/api?v=2.0&ak=6n5d8gKH4ycOwtb92lkqdANbpP41t81S"></script>
+<script>
+//百度地图API功能
+var map = new BMap.Map("baidumap_box"); // 创建Map实例
+<?php if(!empty( $activity_detail['longitude'])):?>
+var point = new BMap.Point(<?php echo $activity_detail['longitude']; ?>, <?php echo $activity_detail['latitude']; ?>);
+  map.centerAndZoom(point, 13);
+  map.enableScrollWheelZoom(true);
+  // map.panTo(point);
+  var mk = new BMap.Marker(point);
+  map.addOverlay(mk);
+
+<?php else: ?>
+//根据浏览器定位
+  var geolocation = new BMap.Geolocation();
+  geolocation.getCurrentPosition(function(r) {
+    if(this.getStatus() == BMAP_STATUS_SUCCESS) {
+      // var mk = new BMap.Marker(r.point);
+      // map.addOverlay(mk);
+      // alert('您的位置：'+r.point.lng+','+r.point.lat);
+      map.centerAndZoom(new BMap.Point(r.point.lng,r.point.lat), 13);
+      map.enableScrollWheelZoom(true);
+      map.panTo(r.point);
+
+    } else {
+      map.centerAndZoom(new BMap.Point(116.404, 39.915), 12);
+    }        
+  }, {enableHighAccuracy: true})
+<?php endif; ?>
+
+
+//手输搜索
+var local = new BMap.LocalSearch(map,{renderOptions: {
+    map: map,
+    panel: "map_positioning_search_result"
+  }
+});
+$("#form_search_box_positioning").submit( function() {
+
+  map.clearOverlays(); //清除地图上所有覆盖物
+
+  local.search($("#form_search_box_positioning [name=positioning_keyword]").val());
+
+  local.setInfoHtmlSetCallback(function(LocalResultPoi) {
+
+    $("#subplate_positioning_event .map_positioning_longitude").val( LocalResultPoi.point.lng );//经
+    $("#subplate_positioning_event .map_positioning_latitude").val( LocalResultPoi.point.lat );//纬
+    $("#subplate_positioning_event .map_positioning_province").val( LocalResultPoi.province );
+    $("#subplate_positioning_event .map_positioning_city").val( LocalResultPoi.city );
+    $("#subplate_positioning_event .map_positioning_district").val( "" );
+    $("#subplate_positioning_event .map_positioning_address").val( LocalResultPoi.address + " " + LocalResultPoi.title );
+    
+    
+    $("#map_positioning_click_result").html("<div><b>当前选中:</b><span>" + (LocalResultPoi.province||"") + (LocalResultPoi.city||"") + "" + LocalResultPoi.address + " " + LocalResultPoi.title + "</span></div>");
+
+  });
+  
+  $("#map_positioning_click_result").html("");
+
+  return false;
+});
+
+//点击地图选择
+var geoc = new BMap.Geocoder();
+map.addEventListener("click", function(e){
+  //删除自己点击时创建的覆盖物
+  var allOverlay = map.getOverlays();
+  for( i in allOverlay ) {
+    if(allOverlay[i]["uQ"] == "Marker") {
+      if(allOverlay[i].getTitle() == "" || allOverlay[i].getTitle() == "undefined") {
+        map.removeOverlay(allOverlay[i]);
+      }
+    }
+  }
+
+  var pt = e.point;
+  geoc.getLocation(pt, function(rs) {
+    var addComp = rs.addressComponents;
+    $("#subplate_positioning_event .map_positioning_longitude").val( rs.point.lng );//经
+    $("#subplate_positioning_event .map_positioning_latitude").val( rs.point.lat );//纬
+    $("#subplate_positioning_event .map_positioning_province").val( addComp.province );
+    $("#subplate_positioning_event .map_positioning_city").val( addComp.city );
+    $("#subplate_positioning_event .map_positioning_district").val( addComp.district );
+    $("#subplate_positioning_event .map_positioning_address").val( addComp.street + addComp.streetNumber );
+    
+    //根据点击所在点，创建覆盖物
+    var marker = new BMap.Marker(new BMap.Point(rs.point.lng, rs.point.lat)); // 创建点
+    map.addOverlay(marker); 
+    $("#map_positioning_click_result").html("<div><b>当前选中:</b><span>" + (addComp.province||"") + (addComp.city||"") + addComp.district + addComp.street + addComp.streetNumber + "</span></div>");
+    
+    
+  }); 
+});
+
+//点击当前地址结果
+$("#map_positioning_click_result").on("click",function(){
+  //$("#map_positioning_click_result > div").css("background-color", "rgb(240, 240, 240)");
+  if($("#subplate_positioning_event .map_positioning_longitude").val() != '')
+  {
+    map.panTo(new BMap.Point($("#subplate_positioning_event .map_positioning_longitude").val(), $("#subplate_positioning_event .map_positioning_latitude").val()));
+  }
+  else
+  {
+  <?php if(!empty($activity_detail['longitude'])): ?>
+   map.panTo(new BMap.Point( <?php echo $activity_detail['longitude']; ?>, <?php echo $activity_detail['latitude']; ?>));
+  <?php endif; ?>
+  }
+});
+
+
+//取消选择 位置
+$("#subplate_positioning_event").on("click", ".bottombar_btn_cancel", function(){
+  $.fn.hasShadow("hide");
+  $("#subplate_positioning_event").hide();
+});
+//确定选择 位置
+$("#subplate_positioning_event").on("click", ".bottombar_btn_ok", function(){
+  $.fn.hasShadow("hide");
+  $("#subplate_positioning_event").hide();
+  
+  $("[name=event_p_longitude]").val( $("#subplate_positioning_event .map_positioning_longitude").val() );//经
+  $("[name=event_p_latitude]").val( $("#subplate_positioning_event .map_positioning_latitude").val() );//纬
+  $("[name=event_p_province]").val( $("#subplate_positioning_event .map_positioning_province").val() );
+  $("[name=event_p_city]").val( $("#subplate_positioning_event .map_positioning_city").val() );
+  $("[name=event_p_district]").val( $("#subplate_positioning_event .map_positioning_district").val() );
+  $("[name=event_p_address]").val( $("#subplate_positioning_event .map_positioning_address").val() );
+  
+  $("#event_address").val( $("[name=event_p_province]").val() + $("[name=event_p_city]").val() + $("[name=event_p_district]").val() + $("[name=event_p_address]").val() );
+  
+  
+});
+
+//弹出选择位置面板
+$("#event_address").on("click", function(){
+  $.fn.hasShadow();
+  $("#subplate_positioning_event").show();
+  <?php if(!empty($activity_detail['longitude'])): ?>
+    $("#map_positioning_click_result").html("<div><b>当前选中:</b><span>" + $(this).val() + "</span></div>");
+    // map.panTo(new BMap.Point( <?php echo $activity_detail['longitude']; ?>, <?php echo $activity_detail['latitude']; ?>));
+  <?php endif; ?>
+  
+  
+  
+});
+
+</script>
+
+
+
+<link rel="stylesheet" href="<?php echo base_url()?>static/index/club/js/datetimepicker/DateTimePicker.css" />
+<script src="<?php echo base_url()?>static/index/club/js/datetimepicker/DateTimePicker.js"></script>
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" href="<?php echo base_url()?>static/index/club/js/datetimepicker/DateTimePicker-ltie9.css" />
+<script type="text/javascript" src="<?php echo base_url()?>static/index/club/js/datetimepicker/DateTimePicker-ltie9.js"></script>
+<![endif]-->
+<!-- For i18n Support -->
+<script src="<?php echo base_url()?>static/index/club/js/datetimepicker/i18n/DatetimePicker-i18n-zh-CN.js"></script>
+
+
+<script src="<?php echo base_url()?>static/index/club/js/geo.js"></script>
+
+<script src="<?php echo base_url()?>static/index/club/js/exif.js"></script>
+<script src="<?php echo base_url()?>static/index/club/js/getimgdata.js"></script>
+<script src="<?php echo base_url()?>static/index/club/js/jcrop/js/jquery.Jcrop.js"></script>
+<link rel="stylesheet" href="<?php echo base_url()?>static/index/club/js/jcrop/css/jquery.Jcrop.css" type="text/css" />
+<script src="<?php echo base_url()?>static/index/club/js/tinymce/tinymce.min.js"></script>
+
+<script>
+
+
+
+  function tinymce_imgupload() {
+    $("#submit_imgupload").html( "<span>插入图片</span>" );
+    //console.log(this);
+    $.fn.cropimgupload({
+      btnOKClick: function( data ){
+
+        var params = $("#imgupload_file_data").serialize();
+
+        $.ajax({
+          type: "POST",
+          datatype: "json",
+          // url: "./demo/imgupload.php",
+          url: "<?php echo site_url('activity/upload_ajax');?>",
+          //data: "imgupload_file_data=" + data,
+          data: params,
+          success: function(data){
+            if( typeof data != "object" ) {
+              data = $.parseJSON(data);
+            }
+            if( data.state == 1 ) {
+              //console.log( data.msg );
+              tinyMCE.execCommand("mceInsertContent",!1,"<p><img src=\"" + data.msg + "\"></p>");
+              $("#imgupload").hide();
+            }
+            if( data.state == 0 ) {
+              //alert( data.msg );
+              $.fn.winktips( data.msg );
+            }
+            return false;
+            
+          }
+
+        });
+        
+      }
+    });
+  }
+
+
+
+
+
+$(function(){
+
+  //初始化日期选择插件
+  $("#datetimepicker").DateTimePicker( {
+    language: "zh-CN",
+    dateFormat: "yyyy-MM-dd",
+    labels: null,
+    afterHide: function(target){
+    
+      //设定活动开始时间自动同步设定报名截止时间
+      if( $(target).attr("name") == "event_starttime" 
+          && ( !$("[name=event_closingdate]").val() 
+            || ( Date.parse($("[name=event_starttime]").val()) < Date.parse($("[name=event_closingdate]").val()) ) ) ) {
+              $("[name=event_closingdate]").val( $("[name=event_starttime]").val() )
+      }
+    }
+  });
+
+  //上传活动封面
+  $("#btn_event_cover_imgupload").cropimgupload({
+    "file_data": "[name=event_cover]",
+    btnOKClick: function(){
+      $( ".form_imgupload" ).css( "background-image", "url("+ $("#imgupload_file_data").val() +")" );
+    }
+  });
+
+  //运动
+  var origi_sports_items = [ "骑行", "徒步", "爬山", "其他" ];
+  var curr_sports_items = $("[name=event_sports_items]").val().split(",");
+  
+  var selectTag_sports_items = {
+    tag_input: "[name=event_sports_items]",
+    origi_box: ".origi_sports_items",
+    curr_box: ".curr_sports_items .curr_list",
+    arr_origi: origi_sports_items,
+    arr_curr: curr_sports_items,
+    origi_item: "<a class=\"item_one [[active]]\" data-text=\"[[tag]]\">[[tag]]</a>",
+    curr_item: "<a class=\"item_one\" data-text=\"[[tag]]\">[[tag]]</a>",
+    origi_update_fn: function (){},
+    curr_update_fn: function (){}
+  }
+
+  $.fn.selectTag( selectTag_sports_items, "update" );
+
+  $("#sports_items_box").on("click", function(){
+    $.fn.hasShadow();
+    $("#subplate_selecttag_sports_items").show();
+  });
+  
+  $(".subplate_selecttag").on("click", ".bottombar_btn_cancel", function(){
+    $.fn.hasShadow("hide");
+    $("#subplate_selecttag_sports_items").hide();
+  });
+  
+  //报名填写项
+  var origi_enroll_items = [ "证件号码", "擅长", "职业", "备注" ];
+  var curr_enroll_items = $("[name=event_enroll_items]").val().split(",");
+  
+  var selectTag_enroll_items = {
+    tag_input: "[name=event_enroll_items]",
+    origi_box: ".origi_enroll_items",
+    curr_box: ".curr_enroll_items .curr_list",
+    arr_origi: origi_enroll_items,
+    arr_curr: curr_enroll_items,
+    origi_item: "<a class=\"item_one [[active]]\" data-text=\"[[tag]]\">[[tag]]</a>",
+    curr_item: "<a class=\"item_one\" data-text=\"[[tag]]\">[[tag]]</a>",
+    origi_update_fn: function (){},
+    curr_update_fn: function (){}
+  }
+
+  $.fn.selectTag( selectTag_enroll_items, "update" );
+
+  $("#enroll_items_box").on("click", function(){
+    $.fn.hasShadow();
+    $("#subplate_selecttag_enroll_items").show();
+  });
+  
+  $("#subplate_selecttag_enroll_items").on("click", ".bottombar_btn_cancel", function(){
+    $.fn.hasShadow("hide");
+    $("#subplate_selecttag_enroll_items").hide();
+  });
+
+
+  
+  //俱乐部简介富文本
+  tinyMCE.init({
+    selector: "#input_event_intro",
+    toolbar: "bold underline textmark | face hr imgupload",
+    plugins: [
+      "hr textmark face paste imgupload",
+      "autosave",
+      //"link code fullscreen media wordcount",
+      "autoresize"
+    ],
+    paste_as_text: true,
+    autosave_ask_before_unload: false,
+    menu: {
+      view: {title: 'Happy', items: 'code fullscreen'}
+    },
+    //menubar: true,
+    menubar: false,
+    statusbar: false,
+    content_css: "<?php echo base_url()?>static/index/club/css/richtext.css",
+    //content_css: "./club/css/style.css",
+    language: "zh_CN",
+    autoresize_max_height: 250,
+    //autoresize_min_height: 150,
+    autoresize_on_init: true,
+    convert_urls: false
+    
+  });
+
+  if (window.localStorage) {
+    if( localStorage.getItem( "tinymce-autosave-" + window.location.pathname + window.location.search + "-input_event_intro-draft" ) ) {
+      $.fn.winktips("已自动载入上次未保存的草稿");
+    }
+  }
+  
+  
+  //是否收费
+  if( $(this).is(":checked") ) {
+    $("#charge_box").show();
+    $(".form_item_club_charge").css("border-bottom-width","1px");
+  }
+  $("[name=club_charge]").on("change click", function(){
+    if( $(this).is(":checked") ) {
+      $("#charge_box").show();
+      $(".form_item_club_charge").css("border-bottom-width","1px");
+    } else {
+      $("#charge_box").hide();
+      $(".form_item_club_charge").css("border-bottom-width","0");
+    }
+  });
+  
+  //默认折叠更多设置
+  if( $("[name=user_profile_idcard]").val() ) {
+    $("body").addClass("user_profile_trueinfo_box_show");
+  }
+  $( "#btn_event_moreset" ).on("click", function(){
+    $("body").addClass("event_moreset_box_show");
+  });
+  
+  //删除提醒
+  $( "#btn_submit_event_del" ).on("click", function(){
+    $.fn.poptips({
+      con: "您确定要「<strong>删除本活动吗</strong>」？！",
+      btnCancel: true,
+      btnOKText: "确认删除",
+      btnOKClick: function (){
+      window.location.replace("<?php echo site_url('activity/delete/'.$activity_detail['id']);?>");
+      // history.back();
+        // alert("删除")//删除活动
+        
+        
+      }
+    });
+  });
+  
+  //活动类型
+  if( $( "[name=event_type]" ).val() == 0 ) {
+    $("#event_select_club_show").hide();
+    $(".form_item_club_event_type").css("border-bottom-width","0");
+  }
+  $( "[name=event_type]" ).on("change click", function(){
+    if( $(this).val() == 0 ) {
+      $("#event_select_club_show").hide();
+      $(".form_item_club_event_type").css("border-bottom-width","0");
+    } else {
+      $("#event_select_club_show").show();
+      $(".form_item_club_event_type").css("border-bottom-width","1px");
+    }
+  });
+  
+  //显示选择俱乐部面板
+  $("#event_select_club_show").on("click", function(){
+    $.fn.hasShadow();
+    $("#event_select_club").show();
+  });
+  //将活动信息填入表单
+  $("#event_select_club").on("click", ".item", function(){
+    $(this).addClass("active").siblings(".item").removeClass("active");
+    $("#event_select_club_show .form_static").html( $(this).find(".clubname").html() );
+    $("[name=event_clubid]").val( $(this).data("clubid") );
+    $("#event_select_club").hide();
+    $.fn.hasShadow("hide");
+  });
+  //取消选择活动
+  $("#event_select_club .bottombar_btn_cancel").on("click", function(){
+    $("#event_select_club").hide();
+    $.fn.hasShadow("hide");
+  });
+
+  
+  
+  
+  
+  
+  //提交
+  $("#event_form").submit( function() {
+
+    //活动标题主题名称
+    if( !$("[name=event_title]").val() ) {
+
+      $.fn.poptips({
+        con: "活动没有「<strong>标题</strong>」？！",
+        btnOKClick: function (){
+          $("[name=event_title]").focus();
+        }
+      });
+
+      $("[name=event_title]").checktips({
+        parent: $("[name=event_title]").closest(".form_item"),
+        tips: "请填写活动标题！"
+      });
+      
+      return false;
+    } else {
+      $("[name=event_title]").checktips({
+        parent: $("[name=event_title]").closest(".form_item"),
+        act: "hide"
+      });
+    }
+  
+    //活动详情
+    if ( !tinymce.get("input_event_intro").getContent({format: 'raw'}).replace(/<[^>].*?>/g,"") ) {
+      $.fn.poptips({
+        con: "请填写「<strong>活动说明</strong>」！",
+        btnOKClick: function (){
+          //$("[name=input_travelogue_text]").focus();
+          tinyMCE.activeEditor.focus();
+        }
+      });
+      return false;
+    }
+    
+    
+    //活动开始时间
+    if( !$("[name=event_starttime]").val() ) {
+
+      $.fn.poptips({
+        con: "请选择「<strong>活动开始时间</strong>」！",
+        btnOKClick: function (){
+          $("[name=event_starttime]").focus();
+        }
+      });
+
+      $("[name=event_starttime]").checktips({
+        parent: $("[name=event_starttime]").closest(".form_item"),
+        tips: "请选择活动开始时间！"
+      });
+      
+      return false;
+    } else {
+      $("[name=event_starttime]").checktips({
+        parent: $("[name=event_starttime]").closest(".form_item"),
+        act: "hide"
+      });
+    }
+    
+    //活动结束时间
+    if( !$("[name=event_endtime]").val() ) {
+
+      $.fn.poptips({
+        con: "请选择「<strong>活动结束时间</strong>」！",
+        btnOKClick: function (){
+          $("[name=event_endtime]").focus();
+        }
+      });
+
+      $("[name=event_endtime]").checktips({
+        parent: $("[name=event_endtime]").closest(".form_item"),
+        tips: "请选择活动结束时间！"
+      });
+      
+      return false;
+    } else {
+      $("[name=event_endtime]").checktips({
+        parent: $("[name=event_endtime]").closest(".form_item"),
+        act: "hide"
+      });
+      parsetime_endtime = Date.parse($("[name=event_endtime]").val());
+      if( parsetime_starttime >= parsetime_endtime ) {
+        $.fn.poptips({
+          con: "请修改「<strong>活动结束时间</strong>」！<br>「活动结束时间」<strong>须晚于</strong>「活动开始时间」！",
+          btnOKClick: function (){
+            $("[name=event_endtime]").focus();
+          }
+        });
+        return false;
+      }
+    }
+    //报名截止时间 event_closingdate
+    if( !$("[name=event_closingdate]").val() ) {
+
+      $.fn.poptips({
+        con: "请选择「<strong>报名截止时间</strong>」！",
+        btnOKClick: function (){
+          $("[name=event_closingdate]").focus();
+        }
+      });
+
+      $("[name=event_closingdate]").checktips({
+        parent: $("[name=event_closingdate]").closest(".form_item"),
+        tips: "请选择报名截止时间！"
+      });
+      
+      return false;
+    } else {
+      $("[name=event_closingdate]").checktips({
+        parent: $("[name=event_closingdate]").closest(".form_item"),
+        act: "hide"
+      });
+      parsetime_closingdate = Date.parse($("[name=event_closingdate]").val());
+      if( parsetime_starttime < parsetime_closingdate ) {
+        $.fn.poptips({
+          con: "「报名截止时间」<strong>不可晚于</strong>「活动开始时间」！<br>请修改「<strong>报名截止时间</strong>」！",
+          btnOKClick: function (){
+            $("[name=event_closingdate]").focus();
+          }
+        });
+        return false;
+      }
+    }
+    //检测选择俱乐部
+    if( $( "[name=event_type]" ).val() != 0 && !parseInt($("[name=event_clubid]").val()) ) {
+
+      $.fn.poptips({
+        con: "请选择「<strong>主办俱乐部</strong>」！",
+        btnOKClick: function (){
+          //$("[name=event_clubid]").focus();
+        }
+      });
+
+      $("[name=event_clubid]").checktips({
+        parent: $("[name=event_clubid]").closest(".form_item"),
+        tips: "请选择主办俱乐部！"
+      });
+      
+      return false;
+    } else {
+      $("[name=event_clubid]").checktips({
+        parent: $("[name=event_clubid]").closest(".form_item"),
+        act: "hide"
+      });
+    }
+    if( $("[name=club_charge]").is(":checked") )
+    {
+      var price = $("[name=club_charge_price]").val();
+      if(!price)
+      {
+         $.fn.poptips({
+          con: "「金额」<strong>不能为空</strong>！<br>请填写「<strong>金额</strong>」！",
+          btnOKClick: function (){
+            $("[name=club_charge_price]").focus();
+          }
+        });
+        return false;
+      }
+      if(price < 0.01)
+      {
+        $.fn.poptips({
+          con: "「金额」<strong>不可低于</strong>「0.01元」！<br>请修改「<strong>金额</strong>」！",
+          btnOKClick: function (){
+            $("[name=club_charge_price]").focus();
+          }
+        });
+        return false;
+      }
+    }
+    
+    
+    // return false;
+  
+  
+  });
+  
+
+});
+
+
+
+
+
+</script>
+
+
+
+
+
+
+<!-- 以下为页脚 -->
+
+<?php $this->load->view('public/footer.html'); ?>
+</body>
+</html>
