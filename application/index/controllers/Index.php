@@ -41,22 +41,38 @@ class Index extends CI_Controller {
 	 */
 	public function user_wallet()
 	{
-		// $this->Login_model->login();
-
-		// $data['sys_set']['withdraw_start_day'] = $this->Wallet_model->get_sys_set('withdraw_start_day');
-		// $data['sys_set']['withdraw_end_day'] = $this->Wallet_model->get_sys_set('withdraw_end_day');
-		// // 每月
-		// $data['day'] = date('d');
-		// // var_dump($data);exit();
-
-		// $data['avail_cash'] = $this->Wallet_model->avail_get_cash($_SESSION['user']['id']);
-		// $data['freeze_money'] = $this->Wallet_model->count_freeze_money($_SESSION['user']['id']);
-		// $data['identity_verify_status'] = $this->Wallet_model->get_identity_verify_status();
+		$data['avail_cash'] = 100;
+		$data['freeze_money'] = 999;
 
 		// var_dump($data);exit();
 		$data['title'] = '我的钱包';
 		$data['header_title'] = '我的钱包';
 		$this->load->view('club/user_wallet.html', $data);
+	}
+
+	public function user_cash()
+	{
+		$data['title'] = '我的钱包';
+		$data['header_title'] = '我的钱包';
+
+		$data['cash'] = 100;
+		$this->load->view('club/user_cash.html', $data);
+	}
+
+	// 余额明细
+	public function cash_detail($value='')
+	{
+		$data['title'] = '我的钱包';
+		$data['header_title'] = '我的钱包';
+		$this->load->view('club/user_wallet_record.html', $data);
+	}
+
+	// 预估收入明细
+	public function freeze_detail($value='')
+	{
+		$data['title'] = '我的钱包';
+		$data['header_title'] = '我的钱包';
+		$this->load->view('club/user_wallet_record1.html', $data);
 	}
 
 

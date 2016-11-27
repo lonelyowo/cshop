@@ -25,35 +25,19 @@ $(function(){
     
     <div class="card card_form">
     
-      <div class="form_item form_item_plane">
-        <div class="form_label">认证用户</div>
+      <label id="alipay" class="form_item form_item_plane">
+        <div class="form_label">支付宝账号</div>
         <div class="form_item_con">
-          <div class="form_static"><b><?php echo !empty($user)?$user['real_name']:''; ?></b><small> [已认证]</small></div>
+          <input type="text" class="form_input" name="alipay" placeholder="" value="">
         </div>
-      </div>
-    
-    	<div class="form_item form_item_plane" id="user_cash_target_bank_account">
-        <div class="form_label">选择账户</div>
-        <div class="form_item_con">
-        
-          <div class="target_bank_account">
-          <!--
-            <div class="bank_ico" style="background-image: url(./club/img/bank/工商银行.png);"></div>
-            <div class="name">工商银行</div>
-            <div class="text">尾号 7032</div>
-            -->
-            
-            <div class="bank_ico"></div>
-            <div class="name">请选择</div>
-            <div class="text">--</div>
-            
-          </div>
-          <input type="hidden" name="user_cash_target" value="0">
+      </label>
 
-          <i class="enter material-icons">&#xe315;</i>
-          
+      <label id="wxpay" class="form_item form_item_plane">
+        <div class="form_label">微信账号</div>
+        <div class="form_item_con">
+          <input type="text" class="form_input" name="wxpay" placeholder="" value="">
         </div>
-      </div>
+      </label>
       
       <label id="user_cash_num" class="form_item form_item_plane">
         <div class="form_label">提现金额</div>
@@ -65,14 +49,14 @@ $(function(){
       
       <div id="user_cash_limit" class="form_item form_item_plane">
         <div class="form_item_con">
-          <div class="form_static">可用余额 <b class="num"><?php echo $cash; ?></b> 元 <a class="btn">全部提现</a></div>
+          <div class="form_static">余额 <b class="num"><?php echo $cash; ?></b> 元 <a class="btn">全部提现</a></div>
         </div>
       </div>
       
       <label class="form_item form_item_plane">
         <div class="form_label">备注</div>
         <div class="form_item_con">
-          <textarea class="form_input" name="user_profile_intro" placeholder="选填，不超过250个(汉字)" maxlength="250"></textarea>
+          <textarea class="form_input" name="user_profile_intro" placeholder="选填，不超过200个字。" maxlength="200"></textarea>
         </div>
       </label>
 
@@ -82,7 +66,11 @@ $(function(){
       <div class="form_item form_item_plane form_item_tips">
         <div class="form_label">提现规则</div>
         <div class="form_item_con">
-          <div class="form_static"><?php echo $tip; ?></div>
+          <div class="form_static">
+            收款账号：支付宝或微信任选一项。
+            <br>
+            3个工作日内完成提现，请耐心等待。
+          </div>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2016-11-24 01:57:17
+-- Generation Time: 2016-11-27 21:59:05
 -- 服务器版本： 5.6.17
 -- PHP Version: 5.5.12
 
@@ -119,6 +119,41 @@ INSERT INTO `admin_user` (`id`, `name`, `password`, `identity`, `time`) VALUES
 -- --------------------------------------------------------
 
 --
+-- 表的结构 `cash`
+--
+
+CREATE TABLE IF NOT EXISTS `cash` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `operate` tinyint(1) NOT NULL COMMENT '0:减 1:加 ',
+  `money` varchar(20) NOT NULL,
+  `time` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='余额' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `cash_apply`
+--
+
+CREATE TABLE IF NOT EXISTS `cash_apply` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `alipay` varchar(200) NOT NULL COMMENT '支付宝账号',
+  `wxpay` varchar(200) NOT NULL COMMENT '微信账号',
+  `money` varchar(20) NOT NULL,
+  `remark` varchar(300) NOT NULL,
+  `add_time` varchar(10) NOT NULL COMMENT '添加时间',
+  `end_time` varchar(10) NOT NULL COMMENT '处理时间',
+  `status` tinyint(1) NOT NULL COMMENT '处理状态  0：未处理 1：已经处理 2：申请无效',
+  `reason` varchar(300) NOT NULL COMMENT '提现申请无效理由',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='申请提现' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- 表的结构 `cate`
 --
 
@@ -138,6 +173,25 @@ CREATE TABLE IF NOT EXISTS `cate` (
 INSERT INTO `cate` (`id`, `sort`, `name`, `img`, `time`) VALUES
 (4, 100, 'test', 'data/uploads/cate/1479831536.jpg', '1479831536'),
 (5, 100, '考拉', 'data/uploads/cate/1479913956.jpg', '1479913956');
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `freeze`
+--
+
+CREATE TABLE IF NOT EXISTS `freeze` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `goods_id` int(10) unsigned NOT NULL,
+  `order_id` int(10) unsigned NOT NULL,
+  `operate` tinyint(1) NOT NULL COMMENT '0:减 1:加 ',
+  `money` varchar(20) NOT NULL,
+  `add_time` varchar(10) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1:结算转入余额',
+  `end_time` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='冻结资金' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -162,7 +216,25 @@ CREATE TABLE IF NOT EXISTS `goods` (
 --
 
 INSERT INTO `goods` (`id`, `cate_id`, `sort`, `name`, `url`, `img`, `price`, `time`) VALUES
-(1, 1, 100, 'test', 'www.baidu.com', 'data/uploads/goods/1479905197.jpg', '10', '1479905197');
+(1, 5, 100, 'test', 'www.baidu.com', 'data/uploads/goods/1479987215.jpg', '10', '1479905197');
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `order`
+--
+
+CREATE TABLE IF NOT EXISTS `order` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `order_num` varchar(100) NOT NULL COMMENT '第三方平台提供-订单编号',
+  `goods_info` text NOT NULL COMMENT '第三方平台提供-商品信息',
+  `income` varchar(20) NOT NULL COMMENT '商家返利',
+  `add_time` varchar(10) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '订单状态 1：结算完成',
+  `end_time` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -172,9 +244,11 @@ INSERT INTO `goods` (`id`, `cate_id`, `sort`, `name`, `url`, `img`, `price`, `ti
 
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) CHARACTER SET utf8 NOT NULL,
-  `password` varchar(100) CHARACTER SET utf8 NOT NULL,
-  `time` varchar(10) CHARACTER SET utf8 NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `freeze_money` varchar(20) NOT NULL DEFAULT '0' COMMENT '冻结资金',
+  `cash_money` varchar(20) NOT NULL DEFAULT '0' COMMENT '可提现金额',
+  `time` varchar(10) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
@@ -183,9 +257,9 @@ CREATE TABLE IF NOT EXISTS `user` (
 -- 转存表中的数据 `user`
 --
 
-INSERT INTO `user` (`id`, `name`, `password`, `time`) VALUES
-(1, 'root', 'root', '1479922110'),
-(2, 'test', 'test', '1479922189');
+INSERT INTO `user` (`id`, `name`, `password`, `freeze_money`, `cash_money`, `time`) VALUES
+(1, 'root', 'root', '0', '0', '1479922110'),
+(2, 'test', 'test', '0', '0', '1479922189');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
