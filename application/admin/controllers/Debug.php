@@ -10,28 +10,7 @@ class Debug extends CI_Controller {
 
 	public function index()
 	{
-		$a = '{
-                "status": 1,
-                "msg": "ok",
-                "data": [
-                            {
-                                "id": 1,
-                                "logo": "./demo/img/club_01.jpg",
-                                "name": "昆山勇者无畏",
-                                "star": 0,
-                                "people": 1542
-                            },
-                            {
-                                "id": 2,
-                                "logo": "./demo/img/club_01.jpg",
-                                "name": "昆山勇者无畏",
-                                "star": 1,
-                                "people": 1542
-                            }
-                        ]
-            }';
-    $code = urldecode(json_encode(urlencode("厦门")));
-    var_dump($code);
+		var_dump($this->db->where('id', 1)->get('order')->row_array());
 	}
 
 	public function sess()

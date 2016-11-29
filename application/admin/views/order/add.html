@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="控制台 后台管理">
+    <meta name="author" content="Chenjp">
+    <!-- <link rel="icon" href="http://v3.bootcss.com/favicon.ico"> -->
+
+    <title>Chenjp</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="http://v3.bootcss.com/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="http://v3.bootcss.com/examples/dashboard/dashboard.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="http://v3.bootcss.com/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="http://v3.bootcss.com/assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <?php $this->load->view('public/navbar.html'); ?>
+
+    <div class="container-fluid">
+      <div class="row">
+      
+        <?php $this->load->view('public/sidebar.html'); ?>
+
+
+      
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          
+          <form class="form-horizontal" role="form" action="<?php echo site_url('Index/order_bll'); ?>" method="post" enctype="multipart/form-data">
+            
+            <div class="form-group">
+              <label for="user_id" class="col-sm-1 control-label">用户名:</label>
+              <div class="col-sm-10">
+                <select id="user_id" name="user_id" class="form-control">
+                  <?php if ($user_list) : ?>
+                    <?php foreach ($user_list as $key => $user) : ?>
+                      <option value="<?php echo $user['id']; ?>"><?php echo $user['name']; ?></option>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="goods_name" class="col-sm-1 control-label">商品名:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="goods_name" name="goods_name" placeholder="商品名" value="">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="order_num" class="col-sm-1 control-label">订单号:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="order_num" name="order_num" placeholder="第三方-订单号" value="">
+              </div>
+            </div>
+
+            
+
+            <div class="form-group">
+              <label for="income" class="col-sm-1 control-label">商家返利:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="income" name="income" placeholder="商家返利" value="">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="money" class="col-sm-1 control-label">用户返利:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="money" name="money" placeholder="用户返利" value="">
+              </div>
+            </div>
+
+             
+
+            <div class="form-group">
+              <div class="col-sm-offset-1 col-sm-10">
+                <button type="submit" id="submit" class="btn btn-danger">提交</button>
+              </div>
+            </div>
+          
+          </form>
+
+
+          
+        </div>
+
+
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://v3.bootcss.com/dist/js/bootstrap.min.js"></script>
+    <!-- <script src="http://v3.bootcss.com/assets/js/docs.min.js"></script> -->
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="http://v3.bootcss.com/assets/js/ie10-viewport-bug-workaround.js"></script>
+
+    <script>
+      $(function(){
+        $('#submit').click(function(){
+          var user_id = $.trim($('#user_id').val());
+          var order_num = $.trim($('#order_num').val());
+          var goods_name = $.trim($('#goods_name').val());
+          var income = $.trim($('#income').val());
+          var money = $.trim($('#money').val());
+
+          if ( user_id=='' || order_num=='' || goods_name=='' || income=='' || money=='' ) {
+            alert('输入不能为空，请检查！');
+            return false;
+          }
+        
+        });
+      });
+    </script>
+    
+  </body>
+</html>

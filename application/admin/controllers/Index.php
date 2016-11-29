@@ -457,6 +457,178 @@ class Index extends CI_Controller {
 		echo json_encode($json);
 	}
 
+	
+	// 订单管理
+	public function order()
+	{
+		$data['sidebar_active']['Index/order'] = 'active';
+		$data['data'] = $this->Index_model->get_order();
+		// var_dump($data['data']);exit();
+		$this->load->view('order/order.html', $data);
+	}
+
+	public function order_add()
+	{
+		$data['sidebar_active']['Index/order'] = 'active';
+		$data['user_list'] = $this->Index_model->get_user();
+		$this->load->view('order/add.html', $data);
+	}
+
+	public function order_del($id='')
+	{
+		$this->db->delete('order', array('id' => $id));
+		redirect('Index/order');
+	}
+
+	// 添加订单记录
+	public function order_bll()
+	{
+		$this->db->trans_strict(FALSE);
+		$this->db->trans_start();
+
+
+		// 添加订单
+		$data = array(
+			'user_id'=>$_POST['user_id'],
+			'goods_name'=>$_POST['goods_name'],
+			'order_num'=>$_POST['order_num'],
+			'income'=>$_POST['income'],
+			'freeze_money'=>$_POST['money'],
+			'add_time'=>time(),
+			);
+		$this->db->insert('order', $data);
+		$order_id = $this->db->insert_id();
+
+		// 添加用户返利记录
+		$data = array(
+			'user_id'=>$_POST['user_id'],
+			'order_id'=>$order_id,
+			'goods_name'=>$_POST['goods_name'],
+			'operate'=>1,
+			'money'=>$_POST['money'],
+			'add_time'=>time(),
+			);
+		$this->db->insert('freeze', $data);
+
+		// 用户预估收入账户
+		$sql = "UPDATE `user`
+				SET freeze_money = freeze_money + {$_POST['money']}
+				WHERE
+					id = {$_POST['user_id']}";
+		$this->db->query($sql);
+
+
+		$this->db->trans_complete();
+
+		redirect('Index/order');
+	}
+
+	// 转入余额
+	public function into_cash($order_id)
+	{
+		$this->db->trans_strict(FALSE);
+		$this->db->trans_start();
+
+		// 订单改为失效
+		$data = array(
+		    'is_use' => 0,
+		    'end_time' => time(),
+		);
+		$this->db->where('id', $order_id)->update('order', $data);
+
+		// 获取冻结资金 用户id
+		$row = $this->db->where('id', $order_id)->get('order')->row_array();
+		$freeze_money = $row['freeze_money'];
+		$user_id = $row['user_id'];
+
+		// 添加转入余额记录
+		$data = array(
+			'user_id'=>$user_id,
+			'operate'=>1,
+			'money'=>$freeze_money,
+			'time'=>time(),
+			);
+		$this->db->insert('cash', $data);
+
+		// 转入余额
+		$sql = "UPDATE `user`
+				SET 
+					freeze_money = freeze_money - {$freeze_money},
+					cash_money = cash_money + {$freeze_money}
+				WHERE
+					id = {$user_id} 
+				LIMIT 1";
+		$this->db->query($sql);
+
+
+		$this->db->trans_complete();
+		redirect('Index/order');
+	}
+
+	// 取消用户返利
+	public function cancel_freeze_money($order_id)
+	{
+		$this->db->trans_strict(FALSE);
+		$this->db->trans_start();
+
+		// 订单改为失效
+		$data = array(
+		    'is_use' => 0,
+		    'end_time' => time(),
+		);
+		$this->db->where('id', $order_id)->update('order', $data);
+
+		// 获取冻结资金 用户id
+		$row = $this->db->where('id', $order_id)->get('order')->row_array();
+		$freeze_money = $row['freeze_money'];
+		$user_id = $row['user_id'];
+		$goods_name = $row['goods_name'];
+
+		// 添加取消用户返利记录
+		$data = array(
+			'user_id'=>$user_id,
+			'order_id'=>$order_id,
+			'goods_name'=>$goods_name,
+			'operate'=>0,
+			'money'=>$freeze_money,
+			'add_time'=>time(),
+			);
+		$this->db->insert('freeze', $data);
+
+		// 取消用户返利
+		$sql = "UPDATE `user`
+				SET 
+					freeze_money = freeze_money - {$freeze_money}
+				WHERE
+					id = {$user_id} 
+				LIMIT 1";
+		$this->db->query($sql);
+
+
+		$this->db->trans_complete();
+		redirect('Index/order');
+	}
+
+
+	// 提现管理
+	public function cash_apply()
+	{
+		$data['data'] = $this->Index_model->get_cash_apply();
+		var_dump($data['data']);exit();
+		$data['sidebar_active']['Index/cash_apply'] = 'active';		
+		$this->load->view('cash_apply/cash_apply.html', $data);
+	}
+
+
+	// 前台用户管理
+	public function index_user()
+	{
+		$data['sidebar_active']['Index/index_user'] = 'active';
+		$data['data'] = $this->Index_model->get_user();
+		$this->load->view('index_user/index_user.html', $data);
+	}
+
+
 	// 文章管理
 	public function article()
 	{

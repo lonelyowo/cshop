@@ -41,10 +41,11 @@ class Index extends CI_Controller {
 	 */
 	public function user_wallet()
 	{
-		$data['avail_cash'] = 100;
-		$data['freeze_money'] = 999;
+		$row = $this->db->where('id', $_SESSION['user']['id'])->get('user')->row_array();
 
-		// var_dump($data);exit();
+		$data['avail_cash'] = $row['cash_money'];
+		$data['freeze_money'] = $row['freeze_money'];
+
 		$data['title'] = '我的钱包';
 		$data['header_title'] = '我的钱包';
 		$this->load->view('club/user_wallet.html', $data);
@@ -60,16 +61,19 @@ class Index extends CI_Controller {
 	}
 
 	// 余额明细
-	public function cash_detail($value='')
+	public function cash_detail()
 	{
+		$data['data'] = $this->db->where('user_id', $_SESSION['user']['id'])->get('cash')->result_array();
 		$data['title'] = '我的钱包';
 		$data['header_title'] = '我的钱包';
 		$this->load->view('club/user_wallet_record.html', $data);
 	}
 
 	// 预估收入明细
-	public function freeze_detail($value='')
+	public function freeze_detail()
 	{
+		$data['data'] = $this->db->where('user_id', $_SESSION['user']['id'])->get('freeze')->result_array();
+
 		$data['title'] = '我的钱包';
 		$data['header_title'] = '我的钱包';
 		$this->load->view('club/user_wallet_record1.html', $data);

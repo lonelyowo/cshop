@@ -119,5 +119,29 @@ class Index_model extends CI_Model {
         return $query->row_array();
     }
 
+    public function get_user()
+    {
+        return $this->db->get('user')->result_array();
+    }
+
+    public function get_order()
+    {
+        $sql = "SELECT
+                    `order`.*, `user`.`name`
+                FROM
+                    `order`
+                LEFT JOIN `user` ON `order`.user_id = USER .id";
+        return $this->db->query($sql)->result_array();
+    }
+
+    public function get_cash_apply()
+    {
+        $sql = "SELECT
+                    `cash_apply`.*, `user`.`name`
+                FROM
+                    `cash_apply`
+                LEFT JOIN `user` ON `cash_apply`.user_id = USER .id";
+        return $this->db->query($sql)->result_array();
+    }
 
 }

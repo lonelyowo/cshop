@@ -23,7 +23,7 @@ $(function(){
   
     <div class="list">
  
-      <a class="item" href="./order.html?id=12">
+      <!-- <a class="item" href="./order.html?id=12">
         <div class="title">转入</div>
         <div class="time">2015-10-20</div>
         <div class="money">
@@ -36,7 +36,17 @@ $(function(){
         <div class="money"> 
           -25元
         </div>
-      </a>
+      </a> -->
+
+      <?php foreach ($data as $key => $row) : ?>
+        <a class="item" href="javascript:;">
+          <div class="title"><?php echo $row['operate']?'转入':'提现'; ?></div>
+          <div class="time"><?php echo date('Y-m-d', $row['time']); ?></div>
+          <div class="money">
+            <?php echo $row['operate']?'+':'-'; ?><?php echo $row['money']; ?>元
+          </div>
+        </a>
+      <?php endforeach; ?>
 
     </div>
     
@@ -60,90 +70,90 @@ $(function(){
 
     var tmp_wallet_record_page = $(this).data("page")?$(this).data("page"):0;
 
-    $.ajax({
+    // $.ajax({
 
-      type: "POST",
-      datatype: "json",
-      // url: "<?php echo base_url('static/index'); ?>/demo/json/wallet_record.json",
-      url: "<?php echo site_url('Wallet/get_json_user_wallet_record'); ?>",
-      data: "page=" + tmp_wallet_record_page,
-      beforeSend: function(){
-        $tmp_this_card_more.html( "正在载入…" );
-      },
-      success: function(data){
-        if( typeof data != "object" ) {
-          data = $.parseJSON(data);
-        }
-        if( data.state == 1 ) {
-          var tmp_html = "";
+    //   type: "POST",
+    //   datatype: "json",
+    //   // url: "<?php echo base_url('static/index'); ?>/demo/json/wallet_record.json",
+    //   url: "<?php echo site_url('Wallet/get_json_user_wallet_record'); ?>",
+    //   data: "page=" + tmp_wallet_record_page,
+    //   beforeSend: function(){
+    //     $tmp_this_card_more.html( "正在载入…" );
+    //   },
+    //   success: function(data){
+    //     if( typeof data != "object" ) {
+    //       data = $.parseJSON(data);
+    //     }
+    //     if( data.state == 1 ) {
+    //       var tmp_html = "";
           
-          //没有更多内容了
-          if( data.wallet_record.length == 0 ) {
-            $tmp_this_card_more.html( "没有更多内容了" );
-            return false;
-          }
+    //       //没有更多内容了
+    //       if( data.wallet_record.length == 0 ) {
+    //         $tmp_this_card_more.html( "没有更多内容了" );
+    //         return false;
+    //       }
           
-          for(var i = 0; i < data.wallet_record.length; i++) {
-            var tmp_wallet_record_state = tmp_wallet_record_state_text = tmp_wallet_record_isplus = "";
+    //       for(var i = 0; i < data.wallet_record.length; i++) {
+    //         var tmp_wallet_record_state = tmp_wallet_record_state_text = tmp_wallet_record_isplus = "";
             
-            // 0 = 进行中/审核中 | 1 = 成功 | 2 = 失败
-            if( data.wallet_record[i].state == 2 ) {
-              tmp_wallet_record_state_text = "<em class=\"sorry\">失败</em>";
-              tmp_wallet_record_state = "sorry";
-            } else if( data.wallet_record[i].state == 0 ) {
-              tmp_wallet_record_state_text = "<em>进行中...</em>";
-              tmp_wallet_record_state = "";
-            } else {
-              tmp_wallet_record_state_text = "";
-              tmp_wallet_record_state = "";
-            }
+    //         // 0 = 进行中/审核中 | 1 = 成功 | 2 = 失败
+    //         if( data.wallet_record[i].state == 2 ) {
+    //           tmp_wallet_record_state_text = "<em class=\"sorry\">失败</em>";
+    //           tmp_wallet_record_state = "sorry";
+    //         } else if( data.wallet_record[i].state == 0 ) {
+    //           tmp_wallet_record_state_text = "<em>进行中...</em>";
+    //           tmp_wallet_record_state = "";
+    //         } else {
+    //           tmp_wallet_record_state_text = "";
+    //           tmp_wallet_record_state = "";
+    //         }
             
-            // 0 = 无加减状态（其他） | 1 = 加（活动收款） | 2 = 减（提现/报名）
-            if( data.wallet_record[i].isplus == 1 ) {
-              tmp_wallet_record_isplus = "plus";
-            } else if( data.wallet_record[i].isplus == 2 ) {
-              tmp_wallet_record_isplus = "minus";
-            } else {
-              tmp_wallet_record_isplus = "";
-            }
-            
-            
-            tmp_html += "<a class=\"item " + tmp_wallet_record_isplus + " " + tmp_wallet_record_state + "\"><div class=\"title\">" + data.wallet_record[i].title + "</div><div class=\"time\">" + data.wallet_record[i].time + "</div><div class=\"money\">" + data.wallet_record[i].money + "<small>元</small>" + tmp_wallet_record_state_text + "</div>";
-            
-            if( data.wallet_record[i].text ) {
-              tmp_html += "<div class=\"extra\">" + data.wallet_record[i].text + "</div>";
-            }
-            
-            tmp_html += "</a>";
+    //         // 0 = 无加减状态（其他） | 1 = 加（活动收款） | 2 = 减（提现/报名）
+    //         if( data.wallet_record[i].isplus == 1 ) {
+    //           tmp_wallet_record_isplus = "plus";
+    //         } else if( data.wallet_record[i].isplus == 2 ) {
+    //           tmp_wallet_record_isplus = "minus";
+    //         } else {
+    //           tmp_wallet_record_isplus = "";
+    //         }
             
             
-          }
-          $(tmp_html).hide().appendTo( "#wallet_record_main .list" ).fadeIn(function(){
+    //         tmp_html += "<a class=\"item " + tmp_wallet_record_isplus + " " + tmp_wallet_record_state + "\"><div class=\"title\">" + data.wallet_record[i].title + "</div><div class=\"time\">" + data.wallet_record[i].time + "</div><div class=\"money\">" + data.wallet_record[i].money + "<small>元</small>" + tmp_wallet_record_state_text + "</div>";
+            
+    //         if( data.wallet_record[i].text ) {
+    //           tmp_html += "<div class=\"extra\">" + data.wallet_record[i].text + "</div>";
+    //         }
+            
+    //         tmp_html += "</a>";
+            
+            
+    //       }
+    //       $(tmp_html).hide().appendTo( "#wallet_record_main .list" ).fadeIn(function(){
           
-          });
+    //       });
           
-          //页数累加
-          tmp_wallet_record_page++;
-          $tmp_this_card_more.data( "page", tmp_wallet_record_page );
+    //       //页数累加
+    //       tmp_wallet_record_page++;
+    //       $tmp_this_card_more.data( "page", tmp_wallet_record_page );
           
-          lazy();
-          $tmp_this_card_more.html( "<span>点击载入更多</span>" );
-        }
-        //载入失败
-        if( data.state == 0 ) {
-          $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
-          $.fn.winktips("载入失败 ( >﹏<。)");
-        }
-        return false;
+    //       lazy();
+    //       $tmp_this_card_more.html( "<span>点击载入更多</span>" );
+    //     }
+    //     //载入失败
+    //     if( data.state == 0 ) {
+    //       $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+    //       $.fn.winktips("载入失败 ( >﹏<。)");
+    //     }
+    //     return false;
         
         
-      },
-      error: function(){
-        $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
-        $.fn.winktips("载入失败 （/TДT)/");
-      }
+    //   },
+    //   error: function(){
+    //     $tmp_this_card_more.html( "<span>载入失败，点击重试</span>" );
+    //     $.fn.winktips("载入失败 （/TДT)/");
+    //   }
 
-    });
+    // });
     
   });
   

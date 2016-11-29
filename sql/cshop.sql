@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2016-11-27 21:59:05
+-- Generation Time: 2016-11-30 01:45:30
 -- 服务器版本： 5.6.17
 -- PHP Version: 5.5.12
 
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `admin_menu` (
   `name` varchar(100) NOT NULL COMMENT '菜单名',
   `url` varchar(100) NOT NULL COMMENT '菜单url',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
 
 --
 -- 转存表中的数据 `admin_menu`
@@ -70,7 +70,10 @@ INSERT INTO `admin_menu` (`id`, `name`, `url`) VALUES
 (1, '文章管理', 'Index/article'),
 (2, 'API管理', 'Index/api'),
 (3, '分类管理', 'Index/cate'),
-(4, '商品管理', 'Index/goods');
+(4, '商品管理', 'Index/goods'),
+(5, '订单管理', 'Index/order'),
+(6, '用户管理', 'Index/index_user'),
+(7, '提现管理', 'Index/cash_apply');
 
 -- --------------------------------------------------------
 
@@ -129,7 +132,14 @@ CREATE TABLE IF NOT EXISTS `cash` (
   `money` varchar(20) NOT NULL,
   `time` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='余额' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='余额' AUTO_INCREMENT=2 ;
+
+--
+-- 转存表中的数据 `cash`
+--
+
+INSERT INTO `cash` (`id`, `user_id`, `operate`, `money`, `time`) VALUES
+(1, 1, 1, '10', '1480439803');
 
 -- --------------------------------------------------------
 
@@ -183,15 +193,24 @@ INSERT INTO `cate` (`id`, `sort`, `name`, `img`, `time`) VALUES
 CREATE TABLE IF NOT EXISTS `freeze` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
-  `goods_id` int(10) unsigned NOT NULL,
   `order_id` int(10) unsigned NOT NULL,
+  `goods_name` varchar(300) NOT NULL,
   `operate` tinyint(1) NOT NULL COMMENT '0:减 1:加 ',
   `money` varchar(20) NOT NULL,
   `add_time` varchar(10) NOT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1:结算转入余额',
-  `end_time` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='冻结资金' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='冻结资金' AUTO_INCREMENT=6 ;
+
+--
+-- 转存表中的数据 `freeze`
+--
+
+INSERT INTO `freeze` (`id`, `user_id`, `order_id`, `goods_name`, `operate`, `money`, `add_time`) VALUES
+(1, 1, 2, '测试1', 1, '5', '1480435924'),
+(2, 2, 1, '测试1', 1, '10.5', '1480436364'),
+(3, 2, 1, '测试1', 0, '10.5', '1480439066'),
+(4, 2, 1, '测试1', 0, '10.5', '1480439073'),
+(5, 1, 2, 'etst', 1, '10', '1480439651');
 
 -- --------------------------------------------------------
 
@@ -227,14 +246,23 @@ INSERT INTO `goods` (`id`, `cate_id`, `sort`, `name`, `url`, `img`, `price`, `ti
 CREATE TABLE IF NOT EXISTS `order` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
+  `goods_name` varchar(300) NOT NULL COMMENT '商品名',
   `order_num` varchar(100) NOT NULL COMMENT '第三方平台提供-订单编号',
-  `goods_info` text NOT NULL COMMENT '第三方平台提供-商品信息',
-  `income` varchar(20) NOT NULL COMMENT '商家返利',
+  `income` varchar(20) NOT NULL DEFAULT '0' COMMENT '商家返利',
+  `freeze_money` varchar(20) NOT NULL DEFAULT '0' COMMENT '用户返利',
   `add_time` varchar(10) NOT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '订单状态 1：结算完成',
+  `is_use` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0:失效',
   `end_time` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+
+--
+-- 转存表中的数据 `order`
+--
+
+INSERT INTO `order` (`id`, `user_id`, `goods_name`, `order_num`, `income`, `freeze_money`, `add_time`, `is_use`, `end_time`) VALUES
+(1, 2, '测试1', '1235466', '100', '10.5', '1480436364', 0, '1480439078'),
+(2, 1, 'etst', '111', '100', '10', '1480439651', 0, '1480439803');
 
 -- --------------------------------------------------------
 
@@ -258,8 +286,8 @@ CREATE TABLE IF NOT EXISTS `user` (
 --
 
 INSERT INTO `user` (`id`, `name`, `password`, `freeze_money`, `cash_money`, `time`) VALUES
-(1, 'root', 'root', '0', '0', '1479922110'),
-(2, 'test', 'test', '0', '0', '1479922189');
+(1, 'root', 'root', '6', '10', '1479922110'),
+(2, 'test', 'test', '-41', '31.5', '1479922189');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
