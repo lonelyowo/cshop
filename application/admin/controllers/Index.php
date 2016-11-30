@@ -257,7 +257,7 @@ class Index extends CI_Controller {
 			    'identity' => $_POST['identity'],
 			    'time' => time(),
 			);
-			$this->db->insert('user', $data);
+			$this->db->insert('admin_user', $data);
 			redirect('Index/user');
 		}else{
 			$this->Public_model->history_back('数据不能为空');
