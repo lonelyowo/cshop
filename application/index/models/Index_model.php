@@ -14,6 +14,19 @@ class Index_model extends CI_Model {
         parent::__construct();
     }
 
+    // 已经申请提现的金额
+    public function get_apply_money()
+    {
+        $apply_money = 0;
+        $res = $this->db->where('user_id', $_SESSION['user']['id'])
+                    ->where('status', 0)
+                    ->get('cash_apply')->result_array();
+        foreach ($res as $v) {
+            $apply_money += $v['money'];
+        }
+        return $apply_money;
+    }
+
     public function get_account(){
         $sql = "SELECT * FROM admin_account";
         $query = $this->db->query($sql);

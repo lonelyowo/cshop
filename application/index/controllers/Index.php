@@ -53,11 +53,59 @@ class Index extends CI_Controller {
 
 	public function user_cash()
 	{
+		$row = $this->db->where('id', $_SESSION['user']['id'])->get('user')->row_array();
+		$apply_money = $this->Index_model->get_apply_money();
+		$data['cash'] = $row['cash_money'] - $apply_money;
+
 		$data['title'] = '我的钱包';
 		$data['header_title'] = '我的钱包';
-
-		$data['cash'] = 100;
 		$this->load->view('club/user_cash.html', $data);
+	}
+
+
+
+	public function user_cash_bll()
+	{
+		$row = $this->db->where('id', $_SESSION['user']['id'])->get('user')->row_array();
+		$apply_money = $this->Index_model->get_apply_money();
+		$cash = $row['cash_money'] - $apply_money; //可提现
+
+		if ($_POST['user_cash_num']<=0) {
+			$arr = array(
+				'status'=>0,
+				'msg'=>'提现金额不合法',
+				);
+			echo json_encode($arr);
+			exit();
+		}
+
+		if ($_POST['user_cash_num']>$cash) {
+			$arr = array(
+				'status'=>0,
+				'msg'=>'提现太多啦...',
+				);
+			echo json_encode($arr);
+			exit();
+		}
+
+		$data = array(
+		    'user_id' => $_SESSION['user']['id'],
+		    'alipay' => $_POST['alipay'],
+		    'wxpay' => $_POST['wxpay'],
+		    'money' => $_POST['user_cash_num'],
+		    'remark' => $_POST['user_profile_intro'],
+		    'add_time' => time(),
+		    'status' => 0,
+		);
+		$this->db->insert('cash_apply', $data);
+		if ($this->db->affected_rows()==1) {
+			$arr = array(
+				'status'=>1,
+				'msg'=>'提现申请提交成功',
+				);
+			echo json_encode($arr);
+			exit();
+		}
 	}
 
 	// 余额明细
@@ -77,6 +125,16 @@ class Index extends CI_Controller {
 		$data['title'] = '我的钱包';
 		$data['header_title'] = '我的钱包';
 		$this->load->view('club/user_wallet_record1.html', $data);
+	}
+
+	// 提现记录
+	public function user_cash_detail()
+	{
+		$data['data'] = $this->db->where('user_id', $_SESSION['user']['id'])->get('cash_apply')->result_array();
+
+		$data['title'] = '我的钱包';
+		$data['header_title'] = '我的钱包';
+		$this->load->view('club/user_wallet_record2.html', $data);
 	}
 
 

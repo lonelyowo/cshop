@@ -48,11 +48,15 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>账号</th>
-                  <th>注册时间</th>
-                  <th>预计收入（元）</th>
-                  <th>余额（元）</th>
-                  <!-- <th>操作</th> -->
+                  <th>用户名</th>
+                  <th>申请提现（元）</th>
+                  <th>支付宝</th>
+                  <th>微信</th>
+                  <th>备注</th>
+                  <th>申请时间</th>
+                  <th>处理时间</th>
+                  <th>拒绝理由</th>
+                  <th>操作</th>
                 </tr>
               </thead>
 
@@ -63,9 +67,23 @@
                   <tr>
                     <td><?php echo $row['id']; ?></td>
                     <td><?php echo $row['name']; ?></td>
-                    <td><?php echo date('Y-m-d H:i:s',$row['time']); ?></td>
-                    <td><?php echo $row['freeze_money']; ?></td>
-                    <td><?php echo $row['cash_money']; ?></td>
+                    <td><?php echo $row['money']; ?></td>
+                    <td><?php echo $row['alipay']; ?></td>
+                    <td><?php echo $row['wxpay']; ?></td>
+                    <td><?php echo $row['remark']; ?></td>
+                    <td><?php echo date('Y-m-d H:i:s',$row['add_time']); ?></td>
+                    <td><?php echo !empty($row['end_time'])?date('Y-m-d H:i:s',$row['end_time']):''; ?></td>
+                    <td><?php echo $row['reason']; ?></td>
+                    <td>
+                      <?php if ($row['status']==1) :?>
+                        已提现
+                      <?php elseif ($row['status']==2) :?>
+                        已拒绝
+                      <?php else: ?>
+                        <a class="ok btn btn-success" data-href="<?php echo site_url('Index/cash_ok/'.$row['id']); ?>" href="JavaScript:;" role="button">完成</a>
+                        <a class="no btn btn-danger" data-id="<?php echo $row['id']; ?>" data-href="<?php echo site_url('Index/cash_no'); ?>" href="JavaScript:;" role="button">拒绝</a>
+                      <?php endif; ?>
+                    </td>
                   </tr>
                   <?php endforeach; ?>
                 <?php endif; ?>
@@ -93,10 +111,31 @@
   
     <script>
       $(function(){
-        $('.article_del').click(function(){
+        $('.ok').click(function(){
           var url = $(this).attr('data-href');
-          if ( confirm("确定删除此文章？") ){    
+          if ( confirm("确定完成提现？") ){    
             window.location.href = url;
+          }
+        });
+
+        $('.no').click(function(){
+          var url = $(this).data('href');
+          var id = $(this).data('id');
+          var reason = prompt("请输入拒绝提现理由");
+          if (reason!=null && reason!=""){
+
+            var data = {
+              'id':id,
+              'reason':reason
+            };
+            $.post(url, data, function(data){
+              if (data.status) {
+                window.location.href = "<?php echo site_url('Index/cash_apply'); ?>";
+              } else {
+                alert('呃，好像哪里出问题了o(╯□╰)o！');
+              }
+            }, "json");
+          
           }
         });
 

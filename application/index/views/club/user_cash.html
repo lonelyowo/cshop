@@ -49,7 +49,7 @@ $(function(){
       
       <div id="user_cash_limit" class="form_item form_item_plane">
         <div class="form_item_con">
-          <div class="form_static">余额 <b class="num"><?php echo $cash; ?></b> 元 <a class="btn">全部提现</a></div>
+          <div class="form_static">可提现 <b class="num"><?php echo $cash; ?></b> 元 <a class="btn">全部提现</a></div>
         </div>
       </div>
       
@@ -401,10 +401,12 @@ $(function(){
   
 
   
-  //添加银行账户
+
+
+
+  //提现
   $("#user_cash_form").submit( function() {
 
-    //检查银行卡号
     if( !$("[name=user_cash_num]").val() ) {
       $.fn.poptips({
         con: "请填写提现金额！",
@@ -414,13 +416,12 @@ $(function(){
       });
       return false;
     }
-  
-    //检查银行
-    if( Math.round($("[name=user_cash_target]").val()) == 0 ) {
+
+    if( !$("[name=alipay]").val() && !$("[name=wxpay]").val() ) {
       $.fn.poptips({
-        con: "请选择银行账户！",
+        con: "支付宝或微信至少填写一项！",
         btnOKClick: function (){
-          $("#user_cash_target_bank_account").click();
+          $("[name=alipay]").focus();
         }
       });
       return false;
@@ -432,7 +433,7 @@ $(function(){
 
     var postdata = $('#user_cash_form').serialize();
 
-    $.post("<?php echo site_url('Wallet/apply_cash'); ?>", postdata,
+    $.post("<?php echo site_url('Index/user_cash_bll'); ?>", postdata,
           function(data){
             if (data.status) {
               // alert("提现申请提交成功");
@@ -461,24 +462,7 @@ $(function(){
 
 });
 
-/*
-$("body").click(function(){
 
-  if( !$("#user_profile_idcard").val() ) {
-    var $this_parents_form_item = $("#user_profile_idcard").parents(".form_item");
-    $("#user_profile_idcard").focus();
-    
-    $this_parents_form_item.addClass( "haserror" );
-    
-    if( !$this_parents_form_item.find(".form_help").length ) {
-      $this_parents_form_item.append("<div class=\"form_help\">请输入6-16位密码，区分大小写，不能使用空格！</div>");
-    } else {
-      $this_parents_form_item.find(".form_help").html("请输入6-16位密码，区分大小写，不能使用空格！");
-    }
-  }
-
-});
-*/
 
 
 

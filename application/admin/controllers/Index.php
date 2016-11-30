@@ -614,9 +614,63 @@ class Index extends CI_Controller {
 	public function cash_apply()
 	{
 		$data['data'] = $this->Index_model->get_cash_apply();
-		var_dump($data['data']);exit();
+
+		// var_dump($data['data']);exit();
 		$data['sidebar_active']['Index/cash_apply'] = 'active';		
 		$this->load->view('cash_apply/cash_apply.html', $data);
+	}
+
+	public function cash_ok($id='')
+	{
+		$this->db->trans_strict(FALSE);
+		$this->db->trans_start();
+
+		$row = $this->db->where('id',$id)->get('cash_apply')->row_array();
+		$money = $row['money'];
+		$user_id = $row['user_id'];
+
+		// 余额提现记录
+		$data = array(
+			'user_id'=>$user_id,
+			'operate'=>0,
+			'money'=>$money,
+			'time'=>time(),
+			);
+		$this->db->insert('cash', $data);
+
+		// 扣余额
+		$sql = "UPDATE `user`
+				SET cash_money = cash_money - {$money}
+				WHERE
+					id = {$user_id} LIMIT 1";
+		$this->db->query($sql);
+
+		// 修改提现申请
+		$data = array(
+			'end_time'=>time(),
+			'status'=>1,
+			);
+		$this->db->where('id', $id)->update('cash_apply',$data);
+
+		$this->db->trans_complete();
+
+		redirect('Index/cash_apply');
+	}
+
+	public function cash_no()
+	{
+		// 修改提现申请
+		$data = array(
+			'end_time'=>time(),
+			'status'=>2,
+			'reason'=>$_POST['reason'],
+			);
+		$this->db->where('id', $_POST['id'])->update('cash_apply',$data);
+
+		$arr = array(
+			'status'=>1,
+			);
+		echo json_encode($arr);
 	}
 
 

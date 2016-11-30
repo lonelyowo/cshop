@@ -2,7 +2,7 @@
 俱乐部脚本 2016-10-24 10:11
 ********/
 //芝麻开门
-console.log("%cGiant®%c GoGoGo！(｡・`ω´･)", "color:blue;font-weight:bold", "");
+// console.log("%cGiant®%c GoGoGo！(｡・`ω´･)", "color:blue;font-weight:bold", "");
 /********
 俱乐部通用脚本 2016-10-10 11:42
 ********/
