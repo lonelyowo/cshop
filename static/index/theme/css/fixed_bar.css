@@ -1,6 +1,6 @@
 .smart-banner.is-fixed {
   height: 2rem;
-  background: #F30443;
+  background: #333;
 }
 .fixed_bar .login{
 	color: #fff;
@@ -9,6 +9,7 @@
 	font-size: .72rem;
 	text-align:center;
 	width: 20%;
+	text-decoration:none;
 }
 .fixed_bar .fanfan{
 	color: #fff;
@@ -18,7 +19,7 @@
 	font-family: 微软雅黑;
 	float: left;
 	text-align: left;
-  padding-left: .5rem;
+  	padding-left: .5rem;
 }
 
 

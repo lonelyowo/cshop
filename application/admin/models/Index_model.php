@@ -14,6 +14,20 @@ class Index_model extends CI_Model {
         parent::__construct();
     }
 
+    public function get_site_count()
+    {
+        $sql = "SELECT * FROM site_count WHERE id=1 LIMIT 1";
+        $query = $this->db->query($sql);
+        return $query->row_array();
+    }
+
+    public function get_site_info()
+    {
+        $sql = "SELECT * FROM admin_site_info WHERE id=1 LIMIT 1";
+        $query = $this->db->query($sql);
+        return $query->row_array();
+    }
+
     public function get_account(){
         $sql = "SELECT * FROM admin_account";
         $query = $this->db->query($sql);

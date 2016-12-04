@@ -14,8 +14,103 @@ class Index extends CI_Controller {
 	public function index()
 	{
 		$data['sidebar_active']['Index/index'] = 'active';
+
+		$data['site_count'] =  $this->Index_model->get_site_count();
 		$this->load->view('chenjp.html',$data);
 	}
+
+	// 站点信息编辑
+	public function site()
+	{
+		$data['sidebar_active']['Index/site'] = 'active';
+		$data['data'] = $this->Index_model->get_site_info();
+		$this->load->view('site/edit.html', $data);
+	}
+
+	public function site_bll()
+	{
+		$ico = '';
+		$logo = '';
+		$res = $this->site_ico_upload();
+		if ($res['status']) {
+			$ico = $res['img_path'];
+		}else{
+			exit($res['error']);
+		}
+		$res = $this->site_logo_upload();
+		if ($res['status']) {
+			$logo = $res['img_path'];
+		}else{
+			exit($res['error']);
+		}
+		
+		$data = array(
+			'name'=>$_POST['name'],
+			'ico'=>$ico,
+			'logo'=>$logo,
+			'phone'=>$_POST['phone'],
+			'qq'=>$_POST['qq'],
+			'wechat'=>$_POST['wechat'],
+			);
+		$this->db->where('id',1)->update('admin_site_info', $data);
+		redirect('Index/site');
+	}
+
+	public function site_ico_upload()
+    {
+        $config['upload_path']      = FCPATH.'data/uploads/site/';
+        $config['allowed_types']    = 'gif|jpg|png';
+        $config['file_name']     = time();        
+
+        $this->load->library('upload', $config);
+
+        if ( ! $this->upload->do_upload('ico'))
+        {
+            $error = $this->upload->display_errors();
+			$arr = array(
+				'status'=>0,
+				'error'=>$error
+				);
+			return $arr;
+        }
+        else
+        {
+            $data = $this->upload->data();
+            $arr = array(
+				'status'=>1,
+				'img_path'=>'data/uploads/site/'.$data['file_name']
+				);
+			return $arr;
+        }
+    }
+
+    public function site_logo_upload()
+    {
+        $config['upload_path']      = FCPATH.'data/uploads/site/';
+        $config['allowed_types']    = 'gif|jpg|png';
+        $config['file_name']     = time();        
+
+        $this->load->library('upload', $config);
+
+        if ( ! $this->upload->do_upload('logo'))
+        {
+            $error = $this->upload->display_errors();
+			$arr = array(
+				'status'=>0,
+				'error'=>$error
+				);
+			return $arr;
+        }
+        else
+        {
+            $data = $this->upload->data();
+            $arr = array(
+				'status'=>1,
+				'img_path'=>'data/uploads/site/'.$data['file_name']
+				);
+			return $arr;
+        }
+    }
 
 	public function cate()
 	{

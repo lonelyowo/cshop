@@ -7,7 +7,7 @@
 </script>
 
 <!-- 一级底栏 开始 -->
-<?php $this->load->view('public/index_bottombar.html'); ?>
+<!-- <?php $this->load->view('public/index_bottombar.html'); ?> -->
 <!-- 一级底栏 结束 -->
 
 
@@ -16,7 +16,7 @@
   <div class="main_top_box">
     <div class="user_main_top_info">
       <div class="avatar_wrap">
-        <div class="avatar" <?php if(!empty($_SESSION['user']['avatar'])):?> style="background-image:url(<?php echo $_SESSION['user']['avatar'];?>)" <?php else: ?> style="background-image:url(<?php echo base_url('static/index/club/img/avatar_1.jpg');?>)" <?php endif; ?>></div>
+        <div class="avatar" style="background-image:url(<?php echo base_url($_SESSION['site_info']['logo']);?>)"></div>
       </div>
       <div class="name"><?php echo $_SESSION['user']['name'];?></div>
       <div class="stati">

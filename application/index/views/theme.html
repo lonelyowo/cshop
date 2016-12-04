@@ -2,7 +2,10 @@
 <html style="font-size: 32px;">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
-<title></title>  
+
+<link rel="icon" href="<?php echo base_url($_SESSION['site_info']['ico']); ?>">
+<title><?php echo $_SESSION['site_info']['name']; ?></title>
+  
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes"> 
 <meta name="apple-mobile-web-app-status-bar-style" content="black"> 
@@ -23,10 +26,10 @@
 
 <div id="super" data-spm="1"> 
 
-<div class="sup-line-wrap"> 
+<!-- <div class="sup-line-wrap"> 
     <div class="sup-line"></div> 
     <div class="sup-text">每日10点更新</div> 
-</div> 
+</div>  -->
 
 
 <?php foreach ($cate_list as $key => $cate) : ?>

@@ -93,7 +93,7 @@ body {
 #giantlogo,
 #mmtlogo,
 #livlogo {
-  background-image: url(../img/giant_logo.png);
+  background-image: url(../img/1.png);
   width: 100%;
   height: 60px;
   background-repeat: no-repeat;
@@ -103,10 +103,10 @@ body {
   top: 20px;
 }
 #mmtlogo {
-  background-image: url(../img/mmt_logo.png);
+  background-image: url(../img/1.png);
 }
 #livlogo {
-  background-image: url(../img/liv_logo.png);
+  background-image: url(../img/1.png);
 }
 
 #giantlogo {

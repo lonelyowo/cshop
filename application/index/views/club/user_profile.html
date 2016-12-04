@@ -19,7 +19,7 @@
       <div class="form_item form_item_plane">
         <div class="form_label">头像</div>
         <div class="form_item_con">
-          <div class="avatar form_imgupload" <?php if(!empty($_SESSION['user']['avatar'])): ?> style="background-image:url(<?php echo $_SESSION['user']['avatar'];?>);"<?php endif; ?>></div>
+          <div class="avatar form_imgupload" style="background-image:url(<?php echo base_url($_SESSION['site_info']['logo']);?>);"></div>
           <!-- <input type="hidden" name="user_profile_avatar" value=""> -->
         </div>
       </div>

@@ -6,12 +6,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta name="renderer" content="webkit">
 
-<link rel="icon" href="<?php echo base_url('static/index/login_giant/favicon.ico'); ?>" type="image/x-icon" />
-<link rel="shortcut icon" href="<?php echo base_url('static/index/login_giant/favicon.ico'); ?>" type="image/x-icon" />
+<link rel="icon" href="<?php echo base_url($_SESSION['site_info']['ico']); ?>" type="image/x-icon" />
+<link rel="shortcut icon" href="<?php echo base_url($_SESSION['site_info']['ico']); ?>" type="image/x-icon" />
 
 <link rel="stylesheet" href="<?php echo base_url('static/index/login_giant/css/login_giant.css'); ?>">
 
-<title>Giant账号 - 账号注册</title>
+<title><?php echo $_SESSION['site_info']['name']; ?></title>
 <style>
 
 
@@ -19,13 +19,7 @@
 </head>
 
 <body class="">
-<!--
-不同品牌为 body 添加相应class
-login_giant
-login_mmt
-login_liv
-不填写品牌Class，将三个品牌轮播
--->
+
 
 <div id="login_header">
   <div id="giantcolor"></div>
@@ -56,10 +50,10 @@ login_liv
     <button type="button" class="btn btn_register">立即注册</button>
   </div>
   
-  <div class="login_tips">点击注册，即表示您同意<a id="reg_term_show">服务条款及隐私政策</a></div>
+  <!-- <div class="login_tips">点击注册，即表示您同意<a id="reg_term_show">服务条款及隐私政策</a></div> -->
   
   <div class="login_extra">
-    <a href="<?php echo site_url('Login'); ?>">有捷安特账号？直接登录</a>
+    <a href="<?php echo site_url('Login'); ?>">账号登录</a>
   </div>
 
 </div>
@@ -68,7 +62,7 @@ login_liv
 
 
 
-<div id="copyright">捷安特（昆山）有限公司</div>
+<!-- <div id="copyright"></div> -->
 
 
 <div id="reg_term">

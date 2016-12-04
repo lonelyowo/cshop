@@ -19,8 +19,8 @@ class My extends CI_Controller
 		$data['index_bottombar_active']['index_me'] = 'active';
 		//判断是否有新消息
 		// $data['hasnew'] = $this->my_model->check_hasnew();
-		$data['title'] = '捷安特俱乐部';
-		$data['header_title'] = '捷安特俱乐部';
+		$data['title'] = $_SESSION['site_info']['name'];
+		$data['header_title'] = $_SESSION['site_info']['name'];
 		$this->load->view('club/index_me.html', $data);
 	}
 	/**

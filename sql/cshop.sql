@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2016-12-01 01:24:10
+-- Generation Time: 2016-12-05 00:50:29
 -- 服务器版本： 5.6.17
 -- PHP Version: 5.5.12
 
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `admin_menu` (
   `name` varchar(100) NOT NULL COMMENT '菜单名',
   `url` varchar(100) NOT NULL COMMENT '菜单url',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
 
 --
 -- 转存表中的数据 `admin_menu`
@@ -73,7 +73,8 @@ INSERT INTO `admin_menu` (`id`, `name`, `url`) VALUES
 (4, '商品管理', 'Index/goods'),
 (5, '订单管理', 'Index/order'),
 (6, '用户管理', 'Index/index_user'),
-(7, '提现管理', 'Index/cash_apply');
+(7, '提现管理', 'Index/cash_apply'),
+(8, '站点信息', 'Index/site');
 
 -- --------------------------------------------------------
 
@@ -86,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `admin_menu_permission` (
   `user_id` int(10) unsigned NOT NULL,
   `json` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='左侧菜单权限分配' AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='左侧菜单权限分配' AUTO_INCREMENT=4 ;
 
 --
 -- 转存表中的数据 `admin_menu_permission`
@@ -94,7 +95,32 @@ CREATE TABLE IF NOT EXISTS `admin_menu_permission` (
 
 INSERT INTO `admin_menu_permission` (`id`, `user_id`, `json`) VALUES
 (1, 1, ''),
-(2, 2, '{"2":[]}');
+(2, 2, '{"2":[]}'),
+(3, 3, '{"3":[],"4":[],"5":[],"6":[],"7":[],"8":[]}');
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `admin_site_info`
+--
+
+CREATE TABLE IF NOT EXISTS `admin_site_info` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `ico` varchar(300) NOT NULL,
+  `logo` varchar(300) NOT NULL,
+  `phone` varchar(100) NOT NULL,
+  `qq` varchar(100) NOT NULL,
+  `wechat` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+
+--
+-- 转存表中的数据 `admin_site_info`
+--
+
+INSERT INTO `admin_site_info` (`id`, `name`, `ico`, `logo`, `phone`, `qq`, `wechat`) VALUES
+(1, '蛋小叽', 'data/uploads/site/1480859145.png', 'data/uploads/site/14808591451.png', '13900000000', '111111111', 'wx11000');
 
 -- --------------------------------------------------------
 
@@ -109,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `admin_user` (
   `identity` varchar(20) NOT NULL COMMENT '{超级管理员:root} {普通用户:user}     ',
   `time` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- 转存表中的数据 `admin_user`
@@ -117,7 +143,8 @@ CREATE TABLE IF NOT EXISTS `admin_user` (
 
 INSERT INTO `admin_user` (`id`, `name`, `password`, `identity`, `time`) VALUES
 (1, 'root', 'root', 'root', '1478829283'),
-(2, 'sunqi', 'sunqi', 'user', '1479094884');
+(2, 'sunqi', 'sunqi', 'user', '1479094884'),
+(3, 'ccy', 'ccy', 'user', '1480529149');
 
 -- --------------------------------------------------------
 
@@ -132,19 +159,7 @@ CREATE TABLE IF NOT EXISTS `cash` (
   `money` varchar(20) NOT NULL,
   `time` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='余额' AUTO_INCREMENT=7 ;
-
---
--- 转存表中的数据 `cash`
---
-
-INSERT INTO `cash` (`id`, `user_id`, `operate`, `money`, `time`) VALUES
-(1, 1, 1, '10', '1480439803'),
-(2, 1, 0, '5', '1480508287'),
-(3, 1, 0, '10', '1480509870'),
-(4, 1, 0, '5', '1480513680'),
-(5, 1, 1, '10', '1480513860'),
-(6, 1, 0, '95', '1480513930');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='余额' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -164,20 +179,7 @@ CREATE TABLE IF NOT EXISTS `cash_apply` (
   `status` tinyint(1) NOT NULL COMMENT '处理状态  0：未处理 1：已经处理 2：申请无效',
   `reason` varchar(300) NOT NULL COMMENT '提现申请无效理由',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='申请提现' AUTO_INCREMENT=9 ;
-
---
--- 转存表中的数据 `cash_apply`
---
-
-INSERT INTO `cash_apply` (`id`, `user_id`, `alipay`, `wxpay`, `money`, `remark`, `add_time`, `end_time`, `status`, `reason`) VALUES
-(1, 1, '3783@qq.com', 'wx@qq.com', '5', 'test', '1480505210', '1480508287', 1, ''),
-(3, 1, 'test', 'test', '10', '', '1480509798', '1480509870', 1, ''),
-(4, 1, 'q', 'q', '50', '', '1480509817', '1480511103', 2, '真的假的啊'),
-(5, 1, '11', '11', '90', '111', '1480511136', '1480511166', 2, '骗人的把'),
-(6, 1, '3783@qq.com', '16789990', '10', '我现在要提现10块钱，速度给我。', '1480513576', '1480513613', 2, '你又想骗我的钱？'),
-(7, 1, '39y8uy9', 'pqwei90', '5', '给我 5快', '1480513670', '1480513680', 1, ''),
-(8, 1, 'qwd', '2123231123', '95', '1212', '1480513892', '1480513930', 1, '');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='申请提现' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -192,15 +194,14 @@ CREATE TABLE IF NOT EXISTS `cate` (
   `img` varchar(300) NOT NULL,
   `time` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 --
 -- 转存表中的数据 `cate`
 --
 
 INSERT INTO `cate` (`id`, `sort`, `name`, `img`, `time`) VALUES
-(4, 100, 'test', 'data/uploads/cate/1479831536.jpg', '1479831536'),
-(5, 100, '考拉', 'data/uploads/cate/1479913956.jpg', '1479913956');
+(1, 100, '女装', 'data/uploads/cate/1480863172.png', '1480863172');
 
 -- --------------------------------------------------------
 
@@ -217,22 +218,7 @@ CREATE TABLE IF NOT EXISTS `freeze` (
   `money` varchar(20) NOT NULL,
   `add_time` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='冻结资金' AUTO_INCREMENT=10 ;
-
---
--- 转存表中的数据 `freeze`
---
-
-INSERT INTO `freeze` (`id`, `user_id`, `order_id`, `goods_name`, `operate`, `money`, `add_time`) VALUES
-(1, 1, 2, '测试1', 1, '5', '1480435924'),
-(2, 2, 1, '测试1', 1, '10.5', '1480436364'),
-(3, 2, 1, '测试1', 0, '10.5', '1480439066'),
-(4, 2, 1, '测试1', 0, '10.5', '1480439073'),
-(5, 1, 2, 'etst', 1, '10', '1480439651'),
-(6, 2, 1, '测试1', 0, '10.5', '1480508246'),
-(7, 1, 3, '可就是打飞机客户数据库', 1, '10', '1480513762'),
-(8, 1, 3, '可就是打飞机客户数据库', 0, '10', '1480513820'),
-(9, 1, 4, '我去打球我的', 1, '10', '1480513841');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='冻结资金' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -257,7 +243,7 @@ CREATE TABLE IF NOT EXISTS `goods` (
 --
 
 INSERT INTO `goods` (`id`, `cate_id`, `sort`, `name`, `url`, `img`, `price`, `time`) VALUES
-(1, 5, 100, 'test', 'www.baidu.com', 'data/uploads/goods/1479987215.jpg', '10', '1479905197');
+(1, 1, 100, '米莎秋冬韩版学院风高腰显瘦多色金属丝绒裙半身裙百褶裙长裙裙子', 'https://s.click.taobao.com/t?e=m%3D2%26s%3DVMjqlp%2Bvb1gcQipKwQzePOeEDrYVVa64LKpWJ%2Bin0XLjf2vlNIV67tN72EQA3FrOtYQMu9Tydq2K5fQKi1ngpS%2B9OA04gCJwjXa2RMv%2BzP9yY9k1UPx6rLe1hTdEtKxdO3XKpf4bZ4AUw2G1mUCr0rvunxa65Kqbxg5p7bh%2BFbQ%3D&pvid=21_121.227.37.78_971_1480529385773', 'data/uploads/goods/1480863268.png', '65', '1480863268');
 
 -- --------------------------------------------------------
 
@@ -276,17 +262,26 @@ CREATE TABLE IF NOT EXISTS `order` (
   `is_use` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0:失效',
   `end_time` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
 
 --
--- 转存表中的数据 `order`
+-- 表的结构 `site_count`
 --
 
-INSERT INTO `order` (`id`, `user_id`, `goods_name`, `order_num`, `income`, `freeze_money`, `add_time`, `is_use`, `end_time`) VALUES
-(1, 2, '测试1', '1235466', '100', '10.5', '1480436364', 0, '1480508246'),
-(2, 1, 'etst', '111', '100', '10', '1480439651', 0, '1480439803'),
-(3, 1, '可就是打飞机客户数据库', '11111', '100', '10', '1480513762', 0, '1480513820'),
-(4, 1, '我去打球我的', '1111', '1000', '10', '1480513841', 0, '1480513860');
+CREATE TABLE IF NOT EXISTS `site_count` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `pv` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='站点统计' AUTO_INCREMENT=2 ;
+
+--
+-- 转存表中的数据 `site_count`
+--
+
+INSERT INTO `site_count` (`id`, `pv`) VALUES
+(1, 0);
 
 -- --------------------------------------------------------
 
@@ -310,8 +305,8 @@ CREATE TABLE IF NOT EXISTS `user` (
 --
 
 INSERT INTO `user` (`id`, `name`, `password`, `freeze_money`, `cash_money`, `time`) VALUES
-(1, 'root', 'root', '6', '0', '1479922110'),
-(2, 'test', 'test', '-51.5', '31.5', '1479922189');
+(1, 'root', 'root', '0', '0', '1479922110'),
+(2, 'test', 'test', '0', '0', '1479922189');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

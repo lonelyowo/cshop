@@ -1,22 +1,2 @@
 <div id="footer">
 </div>
-
-
-<script type="text/javascript">
-$(function(){
-
-<?php if(isset($_SESSION['first_login_tmp'])):?>
-  //登录提示
-  $.fn.winktips({
-  	con: "<div class=\"welcome\"><div class=\"avatar\" style=\"background-image:url(<?php echo $_SESSION['user']['avatar']; ?>)\"></div><div class=\"name\"><?php echo $_SESSION['user']['nickname']; ?></div><div>欢迎回来</div>",
-  	delay: 1600
-  });
-<?php endif;unset($_SESSION['first_login_tmp']) ?>
-<?php if(isset($_SESSION['first_login_score_tmp']) && $_SESSION['first_login_score_tmp'] !==FALSE):?>
-  //当日首次登录获得积分
-  $.fn.winktips("当日首次登录<br>积分+<?php echo $_SESSION['first_login_score_tmp']; ?>");
-<?php endif;unset($_SESSION['first_login_score_tmp']) ?>
-
-});
-</script>
-

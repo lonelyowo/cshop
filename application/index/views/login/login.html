@@ -5,12 +5,14 @@
 <meta http-equiv="x-ua-compatible" content="IE=edge, chrome=1" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta name="renderer" content="webkit">
-<link rel="icon" href="<?php echo base_url('static/index/login_giant/favicon.ico'); ?>" type="image/x-icon" />
-<link rel="shortcut icon" href="<?php echo base_url('static/index/login_giant/favicon.ico'); ?>" type="image/x-icon" />
+
+
+<link rel="icon" href="<?php echo base_url($_SESSION['site_info']['ico']); ?>" type="image/x-icon" />
+<link rel="shortcut icon" href="<?php echo base_url($_SESSION['site_info']['ico']); ?>" type="image/x-icon" />
 
 <link rel="stylesheet" href="<?php echo base_url('static/index/login_giant/css/login_giant.css'); ?>">
 
-<title>Giant账号 - 账号登录</title>
+<title><?php echo $_SESSION['site_info']['name']; ?></title>
 <style>
 
 
@@ -18,22 +20,14 @@
 </head>
 
 <body class="login_giant">
-<!--
-不同品牌为 body 添加相应class
-login_giant
-login_mmt
-login_liv
-不填写品牌Class，将三个品牌轮播
--->
+
+
 <div id="login_header">
   <div id="giantcolor"></div>
   <div id="giantlogo"></div>
   <div id="mmtlogo"></div>
   <div id="livlogo"></div>
 </div>
-
-
-
 
 <div id="" class="login_card">
 <form id="form_login">
@@ -49,7 +43,7 @@ login_liv
   
 
   <div class="login_extra">
-    <a href="<?php echo site_url('Login/reg'); ?>">注册捷安特账号</a>
+    <a href="<?php echo site_url('Login/reg'); ?>">注册账号</a>
     <!-- <a href="<?php echo site_url('Login/reset'); ?>" class="reset_password">忘记密码？</a> -->
     <!-- <a target="_blank" href="http://wechat.giant.com.cn/giant/forget_pwd.aspx" class="reset_password">忘记密码？</a> -->
   </div>
@@ -60,7 +54,7 @@ login_liv
 
 
 
-<div id="copyright">捷安特（昆山）有限公司</div>
+<!-- <div id="copyright"><?php echo $_SESSION['site_info']['name']; ?></div> -->
 
 
 <div id="reg_term">

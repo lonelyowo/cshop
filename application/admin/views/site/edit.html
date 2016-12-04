@@ -40,59 +40,58 @@
       
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           
-          <form class="form-horizontal" role="form" action="<?php echo site_url('Index/goods_bll'); ?>" method="post" enctype="multipart/form-data">
+          <form class="form-horizontal" role="form" action="<?php echo site_url('Index/site_bll'); ?>" method="post" enctype="multipart/form-data">
             
             <div class="form-group">
-              <label for="cate_id" class="col-sm-1 control-label">所属分类:</label>
+              <label for="name" class="col-sm-1 control-label">站点名:</label>
               <div class="col-sm-10">
-                <!-- <input type="text" class="form-control" id="cate_id" name="cate_id" placeholder="所属分类" value=""> -->
-                <select id="cate_id" name="cate_id" class="form-control">
-                  <?php if ($cate_list) : ?>
-                    <?php foreach ($cate_list as $key => $cate) : ?>
-                      <option value="<?php echo $cate['id']; ?>"><?php echo $cate['name']; ?></option>
-                    <?php endforeach; ?>
-                  <?php endif; ?>
-                </select>
+                <input type="text" class="form-control" id="name" name="name" placeholder="" value="<?php echo $data['name']; ?>">
               </div>
             </div>
 
             <div class="form-group">
-              <label for="name" class="col-sm-1 control-label">商品名:</label>
+              <label for="ico" class="col-sm-1 control-label">ico:</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" id="name" name="name" placeholder="商品名" value="">
+                <input type="file" name="ico" id="ico">
+                <p class="help-block">
+                  <img src="<?php echo base_url($data['ico']); ?>" alt="" style="width: 150px;">
+                </p>
               </div>
             </div>
 
             <div class="form-group">
-              <label for="url" class="col-sm-1 control-label">推广链接:</label>
+              <label for="logo" class="col-sm-1 control-label">logo:</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" id="url" name="url" placeholder="长链接" value="">
+                <input type="file" name="logo" id="logo">
+                <p class="help-block">
+                  <img src="<?php echo base_url($data['logo']); ?>" alt="" style="width: 150px;">
+                </p>                
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="form-group">
+              <label for="phone" class="col-sm-1 control-label">联系电话:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="" value="<?php echo $data['phone']; ?>">
               </div>
             </div>
 
             <div class="form-group">
-              <label for="img" class="col-sm-1 control-label">商品图片:</label>
+              <label for="qq" class="col-sm-1 control-label">联系QQ:</label>
               <div class="col-sm-10">
-                <input type="file" id="img" name="img">
-                <p class="help-block">建议图片大小 360 x 360.</p>
+                <input type="text" class="form-control" id="qq" name="qq" placeholder="" value="<?php echo $data['qq']; ?>">
               </div>
             </div>
 
             <div class="form-group">
-              <label for="price" class="col-sm-1 control-label">商品价格:</label>
+              <label for="wechat" class="col-sm-1 control-label">联系微信:</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" id="price" name="price" placeholder="商品价格" value="">
+                <input type="text" class="form-control" id="wechat" name="wechat" placeholder="" value="<?php echo $data['wechat']; ?>">
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="sort" class="col-sm-1 control-label">排序:</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control" id="sort" name="sort" placeholder="自然数排序" value="100">
-              </div>
-            </div>
-            
-            
             <div class="form-group">
               <div class="col-sm-offset-1 col-sm-10">
                 <button type="submit" id="submit" class="btn btn-danger">提交</button>
@@ -101,8 +100,6 @@
           
           </form>
 
-
-          
         </div>
 
 
@@ -122,20 +119,22 @@
     <script>
       $(function(){
         $('#submit').click(function(){
-          var cate_id = $.trim($('#cate_id').val());
-          var name = $.trim($('#name').val());
-          var price = $.trim($('#price').val());
-          var sort = $.trim($('#sort').val());
-          var url = $.trim($('#url').val());
 
-          if ( cate_id=='' || name=='' || price=='' || sort=='' || url=='' ) {
-            alert('输入不合法，请检查！');
+          var name = $.trim($('#name').val());
+          var ico = $.trim($('#ico').val());
+          var logo = $.trim($('#logo').val());
+          var phone = $.trim($('#phone').val());
+          var qq = $.trim($('#qq').val());
+          var wechat = $.trim($('#wechat').val());
+          if ( name=='' || ico=='' || logo=='' || phone=='' || qq=='' || wechat=='' ) {
+            alert('输入不能为空');
             return false;
           }
-        
+          
         });
       });
     </script>
-    
+  
+
   </body>
 </html>
